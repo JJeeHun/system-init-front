@@ -1,24 +1,26 @@
 import type { ButtonHTMLAttributes } from "react"
 
-export type ButtonVariant =
-  | "default"
-  | "primary"
-  | "success"
-  | "warning"
-  | "error"
-  | "info"
+type ButtonTone = "primary" | "success" | "warning" | "error" | "info"
+
+type ExclusiveBooleanProps<K extends PropertyKey> =
+  | { [P in K]?: never }
+  | {
+      [P in K]: { [Q in P]: true } & {
+        [Q in Exclude<K, P>]?: never
+      }
+    }[K]
 
 export type ButtonSize = "sm" | "md" | "lg"
 
-type ButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> & {
-  variant?: ButtonVariant
-  size?: ButtonSize
-}
+export type ButtonProps = ExclusiveBooleanProps<ButtonTone> &
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "color"> & {
+    size?: ButtonSize
+  }
 
 const baseClassName =
   "inline-flex items-center justify-center rounded-sm border font-semibold transition-colors disabled:cursor-not-allowed disabled:opacity-50"
 
-const variantClassNames: Record<ButtonVariant, string> = {
+const toneClassNames = {
   default:
     "border-border-strong bg-card text-foreground hover:bg-surface-soft",
   primary:
@@ -31,7 +33,7 @@ const variantClassNames: Record<ButtonVariant, string> = {
     "border-destructive bg-destructive-soft text-destructive hover:opacity-90",
   info:
     "border-info-border bg-info-soft text-info hover:opacity-90",
-}
+} as const
 
 const sizeClassNames: Record<ButtonSize, string> = {
   sm: "h-[var(--control-height-sm)] px-3 text-xs",
@@ -39,19 +41,47 @@ const sizeClassNames: Record<ButtonSize, string> = {
   lg: "h-[var(--control-height-lg)] px-5 text-sm",
 }
 
+function resolveTone({
+  primary,
+  success,
+  warning,
+  error,
+  info,
+}: Pick<ButtonProps, ButtonTone>) {
+  if (primary) return "primary"
+  if (success) return "success"
+  if (warning) return "warning"
+  if (error) return "error"
+  if (info) return "info"
+
+  return "default"
+}
+
 export function Button({
-  variant = "default",
+  primary,
+  success,
+  warning,
+  error,
+  info,
   size = "md",
   type = "button",
   ...props
 }: ButtonProps) {
+  const tone = resolveTone({
+    primary,
+    success,
+    warning,
+    error,
+    info,
+  })
+
   return (
     <button
       {...props}
       type={type}
       className={[
         baseClassName,
-        variantClassNames[variant],
+        toneClassNames[tone],
         sizeClassNames[size],
       ].join(" ")}
     />
