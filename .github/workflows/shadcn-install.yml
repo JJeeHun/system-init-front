@@ -30,7 +30,7 @@ jobs:
       - name: Install project dependencies
         run: npm install --package-lock=false
 
-      - name: Add remaining ERP shadcn primitives
+      - name: Add shadcn field
         run: npx shadcn add field --yes
 
       - name: Typecheck generated primitives
