@@ -1,7 +1,9 @@
 import { useMemo } from "react"
 import {
+  CellStyleModule,
   ClientSideRowModelModule,
   ModuleRegistry,
+  RowStyleModule,
   themeQuartz,
 } from "ag-grid-community"
 import type { ColDef, RowClassParams } from "ag-grid-community"
@@ -10,7 +12,11 @@ import { AgGridReact } from "ag-grid-react"
 import type { DataGridProps } from "@/shared/ui/data-grid/data-grid.types"
 import "@/shared/ui/data-grid/data-grid.css"
 
-ModuleRegistry.registerModules([ClientSideRowModelModule])
+ModuleRegistry.registerModules([
+  CellStyleModule,
+  ClientSideRowModelModule,
+  RowStyleModule,
+])
 
 const appGridTheme = themeQuartz.withParams({
   accentColor: "var(--primary)",
@@ -21,7 +27,6 @@ const appGridTheme = themeQuartz.withParams({
   headerBackgroundColor: "var(--table-header)",
   headerTextColor: "var(--foreground)",
   rowHoverColor: "var(--table-row-hover)",
-  selectedRowBackgroundColor: "var(--table-row-selected)",
 })
 
 const columnSizeConfig = {

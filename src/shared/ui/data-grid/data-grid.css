@@ -6,6 +6,7 @@
   text-align: right;
 }
 
-.app-data-grid .ag-row.app-data-grid__row--selected {
+.app-data-grid .ag-row.app-data-grid__row--selected,
+.app-data-grid .ag-row.app-data-grid__row--selected:hover {
   background-color: var(--table-row-selected);
 }
