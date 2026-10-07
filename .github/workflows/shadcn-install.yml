@@ -37,7 +37,7 @@ jobs:
           sonner alert alert-dialog skeleton spinner progress
           dialog sheet popover tooltip dropdown-menu context-menu
           tabs accordion collapsible pagination badge card separator empty
-          command combobox calendar date-picker scroll-area resizable
+          command combobox calendar scroll-area resizable
           --yes
 
       - name: Typecheck generated primitives
