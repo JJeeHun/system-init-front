@@ -20,9 +20,12 @@ export function MainLayout() {
       <div className="grid min-h-[calc(100dvh-var(--layout-header-height))] grid-cols-1 lg:[grid-template-columns:var(--layout-sidebar-width)_minmax(0,1fr)]">
         <Sidebar
           title={navigation.activeRootMenu?.label ?? "메뉴"}
+          rootMenus={navigation.menus}
           menus={navigation.sidebarMenus}
+          activeRootId={navigation.activeRootMenu?.id}
           activeMenuIds={navigation.activeMenuIds}
           open={navigation.sidebarOpen}
+          onRootSelect={navigation.selectRootMenu}
           onClose={navigation.closeSidebar}
         />
 
