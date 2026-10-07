@@ -1,4 +1,5 @@
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
+import { Button } from "@/shared/ui/button"
 
 type CommonCodeGroupOptionProps = {
   group: CommonCodeGroup
@@ -12,34 +13,23 @@ export function CommonCodeGroupOption({
   onSelect,
 }: CommonCodeGroupOptionProps) {
   return (
-    <button
-      type="button"
+    <Button
+      primary={selected}
+      size="lg"
       onClick={() => onSelect(group)}
-      className={[
-        "grid gap-1 rounded-md border p-3 text-left transition-colors",
-        selected
-          ? "border-primary-border bg-primary-soft"
-          : "border-border bg-card hover:bg-surface-soft",
-      ].join(" ")}
     >
-      <span className="flex items-center justify-between gap-2">
-        <strong className="text-sm text-foreground">{group.name}</strong>
-        <span
-          className={
-            group.enabled
-              ? "text-xs font-medium text-success"
-              : "text-xs font-medium text-foreground-faint"
-          }
-        >
-          {group.enabled ? "사용" : "미사용"}
+      <span className="grid w-full gap-1 text-left">
+        <span className="flex items-center justify-between gap-2">
+          <strong>{group.name}</strong>
+          <span className={group.enabled ? "text-success" : "text-foreground-faint"}>
+            {group.enabled ? "사용" : "미사용"}
+          </span>
         </span>
+        <span>{group.code}</span>
+        {group.description ? (
+          <span className="line-clamp-2 font-normal">{group.description}</span>
+        ) : null}
       </span>
-      <span className="text-xs font-semibold text-primary">{group.code}</span>
-      {group.description ? (
-        <span className="line-clamp-2 text-xs text-foreground-soft">
-          {group.description}
-        </span>
-      ) : null}
-    </button>
+    </Button>
   )
 }
