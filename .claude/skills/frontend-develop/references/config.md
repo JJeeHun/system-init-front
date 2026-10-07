@@ -37,7 +37,7 @@ Feature / Hook / API / Component
 ```ts
 import { config } from "@/shared/config/config"
 
-const apiBaseUrl = config.api.baseUrl
+const appBaseUrl = config.app.baseUrl
 ```
 
 ## 타입
