@@ -1,5 +1,9 @@
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 
+function isPathActive(menuPath: string, pathname: string) {
+  return pathname === menuPath || pathname.startsWith(menuPath + "/")
+}
+
 export function getFirstMenuPath(menu: NavigationMenuItem): string | null {
   if (menu.path) {
     return menu.path
@@ -21,7 +25,7 @@ export function findMenuByPath(
   pathname: string,
 ): NavigationMenuItem | null {
   for (const menu of menus) {
-    if (menu.path === pathname) {
+    if (menu.path && isPathActive(menu.path, pathname)) {
       return menu
     }
 
@@ -41,7 +45,7 @@ export function findRootMenuByPath(
 ): NavigationMenuItem | null {
   return (
     menus.find((menu) => {
-      if (menu.path === pathname) {
+      if (menu.path && isPathActive(menu.path, pathname)) {
         return true
       }
 
@@ -57,15 +61,16 @@ export function getActiveMenuIds(
   const activeIds = new Set<string>()
 
   function visit(menu: NavigationMenuItem): boolean {
-    const isDirectMatch = menu.path === pathname
-    const hasActiveChild = (menu.children ?? []).some(visit)
-    const isActive = isDirectMatch || hasActiveChild
+    const directMatch =
+      typeof menu.path === "string" && isPathActive(menu.path, pathname)
+    const activeChild = (menu.children ?? []).some(visit)
+    const active = directMatch || activeChild
 
-    if (isActive) {
+    if (active) {
       activeIds.add(menu.id)
     }
 
-    return isActive
+    return active
   }
 
   menus.forEach(visit)

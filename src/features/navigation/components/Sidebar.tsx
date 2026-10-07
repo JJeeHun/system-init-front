@@ -7,8 +7,8 @@ import type { NavigationMenuItem } from "@/features/navigation/types/navigation.
 type SidebarProps = {
   title: string
   rootMenus: NavigationMenuItem[]
-  menus: NavigationMenuItem[]
   activeRootId?: string
+  menus: NavigationMenuItem[]
   activeMenuIds: Set<string>
   open: boolean
   onRootSelect: (menu: NavigationMenuItem) => void
@@ -37,7 +37,7 @@ function SidebarItems({
               key={menu.id}
               className={depth === 0 ? "mt-5 first:mt-0" : "mt-3"}
             >
-              <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-foreground-faint">
+              <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wide text-foreground-faint">
                 {menu.label}
               </p>
               <div className="grid gap-1">
@@ -80,8 +80,8 @@ function SidebarItems({
 export function Sidebar({
   title,
   rootMenus,
-  menus,
   activeRootId,
+  menus,
   activeMenuIds,
   open,
   onRootSelect,
@@ -113,34 +113,27 @@ export function Sidebar({
           </button>
         </div>
 
+        <nav className="border-b border-border p-3 lg:hidden" aria-label="주요 업무 메뉴">
+          <div className="grid grid-cols-2 gap-2">
+            {rootMenus.map((menu) => (
+              <button
+                key={menu.id}
+                type="button"
+                onClick={() => onRootSelect(menu)}
+                className={[
+                  "min-h-10 rounded-sm px-3 text-left text-sm",
+                  menu.id === activeRootId
+                    ? "bg-primary-soft font-semibold text-primary"
+                    : "bg-surface-soft text-foreground-soft",
+                ].join(" ")}
+              >
+                {menu.label}
+              </button>
+            ))}
+          </div>
+        </nav>
+
         <nav className="p-3" aria-label={title + " 하위 메뉴"}>
-          <section className="mb-5 border-b border-border pb-4 lg:hidden">
-            <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wider text-foreground-faint">
-              업무 메뉴
-            </p>
-            <div className="grid gap-1">
-              {rootMenus.map((menu) => {
-                const active = menu.id === activeRootId
-
-                return (
-                  <button
-                    key={menu.id}
-                    type="button"
-                    onClick={() => onRootSelect(menu)}
-                    className={[
-                      "min-h-10 rounded-sm px-3 text-left text-sm transition-colors",
-                      active
-                        ? "bg-sidebar-active font-semibold text-sidebar-active-foreground"
-                        : "text-sidebar-foreground hover:bg-surface-soft hover:text-foreground",
-                    ].join(" ")}
-                  >
-                    {menu.label}
-                  </button>
-                )
-              })}
-            </div>
-          </section>
-
           <SidebarItems menus={menus} activeMenuIds={activeMenuIds} />
         </nav>
       </aside>

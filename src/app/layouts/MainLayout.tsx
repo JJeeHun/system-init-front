@@ -4,8 +4,16 @@ import { Header } from "@/features/navigation/components/Header"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
 import { useMainNavigation } from "@/features/navigation/hooks/use-main-navigation"
 
+export type MainLayoutContext = {
+  navigation: ReturnType<typeof useMainNavigation>
+}
+
 export function MainLayout() {
   const navigation = useMainNavigation()
+
+  const context: MainLayoutContext = {
+    navigation,
+  }
 
   return (
     <div className="min-h-dvh w-screen bg-background">
@@ -17,12 +25,12 @@ export function MainLayout() {
         onOpenSidebar={navigation.openSidebar}
       />
 
-      <div className="grid min-h-[calc(100dvh-var(--layout-header-height))] grid-cols-1 lg:[grid-template-columns:var(--layout-sidebar-width)_minmax(0,1fr)]">
+      <div className="grid min-h-[calc(100dvh-var(--layout-header-height))] grid-cols-1 lg:grid-cols-[var(--layout-sidebar-width)_minmax(0,1fr)]">
         <Sidebar
           title={navigation.activeRootMenu?.label ?? "메뉴"}
           rootMenus={navigation.menus}
-          menus={navigation.sidebarMenus}
           activeRootId={navigation.activeRootMenu?.id}
+          menus={navigation.sidebarMenus}
           activeMenuIds={navigation.activeMenuIds}
           open={navigation.sidebarOpen}
           onRootSelect={navigation.selectRootMenu}
@@ -31,15 +39,15 @@ export function MainLayout() {
 
         <main className="min-w-0">
           {navigation.isLoading ? (
-            <div className="p-page-x text-sm text-foreground-soft">
+            <div className="px-page-x py-page-y text-sm text-foreground-soft">
               메뉴를 불러오는 중입니다.
             </div>
           ) : navigation.isError ? (
-            <div className="p-page-x text-sm text-destructive">
+            <div className="px-page-x py-page-y text-sm text-destructive">
               메뉴 정보를 불러오지 못했습니다.
             </div>
           ) : (
-            <Outlet />
+            <Outlet context={context} />
           )}
         </main>
       </div>

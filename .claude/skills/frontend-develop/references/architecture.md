@@ -98,6 +98,15 @@ Layout은 `children`을 받아 재사용한다.
 
 단, 한 번만 사용되는 단순 배치를 억지로 별도 Layout Component로 만들지 않는다.
 
+### Route Layout
+
+공통 화면 골격이 다른 Route는 Layout 경계로 분리한다.
+
+- 인증 화면은 AuthLayout처럼 Header / Sidebar가 없는 Layout을 사용한다.
+- 업무 화면은 MainLayout처럼 Header / Sidebar가 있는 Layout을 사용한다.
+- Page에서 pathname 조건으로 Header / Sidebar를 숨기거나 보이지 않는다.
+- Header / Sidebar는 업무 Layout에 고정하고 Page는 업무 콘텐츠만 조립한다.
+
 ## 공통화 기준
 
 - 특정 Feature에서만 사용하는 코드는 해당 Feature 내부에 둔다.

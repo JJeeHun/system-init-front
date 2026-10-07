@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { authMutations } from "@/features/auth/api/auth.query"
 import { setAuthSession } from "@/features/auth/storage/auth-session"
 import type { LoginRequest } from "@/features/auth/types/auth.types"
+import { navigationQueryKeys } from "@/features/navigation/api/navigation.query"
 
 export function useLoginForm() {
   const navigate = useNavigate()
@@ -21,7 +22,7 @@ export function useLoginForm() {
     ...authMutations.login(),
     onSuccess: ({ accessToken, expiresIn }) => {
       setAuthSession(accessToken, expiresIn)
-      queryClient.clear()
+      queryClient.removeQueries({ queryKey: navigationQueryKeys.all })
       navigate("/app", { replace: true })
     },
   })

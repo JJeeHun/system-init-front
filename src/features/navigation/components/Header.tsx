@@ -21,20 +21,23 @@ export function Header({
   onOpenSidebar,
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-[var(--z-sticky)] grid min-h-[var(--layout-header-height)] grid-cols-[1fr_auto] bg-header text-header-foreground lg:grid-cols-[var(--layout-sidebar-width)_minmax(0,1fr)_auto]">
-      <div className="flex items-center gap-3 border-b border-header-border px-4 lg:border-b-0 lg:border-r">
-        <span className="grid size-9 place-items-center rounded-md bg-header-accent">
+    <header className="sticky top-0 z-[var(--z-sticky)] grid min-h-[var(--layout-header-height)] grid-cols-[minmax(0,1fr)_auto] border-b border-header-border bg-header text-header-foreground lg:grid-cols-[var(--layout-sidebar-width)_minmax(0,1fr)_auto]">
+      <div className="flex min-w-0 items-center gap-3 px-4 lg:border-r lg:border-header-border">
+        <span className="grid size-9 shrink-0 place-items-center rounded-md bg-header-accent">
           <Boxes aria-hidden="true" className="size-5" />
         </span>
         <span className="grid min-w-0">
           <strong className="truncate text-sm">FlowStock</strong>
-          <small className="truncate text-xs uppercase tracking-wider text-header-faint">
+          <small className="hidden truncate text-xs uppercase tracking-wider text-header-faint sm:block">
             WMS Console
           </small>
         </span>
       </div>
 
-      <nav className="hidden min-w-0 overflow-x-auto lg:flex" aria-label="주요 업무 메뉴">
+      <nav
+        className="hidden min-w-0 overflow-x-auto lg:flex"
+        aria-label="주요 업무 메뉴"
+      >
         {menus.map((menu) => {
           const active = menu.id === activeRootId
 
@@ -44,10 +47,10 @@ export function Header({
               type="button"
               onClick={() => onRootSelect(menu)}
               className={[
-                "min-w-24 border-b-[0.18rem] px-4 text-sm transition-colors",
+                "min-w-24 border-b-2 px-4 text-sm transition-colors",
                 active
-                  ? "border-header-active bg-header-surface text-header-foreground font-semibold"
-                  : "border-transparent text-header-muted hover:bg-header-surface hover:text-header-foreground",
+                  ? "border-header-active bg-header-surface font-semibold text-header-foreground"
+                  : "border-transparent text-header-muted hover:bg-header-surface-hover hover:text-header-foreground",
               ].join(" ")}
             >
               {menu.label}
