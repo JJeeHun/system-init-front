@@ -59,11 +59,13 @@ $ARGUMENTS
 - API, React Query, 캐시 기본값: [api-react-query.md](references/api-react-query.md)
 - UI, 모바일, flex/grid, 크기와 Layout: [ui-layout.md](references/ui-layout.md)
 - 컬러, 폰트, light/dark/custom theme: [theme.md](references/theme.md)
+- env/config 사용 규칙: [config.md](references/config.md)
 
 UI 작업이면 구현 전에 `theme.md`와 `ui-layout.md`를 확인한다.
 상태/폼 작업이면 `state-form.md`를 확인한다.
 서버 통신 작업이면 `api-react-query.md`를 확인한다.
 구조를 추가하거나 이동하는 작업이면 `architecture.md`를 확인한다.
+env 또는 환경 설정 값을 사용하는 작업이면 `config.md`를 확인한다.
 
 ## 작업 방식
 

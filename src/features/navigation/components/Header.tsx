@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { Boxes, ChevronDown, MapPin, Menu } from "lucide-react"
 
 import type {
@@ -13,7 +14,7 @@ type HeaderProps = {
   onOpenSidebar: () => void
 }
 
-export function Header({
+export const Header = memo(function Header({
   menus,
   user,
   activeRootId,
@@ -91,4 +92,4 @@ export function Header({
       </div>
     </header>
   )
-}
+})

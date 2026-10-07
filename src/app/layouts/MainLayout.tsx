@@ -31,7 +31,6 @@ export function MainLayout() {
           rootMenus={navigation.menus}
           activeRootId={navigation.activeRootMenu?.id}
           menus={navigation.sidebarMenus}
-          activeMenuIds={navigation.activeMenuIds}
           open={navigation.sidebarOpen}
           onRootSelect={navigation.selectRootMenu}
           onClose={navigation.closeSidebar}

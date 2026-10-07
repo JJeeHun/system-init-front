@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useLocation, useNavigate } from "react-router-dom"
 
@@ -6,7 +6,6 @@ import { navigationQueries } from "@/features/navigation/api/navigation.query"
 import {
   findMenuByPath,
   findRootMenuByPath,
-  getActiveMenuIds,
   getFirstMenuPath,
 } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
@@ -30,11 +29,6 @@ export function useMainNavigation() {
     [location.pathname, menus],
   )
 
-  const activeMenuIds = useMemo(
-    () => getActiveMenuIds(menus, location.pathname),
-    [location.pathname, menus],
-  )
-
   useEffect(() => {
     if (location.pathname !== "/app" || menus.length === 0) {
       return
@@ -47,17 +41,16 @@ export function useMainNavigation() {
     }
   }, [location.pathname, menus, navigate])
 
-  useEffect(() => {
-    sidebar.off()
-  }, [location.pathname, sidebar.off])
+  const selectRootMenu = useCallback(
+    (menu: NavigationMenuItem) => {
+      const path = getFirstMenuPath(menu)
 
-  function selectRootMenu(menu: NavigationMenuItem) {
-    const path = getFirstMenuPath(menu)
-
-    if (path) {
-      navigate(path)
-    }
-  }
+      if (path) {
+        navigate(path)
+      }
+    },
+    [navigate],
+  )
 
   return {
     user: navigationQuery.data?.user ?? null,
@@ -65,7 +58,6 @@ export function useMainNavigation() {
     sidebarMenus: activeRootMenu?.children ?? [],
     activeRootMenu,
     currentMenu,
-    activeMenuIds,
     isLoading: navigationQuery.isLoading,
     isError: navigationQuery.isError,
     sidebarOpen: sidebar.value,

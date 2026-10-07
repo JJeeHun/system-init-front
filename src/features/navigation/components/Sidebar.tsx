@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { X } from "lucide-react"
 import { NavLink } from "react-router-dom"
 
@@ -9,7 +10,6 @@ type SidebarProps = {
   rootMenus: NavigationMenuItem[]
   activeRootId?: string
   menus: NavigationMenuItem[]
-  activeMenuIds: Set<string>
   open: boolean
   onRootSelect: (menu: NavigationMenuItem) => void
   onClose: () => void
@@ -17,13 +17,13 @@ type SidebarProps = {
 
 type SidebarItemsProps = {
   menus: NavigationMenuItem[]
-  activeMenuIds: Set<string>
+  onNavigate: () => void
   depth?: number
 }
 
 function SidebarItems({
   menus,
-  activeMenuIds,
+  onNavigate,
   depth = 0,
 }: SidebarItemsProps) {
   return (
@@ -43,7 +43,7 @@ function SidebarItems({
               <div className="grid gap-1">
                 <SidebarItems
                   menus={children}
-                  activeMenuIds={activeMenuIds}
+                  onNavigate={onNavigate}
                   depth={depth + 1}
                 />
               </div>
@@ -55,18 +55,19 @@ function SidebarItems({
           return null
         }
 
-        const active = activeMenuIds.has(menu.id)
-
         return (
           <NavLink
             key={menu.id}
             to={menu.path}
-            className={[
-              "flex min-h-10 items-center gap-3 rounded-sm px-3 text-sm transition-colors",
-              active
-                ? "bg-sidebar-active font-semibold text-sidebar-active-foreground"
-                : "text-sidebar-foreground hover:bg-surface-soft hover:text-foreground",
-            ].join(" ")}
+            onClick={onNavigate}
+            className={({ isActive }) =>
+              [
+                "flex min-h-10 items-center gap-3 rounded-sm px-3 text-sm transition-colors",
+                isActive
+                  ? "bg-sidebar-active font-semibold text-sidebar-active-foreground"
+                  : "text-sidebar-foreground hover:bg-surface-soft hover:text-foreground",
+              ].join(" ")
+            }
           >
             <MenuIcon name={menu.icon} />
             <span className="truncate">{menu.label}</span>
@@ -77,12 +78,11 @@ function SidebarItems({
   )
 }
 
-export function Sidebar({
+export const Sidebar = memo(function Sidebar({
   title,
   rootMenus,
   activeRootId,
   menus,
-  activeMenuIds,
   open,
   onRootSelect,
   onClose,
@@ -134,9 +134,9 @@ export function Sidebar({
         </nav>
 
         <nav className="p-3" aria-label={title + " 하위 메뉴"}>
-          <SidebarItems menus={menus} activeMenuIds={activeMenuIds} />
+          <SidebarItems menus={menus} onNavigate={onClose} />
         </nav>
       </aside>
     </>
   )
-}
+})

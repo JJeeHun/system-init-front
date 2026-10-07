@@ -53,27 +53,3 @@ export function findRootMenuByPath(
     }) ?? null
   )
 }
-
-export function getActiveMenuIds(
-  menus: NavigationMenuItem[],
-  pathname: string,
-): Set<string> {
-  const activeIds = new Set<string>()
-
-  function visit(menu: NavigationMenuItem): boolean {
-    const directMatch =
-      typeof menu.path === "string" && isPathActive(menu.path, pathname)
-    const activeChild = (menu.children ?? []).some(visit)
-    const active = directMatch || activeChild
-
-    if (active) {
-      activeIds.add(menu.id)
-    }
-
-    return active
-  }
-
-  menus.forEach(visit)
-
-  return activeIds
-}
