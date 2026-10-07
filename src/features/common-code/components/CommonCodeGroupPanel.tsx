@@ -1,6 +1,7 @@
 import type { FormEventHandler } from "react"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
+import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
 import { Button } from "@/shared/ui/button"
 
@@ -192,40 +193,12 @@ export function CommonCodeGroupPanel({
             const selected = group.id === selectedGroupId
 
             return (
-              <button
+              <CommonCodeGroupOption
                 key={group.id}
-                type="button"
-                onClick={() => onSelect(group)}
-                className={[
-                  "grid gap-1 rounded-md border p-3 text-left transition-colors",
-                  selected
-                    ? "border-primary-border bg-primary-soft"
-                    : "border-border bg-card hover:bg-surface-soft",
-                ].join(" ")}
-              >
-                <span className="flex items-center justify-between gap-2">
-                  <strong className="text-sm text-foreground">
-                    {group.name}
-                  </strong>
-                  <span
-                    className={
-                      group.enabled
-                        ? "text-xs font-medium text-success"
-                        : "text-xs font-medium text-foreground-faint"
-                    }
-                  >
-                    {group.enabled ? "사용" : "미사용"}
-                  </span>
-                </span>
-                <span className="text-xs font-semibold text-primary">
-                  {group.code}
-                </span>
-                {group.description ? (
-                  <span className="line-clamp-2 text-xs text-foreground-soft">
-                    {group.description}
-                  </span>
-                ) : null}
-              </button>
+                group={group}
+                selected={selected}
+                onSelect={onSelect}
+              />
             )
           })
         )}
