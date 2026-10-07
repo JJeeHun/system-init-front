@@ -18,7 +18,7 @@ export function CommonCodeGroupOption({
       size="lg"
       onClick={() => onSelect(group)}
     >
-      <span className="grid w-full gap-1 text-left">
+      <span className="grid w-full gap-1 whitespace-normal text-left">
         <span className="flex items-center justify-between gap-2">
           <strong>{group.name}</strong>
           <span className={group.enabled ? "text-success" : "text-foreground-faint"}>
