@@ -2,6 +2,7 @@ import type { FormEventHandler } from "react"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
+import { Button } from "@/shared/ui/button"
 
 type CommonCodeGroupFormProps = {
   mode: "create" | "edit" | null
@@ -36,9 +37,6 @@ type CommonCodeGroupPanelProps = {
   form: CommonCodeGroupFormProps
 }
 
-const actionButtonClass =
-  "inline-flex h-[var(--control-height-sm)] items-center justify-center rounded-sm border border-border-strong bg-card px-3 text-xs font-semibold text-foreground transition-colors disabled:cursor-not-allowed disabled:opacity-50"
-
 export function CommonCodeGroupPanel({
   groups,
   selectedGroupId,
@@ -61,29 +59,28 @@ export function CommonCodeGroupPanel({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              className={actionButtonClass}
+            <Button
+              variant="primary"
+              size="sm"
               onClick={form.startCreate}
             >
               그룹 등록
-            </button>
-            <button
-              type="button"
-              className={actionButtonClass}
+            </Button>
+            <Button
+              size="sm"
               disabled={!selectedGroupId}
               onClick={form.startEdit}
             >
               수정
-            </button>
-            <button
-              type="button"
-              className="inline-flex h-[var(--control-height-sm)] items-center justify-center rounded-sm border border-destructive bg-destructive-soft px-3 text-xs font-semibold text-destructive transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+            </Button>
+            <Button
+              variant="error"
+              size="sm"
               disabled={!selectedGroupId || form.isDeleting}
               onClick={form.delete}
             >
               {form.isDeleting ? "삭제 중" : "삭제"}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -162,20 +159,17 @@ export function CommonCodeGroupPanel({
           </div>
 
           <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              className={actionButtonClass}
-              onClick={form.cancel}
-            >
+            <Button size="sm" onClick={form.cancel}>
               취소
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
+              variant="primary"
+              size="sm"
               disabled={form.isPending}
-              className="inline-flex h-[var(--control-height-sm)] items-center justify-center rounded-sm bg-primary px-4 text-xs font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50"
             >
               {form.isPending ? "저장 중" : "저장"}
-            </button>
+            </Button>
           </div>
         </form>
       ) : null}

@@ -34,6 +34,11 @@
   --color-warning-soft: var(--warning-soft);
   --color-warning-emphasis: var(--warning-emphasis);
 
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-info-soft: var(--info-soft);
+  --color-info-border: var(--info-border);
+
   --color-destructive: var(--destructive);
   --color-destructive-foreground: var(--destructive-foreground);
   --color-destructive-soft: var(--destructive-soft);
@@ -170,6 +175,11 @@
   --warning-foreground: #7a4a08;
   --warning-soft: #fff5e6;
   --warning-emphasis: #d58a24;
+
+  --info: #18758f;
+  --info-foreground: #285f6e;
+  --info-soft: #eaf7fb;
+  --info-border: #c3e4ed;
 
   --destructive: #c84040;
   --destructive-foreground: #ffffff;
