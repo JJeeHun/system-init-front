@@ -112,3 +112,17 @@ Application Root Layout은 fullscreen을 기본으로 한다.
 일반 Component는 부모 영역에 적응하며 필요하면 `w-full`을 사용한다.
 
 AG Grid 같은 넓은 데이터 UI는 전체 페이지를 깨뜨리지 않고 해당 데이터 영역 안에서만 horizontal scroll을 허용할 수 있다.
+
+
+## Data Grid 규격
+
+업무 Feature와 Page는 AG Grid를 직접 사용하지 않는다.
+
+- `ag-grid-react`, `ag-grid-community` import는 공통 Data Grid 내부 구현에서만 허용한다.
+- Feature는 프로젝트가 정의한 `shared/ui/data-grid` 공개 API만 사용한다.
+- 공개 Grid props/type에 `ColDef`, `GridApi`, `GridOptions`, AG Grid event type 같은 벤더 타입을 노출하지 않는다.
+- `gridOptions`, `agGridProps` 같은 raw passthrough escape hatch를 만들지 않는다.
+- 현재 화면에서 실제로 필요한 기능만 프로젝트 Grid 규격에 추가한다.
+- 미래 사용 가능성을 이유로 sorting, filtering, selection, pagination, export, editing 같은 기능을 미리 노출하지 않는다.
+- 벤더 기능이 필요해지면 먼저 프로젝트 Grid 계약으로 의미를 정의한 뒤 내부 adapter에서 AG Grid 기능으로 변환한다.
+- 내부 Grid 라이브러리를 교체해도 Feature/Page의 사용 코드는 유지될 수 있어야 한다.

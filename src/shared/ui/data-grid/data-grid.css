@@ -1,0 +1,11 @@
+.app-data-grid .app-data-grid__cell--center {
+  text-align: center;
+}
+
+.app-data-grid .app-data-grid__cell--right {
+  text-align: right;
+}
+
+.app-data-grid .ag-row.app-data-grid__row--selected {
+  background-color: var(--table-row-selected);
+}

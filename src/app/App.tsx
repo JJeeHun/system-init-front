@@ -3,6 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom"
 import { AuthLayout } from "@/app/layouts/AuthLayout"
 import { MainLayout } from "@/app/layouts/MainLayout"
 import { RequireAuth } from "@/app/routing/RequireAuth"
+import { CommonCodePage } from "@/pages/CommonCodePage"
 import { LoginPage } from "@/pages/LoginPage"
 import { MenuPage } from "@/pages/MenuPage"
 
@@ -21,6 +22,7 @@ export default function App() {
           </RequireAuth>
         }
       >
+        <Route path="master/common-code" element={<CommonCodePage />} />
         <Route path="*" element={<MenuPage />} />
       </Route>
 
