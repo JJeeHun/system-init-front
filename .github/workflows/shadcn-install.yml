@@ -31,7 +31,7 @@ jobs:
         run: npm install --package-lock=false
 
       - name: Add shadcn field
-        run: npx shadcn add field --yes
+        run: npx shadcn add field --yes --overwrite
 
       - name: Typecheck generated primitives
         run: npm run typecheck
