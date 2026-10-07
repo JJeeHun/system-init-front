@@ -38,6 +38,16 @@ $ARGUMENTS
 프로젝트 전체 검색은 기본적으로 하지 않는다.
 대상 위치를 모를 때만 요청된 Feature명, 컴포넌트명, 함수명 등으로 검색 범위를 좁혀 찾는다.
 
+## 공통 UI 우선순위
+
+- UI를 구현하기 전에 `src/shared`에 동일 목적의 공통 컴포넌트가 있는지 먼저 확인한다.
+- 공통 컴포넌트가 있으면 Feature/Page의 raw HTML UI 태그나 별도 스타일 구현보다 공통 컴포넌트를 우선 사용한다.
+- 기존 공통 컴포넌트의 공개 props로 해결 가능한 경우 Feature 전용 UI 컴포넌트를 새로 만들지 않는다.
+- 공통 컴포넌트로 해결할 수 없는 화면 고유 UI만 Feature 내부 컴포넌트로 구현한다.
+- `button`, `input`, `textarea`, `select`, `checkbox` 및 프로젝트가 공통화한 heading/title 계열은 shared 컴포넌트가 존재하면 Feature/Page에서 raw HTML 태그를 직접 사용하지 않는다.
+- `div`, `span`, `section`, `form` 등 구조와 semantic 표현을 위한 기본 HTML 태그는 허용한다.
+- shared 컴포넌트의 공개 API를 우회하기 위해 Feature/Page에서 내부 스타일을 임의로 덮어쓰지 않는다.
+
 ## 역할 경계
 
 - UI Component: 표현과 자기 자신의 디자인만 담당한다.
