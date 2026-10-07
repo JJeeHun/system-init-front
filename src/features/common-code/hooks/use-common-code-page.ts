@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useForm } from "react-hook-form"
+import { useController, useForm } from "react-hook-form"
 
 import {
   commonCodeMutations,
@@ -66,6 +66,16 @@ export function useCommonCodePage() {
   const itemForm = useForm<CommonCodeItemFormValues>({
     defaultValues: EMPTY_ITEM_FORM,
   })
+
+  const groupEnabledField = useController({
+    control: groupForm.control,
+    name: "enabled",
+  }).field
+
+  const itemEnabledField = useController({
+    control: itemForm.control,
+    name: "enabled",
+  }).field
 
   const groups = useMemo(
     () => sortGroups(commonCodeQuery.data?.groups ?? []),
@@ -344,7 +354,10 @@ export function useCommonCodePage() {
           required: "그룹명을 입력해주세요.",
         }),
         description: groupForm.register("description"),
-        enabled: groupForm.register("enabled"),
+        enabled: {
+          checked: groupEnabledField.value,
+          onCheckedChange: groupEnabledField.onChange,
+        },
         sortOrder: groupForm.register("sortOrder", {
           required: "정렬순서를 입력해주세요.",
           valueAsNumber: true,
@@ -383,7 +396,10 @@ export function useCommonCodePage() {
           required: "코드명을 입력해주세요.",
         }),
         description: itemForm.register("description"),
-        enabled: itemForm.register("enabled"),
+        enabled: {
+          checked: itemEnabledField.value,
+          onCheckedChange: itemEnabledField.onChange,
+        },
         sortOrder: itemForm.register("sortOrder", {
           required: "정렬순서를 입력해주세요.",
           valueAsNumber: true,
