@@ -1,14 +1,8 @@
 import type { ButtonHTMLAttributes } from "react"
 
-type ButtonTone = "primary" | "success" | "warning" | "error" | "info"
+import type { ExclusiveBooleanProps } from "@/shared/types/exclusive-boolean-props"
 
-type ExclusiveBooleanProps<K extends PropertyKey> =
-  | { [P in K]?: never }
-  | {
-      [P in K]: { [Q in P]: true } & {
-        [Q in Exclude<K, P>]?: never
-      }
-    }[K]
+type ButtonTone = "primary" | "success" | "warning" | "error" | "info"
 
 export type ButtonSize = "sm" | "md" | "lg"
 
@@ -36,9 +30,9 @@ const toneClassNames = {
 } as const
 
 const sizeClassNames: Record<ButtonSize, string> = {
-  sm: "h-[var(--control-height-sm)] px-3 text-xs",
-  md: "h-[var(--control-height-md)] px-4 text-sm",
-  lg: "h-[var(--control-height-lg)] px-5 text-sm",
+  sm: "min-h-[var(--control-height-sm)] px-3 py-2 text-xs",
+  md: "min-h-[var(--control-height-md)] px-4 py-2 text-sm",
+  lg: "min-h-[var(--control-height-lg)] px-5 py-2 text-sm",
 }
 
 function resolveTone({
