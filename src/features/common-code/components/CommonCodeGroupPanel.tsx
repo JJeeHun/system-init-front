@@ -3,6 +3,14 @@ import type { UseFormRegisterReturn } from "react-hook-form"
 
 import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
+import { Checkbox } from "@/shared/components/ui/checkbox"
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+} from "@/shared/components/ui/field"
+import { Input } from "@/shared/components/ui/input"
+import { Textarea } from "@/shared/components/ui/textarea"
 import { Button } from "@/shared/ui/button"
 
 type CommonCodeGroupFormProps = {
@@ -11,7 +19,10 @@ type CommonCodeGroupFormProps = {
     code: UseFormRegisterReturn
     name: UseFormRegisterReturn
     description: UseFormRegisterReturn
-    enabled: UseFormRegisterReturn
+    enabled: {
+      checked: boolean
+      onCheckedChange: (checked: boolean) => void
+    }
     sortOrder: UseFormRegisterReturn
   }
   errors: {
@@ -60,11 +71,7 @@ export function CommonCodeGroupPanel({
           </div>
 
           <div className="flex flex-wrap gap-2">
-            <Button
-              primary
-              size="sm"
-              onClick={form.startCreate}
-            >
+            <Button primary size="sm" onClick={form.startCreate}>
               그룹 등록
             </Button>
             <Button
@@ -99,64 +106,61 @@ export function CommonCodeGroupPanel({
             {form.mode === "create" ? "그룹 등록" : "그룹 수정"}
           </div>
 
-          <label className="grid gap-1.5">
-            <span className="text-xs font-medium text-foreground">그룹 코드</span>
-            <input
+          <Field data-invalid={Boolean(form.errors.code)}>
+            <FieldLabel htmlFor="common-code-group-code">그룹 코드</FieldLabel>
+            <Input
+              id="common-code-group-code"
               {...form.fields.code}
               readOnly={form.mode === "edit"}
-              className="h-[var(--control-height-sm)] rounded-sm border border-border-strong bg-card px-3 text-sm text-foreground read-only:bg-surface-soft"
+              aria-invalid={Boolean(form.errors.code)}
             />
-            {form.errors.code ? (
-              <span className="text-xs text-destructive">{form.errors.code}</span>
-            ) : null}
-          </label>
+            <FieldError>{form.errors.code}</FieldError>
+          </Field>
 
-          <label className="grid gap-1.5">
-            <span className="text-xs font-medium text-foreground">그룹명</span>
-            <input
+          <Field data-invalid={Boolean(form.errors.name)}>
+            <FieldLabel htmlFor="common-code-group-name">그룹명</FieldLabel>
+            <Input
+              id="common-code-group-name"
               {...form.fields.name}
-              className="h-[var(--control-height-sm)] rounded-sm border border-border-strong bg-card px-3 text-sm text-foreground"
+              aria-invalid={Boolean(form.errors.name)}
             />
-            {form.errors.name ? (
-              <span className="text-xs text-destructive">{form.errors.name}</span>
-            ) : null}
-          </label>
+            <FieldError>{form.errors.name}</FieldError>
+          </Field>
 
-          <label className="grid gap-1.5">
-            <span className="text-xs font-medium text-foreground">설명</span>
-            <textarea
+          <Field>
+            <FieldLabel htmlFor="common-code-group-description">설명</FieldLabel>
+            <Textarea
+              id="common-code-group-description"
               {...form.fields.description}
               rows={2}
-              className="resize-none rounded-sm border border-border-strong bg-card px-3 py-2 text-sm text-foreground"
             />
-          </label>
+          </Field>
 
           <div className="grid grid-cols-2 gap-3">
-            <label className="grid gap-1.5">
-              <span className="text-xs font-medium text-foreground">
+            <Field data-invalid={Boolean(form.errors.sortOrder)}>
+              <FieldLabel htmlFor="common-code-group-sort-order">
                 정렬순서
-              </span>
-              <input
+              </FieldLabel>
+              <Input
+                id="common-code-group-sort-order"
                 {...form.fields.sortOrder}
                 type="number"
                 min={0}
-                className="h-[var(--control-height-sm)] rounded-sm border border-border-strong bg-card px-3 text-sm text-foreground"
+                aria-invalid={Boolean(form.errors.sortOrder)}
               />
-              {form.errors.sortOrder ? (
-                <span className="text-xs text-destructive">
-                  {form.errors.sortOrder}
-                </span>
-              ) : null}
-            </label>
+              <FieldError>{form.errors.sortOrder}</FieldError>
+            </Field>
 
-            <label className="flex items-end gap-2 pb-2 text-sm text-foreground">
-              <input
-                {...form.fields.enabled}
-                type="checkbox"
-                className="size-4"
+            <Field orientation="horizontal">
+              <Checkbox
+                id="common-code-group-enabled"
+                checked={form.fields.enabled.checked}
+                onCheckedChange={(checked) =>
+                  form.fields.enabled.onCheckedChange(checked === true)
+                }
               />
-              사용
-            </label>
+              <FieldLabel htmlFor="common-code-group-enabled">사용</FieldLabel>
+            </Field>
           </div>
 
           <div className="flex justify-end gap-2">
@@ -189,18 +193,14 @@ export function CommonCodeGroupPanel({
             등록된 코드 그룹이 없습니다.
           </div>
         ) : (
-          groups.map((group) => {
-            const selected = group.id === selectedGroupId
-
-            return (
-              <CommonCodeGroupOption
-                key={group.id}
-                group={group}
-                selected={selected}
-                onSelect={onSelect}
-              />
-            )
-          })
+          groups.map((group) => (
+            <CommonCodeGroupOption
+              key={group.id}
+              group={group}
+              selected={group.id === selectedGroupId}
+              onSelect={onSelect}
+            />
+          ))
         )}
       </div>
     </section>
