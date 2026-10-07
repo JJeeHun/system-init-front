@@ -5,6 +5,14 @@ import type {
   CommonCodeGroup,
   CommonCodeItem,
 } from "@/features/common-code/types/common-code.types"
+import { Checkbox } from "@/shared/components/ui/checkbox"
+import {
+  Field,
+  FieldError,
+  FieldLabel,
+} from "@/shared/components/ui/field"
+import { Input } from "@/shared/components/ui/input"
+import { Textarea } from "@/shared/components/ui/textarea"
 import { Button } from "@/shared/ui/button"
 import { DataGrid } from "@/shared/ui/data-grid"
 import type { DataGridColumn } from "@/shared/ui/data-grid"
@@ -15,7 +23,10 @@ type CommonCodeItemFormProps = {
     code: UseFormRegisterReturn
     name: UseFormRegisterReturn
     description: UseFormRegisterReturn
-    enabled: UseFormRegisterReturn
+    enabled: {
+      checked: boolean
+      onCheckedChange: (checked: boolean) => void
+    }
     sortOrder: UseFormRegisterReturn
   }
   errors: {
@@ -149,57 +160,60 @@ export function CommonCodeItemPanel({
             {form.mode === "create" ? "코드 등록" : "코드 수정"}
           </div>
 
-          <label className="grid gap-1.5">
-            <span className="text-xs font-medium text-foreground">코드</span>
-            <input
+          <Field data-invalid={Boolean(form.errors.code)}>
+            <FieldLabel htmlFor="common-code-item-code">코드</FieldLabel>
+            <Input
+              id="common-code-item-code"
               {...form.fields.code}
               readOnly={form.mode === "edit"}
-              className="h-[var(--control-height-sm)] rounded-sm border border-border-strong bg-card px-3 text-sm text-foreground read-only:bg-surface-soft"
+              aria-invalid={Boolean(form.errors.code)}
             />
-            {form.errors.code ? (
-              <span className="text-xs text-destructive">{form.errors.code}</span>
-            ) : null}
-          </label>
+            <FieldError>{form.errors.code}</FieldError>
+          </Field>
 
-          <label className="grid gap-1.5">
-            <span className="text-xs font-medium text-foreground">코드명</span>
-            <input
+          <Field data-invalid={Boolean(form.errors.name)}>
+            <FieldLabel htmlFor="common-code-item-name">코드명</FieldLabel>
+            <Input
+              id="common-code-item-name"
               {...form.fields.name}
-              className="h-[var(--control-height-sm)] rounded-sm border border-border-strong bg-card px-3 text-sm text-foreground"
+              aria-invalid={Boolean(form.errors.name)}
             />
-            {form.errors.name ? (
-              <span className="text-xs text-destructive">{form.errors.name}</span>
-            ) : null}
-          </label>
+            <FieldError>{form.errors.name}</FieldError>
+          </Field>
 
-          <label className="grid gap-1.5 md:col-span-2">
-            <span className="text-xs font-medium text-foreground">설명</span>
-            <textarea
+          <Field className="md:col-span-2">
+            <FieldLabel htmlFor="common-code-item-description">설명</FieldLabel>
+            <Textarea
+              id="common-code-item-description"
               {...form.fields.description}
               rows={2}
-              className="resize-none rounded-sm border border-border-strong bg-card px-3 py-2 text-sm text-foreground"
             />
-          </label>
+          </Field>
 
-          <label className="grid gap-1.5">
-            <span className="text-xs font-medium text-foreground">정렬순서</span>
-            <input
+          <Field data-invalid={Boolean(form.errors.sortOrder)}>
+            <FieldLabel htmlFor="common-code-item-sort-order">
+              정렬순서
+            </FieldLabel>
+            <Input
+              id="common-code-item-sort-order"
               {...form.fields.sortOrder}
               type="number"
               min={0}
-              className="h-[var(--control-height-sm)] rounded-sm border border-border-strong bg-card px-3 text-sm text-foreground"
+              aria-invalid={Boolean(form.errors.sortOrder)}
             />
-            {form.errors.sortOrder ? (
-              <span className="text-xs text-destructive">
-                {form.errors.sortOrder}
-              </span>
-            ) : null}
-          </label>
+            <FieldError>{form.errors.sortOrder}</FieldError>
+          </Field>
 
-          <label className="flex items-end gap-2 pb-2 text-sm text-foreground">
-            <input {...form.fields.enabled} type="checkbox" className="size-4" />
-            사용
-          </label>
+          <Field orientation="horizontal">
+            <Checkbox
+              id="common-code-item-enabled"
+              checked={form.fields.enabled.checked}
+              onCheckedChange={(checked) =>
+                form.fields.enabled.onCheckedChange(checked === true)
+              }
+            />
+            <FieldLabel htmlFor="common-code-item-enabled">사용</FieldLabel>
+          </Field>
 
           <div className="flex justify-end gap-2 md:col-span-2">
             <Button size="sm" onClick={form.cancel}>
