@@ -30,15 +30,8 @@ jobs:
       - name: Install project dependencies
         run: npm install --package-lock=false
 
-      - name: Add ERP shadcn primitives
-        run: >
-          npx shadcn add
-          button input textarea label checkbox radio-group select switch
-          sonner alert alert-dialog skeleton spinner progress
-          dialog sheet popover tooltip dropdown-menu context-menu
-          tabs accordion collapsible pagination badge card separator empty
-          command combobox calendar scroll-area resizable
-          --yes
+      - name: Add remaining ERP shadcn primitives
+        run: npx shadcn add field table --yes
 
       - name: Typecheck generated primitives
         run: npm run typecheck
