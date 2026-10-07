@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo } from "react"
 import { useQuery } from "@tanstack/react-query"
 import { useLocation, useNavigate } from "react-router-dom"
 
-import { navigationQueries } from "@/features/navigation/api/navigation.query"
+import { navigationQueries } from "@/features/navigation/api/navigation.api"
 import {
   findMenuByPath,
   findRootMenuByPath,
@@ -16,8 +16,8 @@ export function useMainNavigation() {
   const navigate = useNavigate()
   const sidebar = useToggle()
 
-  const navigationQuery = useQuery(navigationQueries.bootstrap())
-  const menus = navigationQuery.data?.menus ?? []
+  const navigationQuery = useQuery(navigationQueries.menus())
+  const menus = navigationQuery.data ?? []
 
   const activeRootMenu = useMemo(
     () => findRootMenuByPath(menus, location.pathname),
@@ -53,7 +53,6 @@ export function useMainNavigation() {
   )
 
   return {
-    user: navigationQuery.data?.user ?? null,
     menus,
     sidebarMenus: activeRootMenu?.children ?? [],
     activeRootMenu,

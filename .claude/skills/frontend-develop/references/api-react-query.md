@@ -62,6 +62,63 @@ named export를 사용해 import 단위와 tree-shaking 경계를 명확하게 �
 
 단, query key와 queryOptions/mutationOptions factory는 일관된 key 조합이 중요하므로 객체로 묶을 수 있다.
 
+## API 파일 기본 구조
+
+단순한 Feature는 API 요청 함수와 React Query 정의를 같은 `*.api.ts` 파일에 둔다.
+
+기본:
+
+```text
+features/
+└── user/
+    └── api/
+        └── user.api.ts
+```
+
+`user.api.ts` 안에 다음을 함께 둘 수 있다.
+
+- API 요청 함수
+- query key factory
+- queryOptions
+- mutationOptions
+
+단순한 코드를 계층 분리만을 목적으로 `*.api.ts`와 `*.query.ts`로 미리 나누지 않는다.
+
+분리는 다음과 같이 실제 필요가 생겼을 때만 한다.
+
+- API 파일이 커져 역할 구분이 어려워짐
+- transport 함수가 React Query 외에서도 여러 곳에서 재사용됨
+- request/response 변환 로직이 커짐
+- query/mutation 정의가 많아져 별도 파일이 더 읽기 쉬움
+
+## API Response
+
+각 API 함수는 해당 API가 책임지는 데이터만 반환한다.
+
+예:
+
+```ts
+login(): Promise<LoginResponse>
+getCurrentUser(): Promise<CurrentUser>
+getNavigationMenus(): Promise<NavigationMenuItem[]>
+```
+
+지양:
+
+```ts
+getNavigation(): Promise<{
+  user: CurrentUser
+  permissions: string[]
+  menus: NavigationMenuItem[]
+}>
+```
+
+Feature 편의를 위해 관련 없는 도메인 데이터를 한 response에 합치지 않는다.
+여러 API 데이터가 한 화면에서 필요하면 각 React Query 결과를 상위 조합 지점에서 조합한다.
+
+Mock 단계에서도 실제 API 계약과 같은 return type을 사용한다.
+나중에 서버가 연결되면 queryFn이 호출하는 API 함수 내부 구현만 실제 HTTP client 호출로 교체한다.
+
 ## API 정의
 
 Feature의 `api/`에서 API 함수와 React Query 옵션을 정의한다.

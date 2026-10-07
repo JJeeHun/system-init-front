@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom"
 import { Header } from "@/features/navigation/components/Header"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
 import { useMainNavigation } from "@/features/navigation/hooks/use-main-navigation"
+import { useCurrentUser } from "@/features/user/hooks/use-current-user"
 
 export type MainLayoutContext = {
   navigation: ReturnType<typeof useMainNavigation>
@@ -10,6 +11,7 @@ export type MainLayoutContext = {
 
 export function MainLayout() {
   const navigation = useMainNavigation()
+  const currentUser = useCurrentUser()
 
   const context: MainLayoutContext = {
     navigation,
@@ -19,7 +21,7 @@ export function MainLayout() {
     <div className="min-h-dvh w-screen bg-background">
       <Header
         menus={navigation.menus}
-        user={navigation.user}
+        user={currentUser.data ?? null}
         activeRootId={navigation.activeRootMenu?.id}
         onRootSelect={navigation.selectRootMenu}
         onOpenSidebar={navigation.openSidebar}

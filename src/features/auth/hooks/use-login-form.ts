@@ -2,10 +2,9 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
 
-import { authMutations } from "@/features/auth/api/auth.query"
+import { authMutations } from "@/features/auth/api/auth.api"
 import { setAuthSession } from "@/features/auth/storage/auth-session"
 import type { LoginRequest } from "@/features/auth/types/auth.types"
-import { navigationQueryKeys } from "@/features/navigation/api/navigation.query"
 
 export function useLoginForm() {
   const navigate = useNavigate()
@@ -22,7 +21,7 @@ export function useLoginForm() {
     ...authMutations.login(),
     onSuccess: ({ accessToken, expiresIn }) => {
       setAuthSession(accessToken, expiresIn)
-      queryClient.removeQueries({ queryKey: navigationQueryKeys.all })
+      queryClient.removeQueries()
       navigate("/app", { replace: true })
     },
   })

@@ -19,16 +19,3 @@ export type NavigationMenuItem = {
   icon?: NavigationIconKey
   children?: NavigationMenuItem[]
 }
-
-export type NavigationUser = {
-  id: string
-  name: string
-  roleName: string
-  centerName: string
-}
-
-export type NavigationBootstrapResponse = {
-  user: NavigationUser
-  permissions: string[]
-  menus: NavigationMenuItem[]
-}

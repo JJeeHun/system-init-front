@@ -28,6 +28,17 @@ features/
 같은 업무 기능을 Page, Modal, Widget에서 재사용한다.
 화면 형태가 다르다는 이유로 Feature를 새로 만들지 않는다.
 
+## Feature Ownership
+
+Feature는 자기 도메인의 데이터와 동작만 소유한다.
+
+- navigation은 메뉴 데이터만 소유한다.
+- user는 사용자 데이터만 소유한다.
+- auth는 인증 결과와 인증 흐름만 소유한다.
+- UI에서 함께 사용된다는 이유로 다른 Feature의 response/type을 한 Feature에 합치지 않는다.
+- 여러 Feature의 데이터가 한 화면에 필요하면 Layout, Page 또는 상위 조합 Hook에서 각각의 Feature를 조합한다.
+- 서버가 권한에 맞는 메뉴를 이미 내려준다면 navigation response에 별도 user/permission 데이터를 섞지 않는다.
+
 ## 역할
 
 ### Page

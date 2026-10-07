@@ -43,7 +43,7 @@ $ARGUMENTS
 - UI Component: 표현과 자기 자신의 디자인만 담당한다.
 - Layout: 배치, 영역, 간격, 정렬, 반응형 구조를 담당한다.
 - Hook: 상태, 동작, 폼 흐름, 업무 로직을 담당한다.
-- API: React Query query/mutation 정의를 담당한다.
+- API: 요청 함수와 React Query query/mutation 정의를 담당한다.
 - Page: 위 역할들을 조립한다.
 - 서버 상태는 React Query로 관리한다.
 - 직접 `fetch`를 사용하지 않는다.

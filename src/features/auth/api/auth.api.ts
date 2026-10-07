@@ -1,3 +1,5 @@
+import { mutationOptions } from "@tanstack/react-query"
+
 import type { LoginRequest, LoginResponse } from "@/features/auth/types/auth.types"
 
 const MOCK_DELAY = 350
@@ -13,4 +15,11 @@ export async function login(request: LoginRequest): Promise<LoginResponse> {
     accessToken: "mock-access-token",
     expiresIn: 60 * 60,
   }
+}
+
+export const authMutations = {
+  login: () =>
+    mutationOptions({
+      mutationFn: login,
+    }),
 }

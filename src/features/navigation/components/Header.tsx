@@ -1,14 +1,12 @@
 import { memo } from "react"
 import { Boxes, ChevronDown, MapPin, Menu } from "lucide-react"
 
-import type {
-  NavigationMenuItem,
-  NavigationUser,
-} from "@/features/navigation/types/navigation.types"
+import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
+import type { CurrentUser } from "@/features/user/types/user.types"
 
 type HeaderProps = {
   menus: NavigationMenuItem[]
-  user: NavigationUser | null
+  user: CurrentUser | null
   activeRootId?: string
   onRootSelect: (menu: NavigationMenuItem) => void
   onOpenSidebar: () => void
