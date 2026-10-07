@@ -60,7 +60,7 @@ export function CommonCodeGroupPanel({
 
           <div className="flex flex-wrap gap-2">
             <Button
-              variant="primary"
+              primary
               size="sm"
               onClick={form.startCreate}
             >
@@ -74,7 +74,7 @@ export function CommonCodeGroupPanel({
               수정
             </Button>
             <Button
-              variant="error"
+              error
               size="sm"
               disabled={!selectedGroupId || form.isDeleting}
               onClick={form.delete}
@@ -164,7 +164,7 @@ export function CommonCodeGroupPanel({
             </Button>
             <Button
               type="submit"
-              variant="primary"
+              primary
               size="sm"
               disabled={form.isPending}
             >
