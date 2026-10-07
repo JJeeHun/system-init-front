@@ -1,19 +1,31 @@
-import { Route, Routes } from "react-router-dom"
+import { Navigate, Route, Routes } from "react-router-dom"
+
+import { AuthLayout } from "@/app/layouts/AuthLayout"
+import { MainLayout } from "@/app/layouts/MainLayout"
+import { RequireAuth } from "@/app/routing/RequireAuth"
+import { LoginPage } from "@/pages/LoginPage"
+import { MenuPage } from "@/pages/MenuPage"
 
 export default function App() {
   return (
     <Routes>
+      <Route element={<AuthLayout />}>
+        <Route path="/login" element={<LoginPage />} />
+      </Route>
+
       <Route
-        path="/"
+        path="/app"
         element={
-          <main className="flex min-h-screen items-center justify-center bg-slate-50">
-            <div className="text-center">
-              <h1 className="text-2xl font-semibold text-slate-900">system-init-front</h1>
-              <p className="mt-2 text-sm text-slate-600">Frontend environment is ready.</p>
-            </div>
-          </main>
+          <RequireAuth>
+            <MainLayout />
+          </RequireAuth>
         }
-      />
+      >
+        <Route path="*" element={<MenuPage />} />
+      </Route>
+
+      <Route path="/" element={<Navigate to="/app" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   )
 }

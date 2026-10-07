@@ -47,6 +47,9 @@
   --color-header-faint: var(--header-faint);
   --color-header-accent: var(--header-accent);
   --color-header-active: var(--header-active);
+  --color-header-surface: var(--header-surface);
+  --color-header-surface-hover: var(--header-surface-hover);
+  --color-header-border: var(--header-border);
 
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
@@ -59,6 +62,7 @@
   --color-table-border: var(--table-border);
 
   --color-progress-track: var(--progress-track);
+  --color-backdrop: var(--backdrop);
 
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);

@@ -33,26 +33,58 @@ Feature api의 queryOptions / mutationOptions
 기존 공통 HTTP client
 ```
 
+## API Export
+
+HTTP/API 함수는 named export를 기본으로 한다.
+
+함수 이름만 보고 역할을 알 수 있게 명확하게 작성한다.
+
+권장:
+
+```ts
+export async function getUsers() {}
+export async function getUser(id: number) {}
+export async function createUser(input: CreateUserInput) {}
+```
+
+지양:
+
+```ts
+export const userApi = {
+  getUsers,
+  getUser,
+  createUser,
+}
+```
+
+API 함수를 하나의 service/api 객체 property로 묶지 않는다.
+named export를 사용해 import 단위와 tree-shaking 경계를 명확하게 유지한다.
+
+단, query key와 queryOptions/mutationOptions factory는 일관된 key 조합이 중요하므로 객체로 묶을 수 있다.
+
 ## API 정의
 
-Feature의 `api/`에서 query key와 React Query 옵션을 정의한다.
+Feature의 `api/`에서 API 함수와 React Query 옵션을 정의한다.
 
 예:
 
 ```ts
+export async function getUsers() {}
+export async function getUser(id: number) {}
+
 export const userQueries = {
   all: () => ["users"] as const,
 
-  list: (params: UserListParams) =>
+  list: () =>
     queryOptions({
-      queryKey: [...userQueries.all(), "list", params],
-      queryFn: () => userApi.getUsers(params),
+      queryKey: [...userQueries.all(), "list"],
+      queryFn: getUsers,
     }),
 
   detail: (id: number) =>
     queryOptions({
       queryKey: [...userQueries.all(), "detail", id],
-      queryFn: () => userApi.getUser(id),
+      queryFn: () => getUser(id),
     }),
 }
 ```
