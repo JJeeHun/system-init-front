@@ -4,6 +4,7 @@ import { Header } from "@/features/navigation/components/Header"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
 import { useMainNavigation } from "@/features/navigation/hooks/use-main-navigation"
 import { useCurrentUser } from "@/features/user/hooks/use-current-user"
+import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
 
 export type MainLayoutContext = {
   navigation: ReturnType<typeof useMainNavigation>
@@ -39,6 +40,7 @@ export function MainLayout() {
         />
 
         <main className="flex min-h-0 min-w-0 flex-col overflow-hidden">
+          <OpenPageTabs />
           <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
             {navigation.isLoading ? (
             <div className="px-page-x py-page-y text-sm text-foreground-soft">

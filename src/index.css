@@ -124,6 +124,7 @@
   --layout-sidebar-width: 15rem;
   --layout-sidebar-mobile-width: 16.5rem;
   --layout-header-height: 4.25rem;
+  --layout-open-tabs-height: 2.75rem;
   --layout-page-padding-x: clamp(0.75rem, 1.3vw, 1.25rem);
   --layout-page-padding-y: 0.75rem;
   --layout-section-gap: 0.625rem;
