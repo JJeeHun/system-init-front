@@ -28,7 +28,7 @@ function sortItems(items: CommonCodeItem[]) {
 
 export function useCommonCodeItems(groupId: string | null) {
   const queryClient = useQueryClient()
-  const commonCodeQuery = useQuery(commonCodeQueries.all())
+  const itemQuery = useQuery(commonCodeQueries.items(groupId))
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
   const [itemFormMode, setItemFormMode] = useState<FormMode>(null)
   const previousGroupId = useRef(groupId)
@@ -43,13 +43,8 @@ export function useCommonCodeItems(groupId: string | null) {
   }).field
 
   const items = useMemo(
-    () =>
-      sortItems(
-        (commonCodeQuery.data?.items ?? []).filter(
-          (item) => item.groupId === groupId,
-        ),
-      ),
-    [commonCodeQuery.data?.items, groupId],
+    () => sortItems(itemQuery.data ?? []),
+    [itemQuery.data],
   )
 
   const selectedItem = useMemo(
@@ -57,9 +52,9 @@ export function useCommonCodeItems(groupId: string | null) {
     [items, selectedItemId],
   )
 
-  const invalidateCommonCodes = () =>
+  const invalidateItems = (id: string) =>
     queryClient.invalidateQueries({
-      queryKey: commonCodeQueryKeys.all,
+      queryKey: commonCodeQueryKeys.items(id),
     })
 
   const createItemMutation = useMutation({
@@ -68,15 +63,15 @@ export function useCommonCodeItems(groupId: string | null) {
       setSelectedItemId(item.id)
       setItemFormMode(null)
       itemForm.reset(EMPTY_ITEM_FORM)
-      void invalidateCommonCodes()
+      void invalidateItems(item.groupId)
     },
   })
 
   const updateItemMutation = useMutation({
     ...commonCodeMutations.updateItem(),
-    onSuccess: () => {
+    onSuccess: (item) => {
       setItemFormMode(null)
-      void invalidateCommonCodes()
+      void invalidateItems(item.groupId)
     },
   })
 
@@ -85,7 +80,7 @@ export function useCommonCodeItems(groupId: string | null) {
     onSuccess: () => {
       setSelectedItemId(null)
       setItemFormMode(null)
-      void invalidateCommonCodes()
+      if (groupId) void invalidateItems(groupId)
     },
   })
 
@@ -191,8 +186,8 @@ export function useCommonCodeItems(groupId: string | null) {
   }
 
   return {
-    isLoading: commonCodeQuery.isLoading,
-    loadErrorMessage: getErrorMessage(commonCodeQuery.error),
+    isLoading: itemQuery.isLoading,
+    loadErrorMessage: getErrorMessage(itemQuery.error),
     items,
     selectedItem,
     selectItem,
