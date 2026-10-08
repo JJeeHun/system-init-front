@@ -62,6 +62,7 @@ $ARGUMENTS
 - 직접 `fetch`를 사용하지 않는다.
 - 폼 값은 React Hook Form을 우선 사용한다.
 - 화면 렌더링에 필요하지 않은 값을 무분별하게 state로 만들지 않는다.
+- 비즈니스·API 오류는 정의된 공통 오류 타입으로 전파하고, 전역 처리 계층이 있으면 UI 표시 정책을 그곳에 위임한다. 페이지·Feature Hook에 공통 Alert/Toast 처리를 중복 구현하지 않는다.
 
 ## Reference 선택
 
@@ -74,6 +75,7 @@ $ARGUMENTS
 - 컬러, 폰트, light/dark/custom theme: [theme.md](references/theme.md)
 - env/config 사용 규칙: [config.md](references/config.md)
 - 테스트 설계, 실행, 실패 분석, 기존 테스트 변경 승인: [testing.md](references/testing.md)
+- 비즈니스 예외, AppError 타입, 전역 오류 처리와 지역 복구 경계: [error-handling.md](references/error-handling.md)
 
 UI 작업이면 구현 전에 `theme.md`와 `ui-layout.md`를 확인한다.
 상태/폼 작업이면 `state-form.md`를 확인한다.
@@ -81,6 +83,7 @@ UI 작업이면 구현 전에 `theme.md`와 `ui-layout.md`를 확인한다.
 구조를 추가하거나 이동하는 작업이면 `architecture.md`를 확인한다.
 env 또는 환경 설정 값을 사용하는 작업이면 `config.md`를 확인한다.
 테스트를 작성·실행·수정·삭제하거나 테스트 실패를 판단하는 작업이면 `testing.md`를 확인한다.
+API·Feature Hook의 오류를 정의하거나 처리하거나 전역 메시지 정책을 다루는 작업이면 `error-handling.md`를 확인한다.
 
 ## 작업 방식
 
