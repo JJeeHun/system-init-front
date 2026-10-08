@@ -49,6 +49,56 @@ type CommonCodeGroupPanelProps = {
   form: CommonCodeGroupFormProps
 }
 
+type GroupListProps = Pick<
+  CommonCodeGroupPanelProps,
+  "groups" | "selectedGroupId" | "isLoading" | "loadErrorMessage" | "onSelect"
+>
+
+const GroupList = ({
+  groups,
+  selectedGroupId,
+  isLoading,
+  loadErrorMessage,
+  onSelect,
+}: GroupListProps) => {
+  if (loadErrorMessage) {
+    return (
+      <div role="alert" className="rounded-md border border-destructive bg-destructive-soft p-3 text-sm text-destructive">
+        {loadErrorMessage}
+      </div>
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <div className="p-3 text-sm text-foreground-soft">
+        그룹을 불러오는 중입니다.
+      </div>
+    )
+  }
+
+  if (groups.length === 0) {
+    return (
+      <div className="p-3 text-sm text-foreground-soft">
+        등록된 코드 그룹이 없습니다.
+      </div>
+    )
+  }
+
+  return (
+    <>
+      {groups.map((group) => (
+        <CommonCodeGroupOption
+          key={group.id}
+          group={group}
+          selected={group.id === selectedGroupId}
+          onSelect={onSelect}
+        />
+      ))}
+    </>
+  )
+}
+
 const Modal = ({ show, form }: { show: boolean; form: CommonCodeGroupFormProps }) => {
   if (!show) return null
 
@@ -173,28 +223,13 @@ export function CommonCodeGroupPanel({
       <Panel.Content>
         <ScrollArea type="always" className="h-36 min-w-0 sm:h-64">
           <div className="grid min-w-0 gap-1.5 pr-2 [&>button]:w-full [&>button]:min-w-0">
-          {loadErrorMessage ? (
-            <div className="rounded-md border border-destructive bg-destructive-soft p-3 text-sm text-destructive">
-              {loadErrorMessage}
-            </div>
-          ) : isLoading ? (
-            <div className="p-3 text-sm text-foreground-soft">
-              그룹을 불러오는 중입니다.
-            </div>
-          ) : groups.length === 0 ? (
-            <div className="p-3 text-sm text-foreground-soft">
-              등록된 코드 그룹이 없습니다.
-            </div>
-          ) : (
-            groups.map((group) => (
-              <CommonCodeGroupOption
-                key={group.id}
-                group={group}
-                selected={group.id === selectedGroupId}
-                onSelect={onSelect}
-              />
-            ))
-          )}
+            <GroupList
+              groups={groups}
+              selectedGroupId={selectedGroupId}
+              isLoading={isLoading}
+              loadErrorMessage={loadErrorMessage}
+              onSelect={onSelect}
+            />
           </div>
         </ScrollArea>
       </Panel.Content>
