@@ -31,7 +31,7 @@ export function DefaultForm({ className, ...props }: FormProps) {
       <Form
         {...props}
         className={[
-          "grid grid-cols-1 gap-4 p-4 @md:grid-cols-2 @4xl:grid-cols-4",
+          "grid grid-cols-1 gap-form-gap p-form @md:grid-cols-2 @4xl:grid-cols-4",
           className,
         ]
           .filter(Boolean)

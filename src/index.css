@@ -91,6 +91,13 @@
   --spacing-page-y: var(--layout-page-padding-y);
   --spacing-section: var(--layout-section-gap);
   --spacing-content: var(--layout-content-gap);
+  --spacing-panel: var(--layout-panel-padding);
+  --spacing-form: var(--layout-form-padding);
+  --spacing-form-gap: var(--layout-form-gap);
+
+  --text-page-title: var(--ui-page-title-size);
+  --text-page-description: var(--ui-page-description-size);
+  --text-panel-title: var(--ui-panel-title-size);
 }
 
 /* =========================================================
@@ -117,10 +124,21 @@
   --layout-sidebar-width: 15rem;
   --layout-sidebar-mobile-width: 16.5rem;
   --layout-header-height: 4.25rem;
-  --layout-page-padding-x: clamp(1rem, 2.5vw, 2.4rem);
-  --layout-page-padding-y: clamp(1rem, 2vw, 1.8rem);
-  --layout-section-gap: 0.8rem;
-  --layout-content-gap: 1rem;
+  --layout-page-padding-x: clamp(0.75rem, 1.3vw, 1.25rem);
+  --layout-page-padding-y: 0.75rem;
+  --layout-section-gap: 0.625rem;
+  --layout-content-gap: 0.75rem;
+  --layout-panel-padding: 0.75rem;
+  --layout-form-padding: 0.75rem;
+  --layout-form-gap: 0.75rem;
+  --layout-grid-height: min(22rem, 60dvh);
+  --layout-grid-row-height: 2.125rem;
+  --layout-grid-header-height: 2.125rem;
+
+  --ui-page-title-size: 1.125rem;
+  --ui-page-description-size: 0.8125rem;
+  --ui-panel-title-size: 0.875rem;
+  --ui-grid-font-size: 0.8125rem;
 
   --control-height-sm: 2.3rem;
   --control-height-md: 2.7rem;
@@ -268,7 +286,7 @@
   }
 
   #root {
-    width: 100vw;
+    width: 100%;
     min-height: 100dvh;
   }
 

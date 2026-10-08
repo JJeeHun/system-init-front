@@ -58,7 +58,7 @@ export function CommonCodeGroupPanel({
   form,
 }: CommonCodeGroupPanelProps) {
   return (
-    <section className="rounded-lg border border-border bg-card shadow-panel">
+    <section className="min-w-0 rounded-lg border border-border bg-card shadow-panel">
       <PanelHeader
         title="코드 그룹"
         description="Master · 고정 1Depth"
@@ -166,7 +166,7 @@ export function CommonCodeGroupPanel({
         </Dialog>
       ) : null}
 
-      <div className="grid max-h-96 gap-2 overflow-y-auto p-3">
+      <div className="grid min-w-0 max-h-96 gap-1.5 overflow-y-auto p-panel [&>button]:min-w-0">
         {loadErrorMessage ? (
           <div className="rounded-md border border-destructive bg-destructive-soft p-3 text-sm text-destructive">
             {loadErrorMessage}
