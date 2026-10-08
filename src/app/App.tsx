@@ -6,10 +6,12 @@ import { RequireAuth } from "@/app/routing/RequireAuth"
 import { CommonCodePage } from "@/pages/CommonCodePage"
 import { LoginPage } from "@/pages/LoginPage"
 import { MenuPage } from "@/pages/MenuPage"
+import { UiPlaygroundPage } from "@/pages/UiPlaygroundPage"
 
 export default function App() {
   return (
     <Routes>
+      <Route path="/dev/ui" element={<UiPlaygroundPage />} />
       <Route element={<AuthLayout />}>
         <Route path="/login" element={<LoginPage />} />
       </Route>
