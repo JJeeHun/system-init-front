@@ -24,8 +24,8 @@ export function CommonCodePage() {
           <CommonCodeGroupPanel
             groups={commonCode.groups}
             selectedGroupId={commonCode.selectedGroup?.id ?? null}
-            isLoading={commonCode.isLoading}
-            loadErrorMessage={commonCode.loadErrorMessage}
+            isLoading={commonCode.isGroupsLoading}
+            loadErrorMessage={commonCode.groupsLoadErrorMessage}
             onSelect={commonCode.selectGroup}
             form={commonCode.groupForm}
           />
@@ -36,8 +36,8 @@ export function CommonCodePage() {
             group={commonCode.selectedGroup}
             items={commonCode.items}
             selectedItem={commonCode.selectedItem}
-            isLoading={commonCode.isLoading}
-            loadErrorMessage={commonCode.loadErrorMessage}
+            isLoading={commonCode.isItemsLoading}
+            loadErrorMessage={commonCode.itemsLoadErrorMessage}
             onSelect={commonCode.selectItem}
             form={commonCode.itemForm}
           />

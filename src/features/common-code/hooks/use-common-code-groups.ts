@@ -28,7 +28,7 @@ function sortGroups(groups: CommonCodeGroup[]) {
 
 export function useCommonCodeGroups() {
   const queryClient = useQueryClient()
-  const commonCodeQuery = useQuery(commonCodeQueries.all())
+  const groupQuery = useQuery(commonCodeQueries.groups())
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
   const [groupFormMode, setGroupFormMode] = useState<FormMode>(null)
 
@@ -42,8 +42,8 @@ export function useCommonCodeGroups() {
   }).field
 
   const groups = useMemo(
-    () => sortGroups(commonCodeQuery.data?.groups ?? []),
-    [commonCodeQuery.data?.groups],
+    () => sortGroups(groupQuery.data ?? []),
+    [groupQuery.data],
   )
 
   const selectedGroup = useMemo(
@@ -52,9 +52,9 @@ export function useCommonCodeGroups() {
     [groups, selectedGroupId],
   )
 
-  const invalidateCommonCodes = () =>
+  const invalidateGroups = () =>
     queryClient.invalidateQueries({
-      queryKey: commonCodeQueryKeys.all,
+      queryKey: commonCodeQueryKeys.groups,
     })
 
   const createGroupMutation = useMutation({
@@ -63,7 +63,7 @@ export function useCommonCodeGroups() {
       setSelectedGroupId(group.id)
       setGroupFormMode(null)
       groupForm.reset(EMPTY_GROUP_FORM)
-      void invalidateCommonCodes()
+      void invalidateGroups()
     },
   })
 
@@ -71,7 +71,7 @@ export function useCommonCodeGroups() {
     ...commonCodeMutations.updateGroup(),
     onSuccess: () => {
       setGroupFormMode(null)
-      void invalidateCommonCodes()
+      void invalidateGroups()
     },
   })
 
@@ -80,7 +80,7 @@ export function useCommonCodeGroups() {
     onSuccess: () => {
       setSelectedGroupId(null)
       setGroupFormMode(null)
-      void invalidateCommonCodes()
+      void invalidateGroups()
     },
   })
 
@@ -164,8 +164,8 @@ export function useCommonCodeGroups() {
   }
 
   return {
-    isLoading: commonCodeQuery.isLoading,
-    loadErrorMessage: getErrorMessage(commonCodeQuery.error),
+    isLoading: groupQuery.isLoading,
+    loadErrorMessage: getErrorMessage(groupQuery.error),
     groups,
     selectedGroup,
     selectGroup,

@@ -12,8 +12,10 @@ export function useCommonCodePage() {
   }
 
   return {
-    isLoading: group.isLoading || item.isLoading,
-    loadErrorMessage: group.loadErrorMessage ?? item.loadErrorMessage,
+    isGroupsLoading: group.isLoading,
+    isItemsLoading: item.isLoading,
+    groupsLoadErrorMessage: group.loadErrorMessage,
+    itemsLoadErrorMessage: item.loadErrorMessage,
     groups: group.groups,
     selectedGroup: group.selectedGroup,
     items: item.items,

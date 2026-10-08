@@ -1,9 +1,8 @@
-import { mutationOptions, queryOptions } from "@tanstack/react-query"
+import { mutationOptions, queryOptions, skipToken } from "@tanstack/react-query"
 
 import type {
   CommonCodeGroup,
   CommonCodeItem,
-  CommonCodeResponse,
   CreateCommonCodeGroupRequest,
   CreateCommonCodeItemRequest,
   UpdateCommonCodeGroupRequest,
@@ -140,13 +139,14 @@ function requireText(value: string, message: string) {
   return normalized
 }
 
-export async function getCommonCodes(): Promise<CommonCodeResponse> {
+export async function getCommonCodeGroups(): Promise<CommonCodeGroup[]> {
   await wait(READ_DELAY)
+  return mockGroups.map(cloneGroup)
+}
 
-  return {
-    groups: mockGroups.map(cloneGroup),
-    items: mockItems.map(cloneItem),
-  }
+export async function getCommonCodeItems(groupId: string): Promise<CommonCodeItem[]> {
+  await wait(READ_DELAY)
+  return mockItems.filter((item) => item.groupId === groupId).map(cloneItem)
 }
 
 export async function createCommonCodeGroup(
@@ -273,16 +273,22 @@ export async function deleteCommonCodeItem(id: string): Promise<void> {
 }
 
 export const commonCodeQueryKeys = {
-  all: ["common-code"] as const,
+  groups: ["common-code", "groups"] as const,
+  items: (groupId: string | null) => ["common-code", "items", groupId] as const,
 }
 
 export const commonCodeQueries = {
-  all: () =>
+  groups: () =>
     queryOptions({
-      queryKey: commonCodeQueryKeys.all,
-      queryFn: getCommonCodes,
-      staleTime: 30 * 60 * 1000,
-      gcTime: 60 * 60 * 1000,
+      queryKey: commonCodeQueryKeys.groups,
+      queryFn: getCommonCodeGroups,
+      staleTime: 30 * 1000,
+    }),
+  items: (groupId: string | null) =>
+    queryOptions({
+      queryKey: commonCodeQueryKeys.items(groupId),
+      queryFn: groupId ? () => getCommonCodeItems(groupId) : skipToken,
+      staleTime: 30 * 1000,
     }),
 }
 

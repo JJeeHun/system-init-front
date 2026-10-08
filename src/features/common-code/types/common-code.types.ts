@@ -17,11 +17,6 @@ export type CommonCodeItem = {
   sortOrder: number
 }
 
-export type CommonCodeResponse = {
-  groups: CommonCodeGroup[]
-  items: CommonCodeItem[]
-}
-
 export type CreateCommonCodeGroupRequest = Omit<CommonCodeGroup, "id">
 
 export type UpdateCommonCodeGroupRequest = Omit<
