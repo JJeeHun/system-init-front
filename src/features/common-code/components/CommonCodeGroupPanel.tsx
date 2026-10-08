@@ -4,11 +4,7 @@ import type { UseFormRegisterReturn } from "react-hook-form"
 import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
 import { Checkbox } from "@/shared/components/ui/checkbox"
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/shared/components/ui/field"
+import { Field } from "@/shared/ui/field"
 import { Input } from "@/shared/components/ui/input"
 import { Textarea } from "@/shared/components/ui/textarea"
 import { Button } from "@/shared/ui/button"
@@ -106,29 +102,24 @@ export function CommonCodeGroupPanel({
             {form.mode === "create" ? "그룹 등록" : "그룹 수정"}
           </div>
 
-          <Field data-invalid={Boolean(form.errors.code)}>
-            <FieldLabel htmlFor="common-code-group-code">그룹 코드</FieldLabel>
+          <Field label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
             <Input
               id="common-code-group-code"
               {...form.fields.code}
               readOnly={form.mode === "edit"}
               aria-invalid={Boolean(form.errors.code)}
             />
-            <FieldError>{form.errors.code}</FieldError>
           </Field>
 
-          <Field data-invalid={Boolean(form.errors.name)}>
-            <FieldLabel htmlFor="common-code-group-name">그룹명</FieldLabel>
+          <Field label="그룹명" htmlFor="common-code-group-name" error={form.errors.name}>
             <Input
               id="common-code-group-name"
               {...form.fields.name}
               aria-invalid={Boolean(form.errors.name)}
             />
-            <FieldError>{form.errors.name}</FieldError>
           </Field>
 
-          <Field>
-            <FieldLabel htmlFor="common-code-group-description">설명</FieldLabel>
+          <Field label="설명" htmlFor="common-code-group-description">
             <Textarea
               id="common-code-group-description"
               {...form.fields.description}
@@ -137,10 +128,7 @@ export function CommonCodeGroupPanel({
           </Field>
 
           <div className="grid grid-cols-2 gap-3">
-            <Field data-invalid={Boolean(form.errors.sortOrder)}>
-              <FieldLabel htmlFor="common-code-group-sort-order">
-                정렬순서
-              </FieldLabel>
+            <Field label="정렬순서" htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
               <Input
                 id="common-code-group-sort-order"
                 {...form.fields.sortOrder}
@@ -148,10 +136,9 @@ export function CommonCodeGroupPanel({
                 min={0}
                 aria-invalid={Boolean(form.errors.sortOrder)}
               />
-              <FieldError>{form.errors.sortOrder}</FieldError>
             </Field>
 
-            <Field orientation="horizontal">
+            <Field label="사용" htmlFor="common-code-group-enabled" orientation="horizontal">
               <Checkbox
                 id="common-code-group-enabled"
                 checked={form.fields.enabled.checked}
@@ -159,7 +146,6 @@ export function CommonCodeGroupPanel({
                   form.fields.enabled.onCheckedChange(checked === true)
                 }
               />
-              <FieldLabel htmlFor="common-code-group-enabled">사용</FieldLabel>
             </Field>
           </div>
 
