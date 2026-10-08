@@ -84,6 +84,87 @@ const columns = [
   },
 ] satisfies DataGridColumn<CommonCodeItem>[]
 
+const Modal = ({ show, form }: { show: boolean; form: CommonCodeItemFormProps }) => {
+  if (!show) return null
+
+  return (
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open && !form.isPending) form.cancel()
+      }}
+      title={form.mode === "create" ? "코드 등록" : "코드 수정"}
+    >
+      <DefaultForm onSubmit={form.submit}>
+        <Field label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
+          <Input
+            id="common-code-item-code"
+            {...form.fields.code}
+            readOnly={form.mode === "edit"}
+            aria-invalid={Boolean(form.errors.code)}
+          />
+        </Field>
+
+        <Field label="코드명" htmlFor="common-code-item-name" error={form.errors.name}>
+          <Input
+            id="common-code-item-name"
+            {...form.fields.name}
+            aria-invalid={Boolean(form.errors.name)}
+          />
+        </Field>
+
+        <Field label="설명" htmlFor="common-code-item-description" className="@md:col-span-2">
+          <Textarea
+            id="common-code-item-description"
+            {...form.fields.description}
+            rows={2}
+          />
+        </Field>
+
+        <Field label="정렬순서" htmlFor="common-code-item-sort-order" error={form.errors.sortOrder}>
+          <Input
+            id="common-code-item-sort-order"
+            {...form.fields.sortOrder}
+            type="number"
+            min={0}
+            aria-invalid={Boolean(form.errors.sortOrder)}
+          />
+        </Field>
+
+        <Field label="사용" htmlFor="common-code-item-enabled" orientation="horizontal">
+          <Checkbox
+            id="common-code-item-enabled"
+            checked={form.fields.enabled.checked}
+            onCheckedChange={(checked) =>
+              form.fields.enabled.onCheckedChange(checked === true)
+            }
+          />
+        </Field>
+
+        {form.errorMessage ? (
+          <p role="alert" className="col-span-full text-sm text-destructive">
+            {form.errorMessage}
+          </p>
+        ) : null}
+
+        <DefaultForm.Actions>
+          <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
+            취소
+          </Button>
+          <Button
+            type="submit"
+            primary
+            size="sm"
+            loading={form.isPending}
+          >
+            저장
+          </Button>
+        </DefaultForm.Actions>
+      </DefaultForm>
+    </Dialog>
+  )
+}
+
 export function CommonCodeItemPanel({
   group,
   items,
@@ -134,82 +215,7 @@ export function CommonCodeItemPanel({
         }
       />
 
-      {form.mode ? (
-        <Dialog
-          open
-          onOpenChange={(open) => {
-            if (!open && !form.isPending) form.cancel()
-          }}
-          title={form.mode === "create" ? "코드 등록" : "코드 수정"}
-        >
-          <DefaultForm onSubmit={form.submit}>
-            <Field label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
-              <Input
-                id="common-code-item-code"
-                {...form.fields.code}
-                readOnly={form.mode === "edit"}
-                aria-invalid={Boolean(form.errors.code)}
-              />
-            </Field>
-
-            <Field label="코드명" htmlFor="common-code-item-name" error={form.errors.name}>
-              <Input
-                id="common-code-item-name"
-                {...form.fields.name}
-                aria-invalid={Boolean(form.errors.name)}
-              />
-            </Field>
-
-            <Field label="설명" htmlFor="common-code-item-description" className="@md:col-span-2">
-              <Textarea
-                id="common-code-item-description"
-                {...form.fields.description}
-                rows={2}
-              />
-            </Field>
-
-            <Field label="정렬순서" htmlFor="common-code-item-sort-order" error={form.errors.sortOrder}>
-              <Input
-                id="common-code-item-sort-order"
-                {...form.fields.sortOrder}
-                type="number"
-                min={0}
-                aria-invalid={Boolean(form.errors.sortOrder)}
-              />
-            </Field>
-
-            <Field label="사용" htmlFor="common-code-item-enabled" orientation="horizontal">
-              <Checkbox
-                id="common-code-item-enabled"
-                checked={form.fields.enabled.checked}
-                onCheckedChange={(checked) =>
-                  form.fields.enabled.onCheckedChange(checked === true)
-                }
-              />
-            </Field>
-
-            {form.errorMessage ? (
-              <p role="alert" className="col-span-full text-sm text-destructive">
-                {form.errorMessage}
-              </p>
-            ) : null}
-
-            <DefaultForm.Actions>
-              <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
-                취소
-              </Button>
-              <Button
-                type="submit"
-                primary
-                size="sm"
-                loading={form.isPending}
-              >
-                저장
-              </Button>
-            </DefaultForm.Actions>
-          </DefaultForm>
-        </Dialog>
-      ) : null}
+      <Modal show={!!form.mode} form={form} />
 
       <Panel.Content>
         <DataGrid

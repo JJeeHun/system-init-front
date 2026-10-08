@@ -49,6 +49,87 @@ type CommonCodeGroupPanelProps = {
   form: CommonCodeGroupFormProps
 }
 
+const Modal = ({ show, form }: { show: boolean; form: CommonCodeGroupFormProps }) => {
+  if (!show) return null
+
+  return (
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open && !form.isPending) form.cancel()
+      }}
+      title={form.mode === "create" ? "그룹 등록" : "그룹 수정"}
+    >
+      <DefaultForm onSubmit={form.submit}>
+        <Field label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
+          <Input
+            id="common-code-group-code"
+            {...form.fields.code}
+            readOnly={form.mode === "edit"}
+            aria-invalid={Boolean(form.errors.code)}
+          />
+        </Field>
+
+        <Field label="그룹명" htmlFor="common-code-group-name" error={form.errors.name}>
+          <Input
+            id="common-code-group-name"
+            {...form.fields.name}
+            aria-invalid={Boolean(form.errors.name)}
+          />
+        </Field>
+
+        <Field label="설명" htmlFor="common-code-group-description" className="@md:col-span-2 @4xl:col-span-4">
+          <Textarea
+            id="common-code-group-description"
+            {...form.fields.description}
+            rows={2}
+          />
+        </Field>
+
+        <Field label="정렬순서" htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
+          <Input
+            id="common-code-group-sort-order"
+            {...form.fields.sortOrder}
+            type="number"
+            min={0}
+            aria-invalid={Boolean(form.errors.sortOrder)}
+          />
+        </Field>
+
+        <Field label="사용" htmlFor="common-code-group-enabled" orientation="horizontal">
+          <Checkbox
+            id="common-code-group-enabled"
+            checked={form.fields.enabled.checked}
+            onCheckedChange={(checked) =>
+              form.fields.enabled.onCheckedChange(checked === true)
+            }
+          />
+        </Field>
+
+        {form.errorMessage ? (
+          <p role="alert" className="col-span-full text-sm text-destructive">
+            {form.errorMessage}
+          </p>
+        ) : null}
+
+        <DefaultForm.Actions>
+          <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
+            취소
+          </Button>
+          <Button
+            type="submit"
+            primary
+            size="sm"
+            loading={form.isPending}
+          >
+            저장
+          </Button>
+        </DefaultForm.Actions>
+      </DefaultForm>
+    </Dialog>
+  )
+}
+
 export function CommonCodeGroupPanel({
   groups,
   selectedGroupId,
@@ -87,82 +168,7 @@ export function CommonCodeGroupPanel({
         }
       />
 
-      {form.mode ? (
-        <Dialog
-          open
-          onOpenChange={(open) => {
-            if (!open && !form.isPending) form.cancel()
-          }}
-          title={form.mode === "create" ? "그룹 등록" : "그룹 수정"}
-        >
-          <DefaultForm onSubmit={form.submit}>
-            <Field label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
-              <Input
-                id="common-code-group-code"
-                {...form.fields.code}
-                readOnly={form.mode === "edit"}
-                aria-invalid={Boolean(form.errors.code)}
-              />
-            </Field>
-
-            <Field label="그룹명" htmlFor="common-code-group-name" error={form.errors.name}>
-              <Input
-                id="common-code-group-name"
-                {...form.fields.name}
-                aria-invalid={Boolean(form.errors.name)}
-              />
-            </Field>
-
-            <Field label="설명" htmlFor="common-code-group-description" className="@md:col-span-2 @4xl:col-span-4">
-              <Textarea
-                id="common-code-group-description"
-                {...form.fields.description}
-                rows={2}
-              />
-            </Field>
-
-            <Field label="정렬순서" htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
-              <Input
-                id="common-code-group-sort-order"
-                {...form.fields.sortOrder}
-                type="number"
-                min={0}
-                aria-invalid={Boolean(form.errors.sortOrder)}
-              />
-            </Field>
-
-            <Field label="사용" htmlFor="common-code-group-enabled" orientation="horizontal">
-              <Checkbox
-                id="common-code-group-enabled"
-                checked={form.fields.enabled.checked}
-                onCheckedChange={(checked) =>
-                  form.fields.enabled.onCheckedChange(checked === true)
-                }
-              />
-            </Field>
-
-            {form.errorMessage ? (
-              <p role="alert" className="col-span-full text-sm text-destructive">
-                {form.errorMessage}
-              </p>
-            ) : null}
-
-            <DefaultForm.Actions>
-              <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
-                취소
-              </Button>
-              <Button
-                type="submit"
-                primary
-                size="sm"
-                loading={form.isPending}
-              >
-                저장
-              </Button>
-            </DefaultForm.Actions>
-          </DefaultForm>
-        </Dialog>
-      ) : null}
+      <Modal show={!!form.mode} form={form} />
 
       <Panel.Content>
         <ScrollArea type="always" className="h-36 min-w-0 sm:h-64">
