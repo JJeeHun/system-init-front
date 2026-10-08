@@ -25,6 +25,7 @@ export default function App() {
         }
       >
         <Route path="master/common-code" element={<CommonCodePage />} />
+        <Route path="dev/ui" element={<UiPlaygroundPage />} />
         <Route path="*" element={<MenuPage />} />
       </Route>
 

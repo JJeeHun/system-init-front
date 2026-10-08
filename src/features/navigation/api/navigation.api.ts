@@ -145,6 +145,12 @@ const mockNavigationMenus: NavigationMenuItem[] = [
             path: "/app/operations/log",
             icon: "clipboard",
           },
+          {
+            id: "ui-playground",
+            label: "UI Playground",
+            path: "/app/dev/ui",
+            icon: "code",
+          },
         ],
       },
     ],

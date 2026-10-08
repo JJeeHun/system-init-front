@@ -427,7 +427,7 @@ function LayoutPreview() {
 
 export function UiPlaygroundPage() {
   return (
-    <main className="min-h-dvh bg-background">
+    <div className="min-h-full bg-background">
       <PageLayout>
         <div className="flex flex-wrap items-start justify-between gap-3">
           <PageHeader
@@ -448,6 +448,6 @@ export function UiPlaygroundPage() {
         </div>
       </PageLayout>
       <Toaster position="top-right" />
-    </main>
+    </div>
   )
 }
