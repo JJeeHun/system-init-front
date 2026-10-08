@@ -84,7 +84,7 @@ const columns = [
   },
 ] satisfies DataGridColumn<CommonCodeItem>[]
 
-const Modal = ({ show, form }: { show: boolean; form: CommonCodeItemFormProps }) => {
+const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFormProps }) => {
   if (!show) return null
 
   return (
@@ -215,7 +215,7 @@ export function CommonCodeItemPanel({
         }
       />
 
-      <Modal show={!!form.mode} form={form} />
+      <ItemFormDialog show={!!form.mode} form={form} />
 
       <Panel.Content>
         <DataGrid

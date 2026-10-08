@@ -99,7 +99,7 @@ const GroupList = ({
   )
 }
 
-const Modal = ({ show, form }: { show: boolean; form: CommonCodeGroupFormProps }) => {
+const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupFormProps }) => {
   if (!show) return null
 
   return (
@@ -218,7 +218,7 @@ export function CommonCodeGroupPanel({
         }
       />
 
-      <Modal show={!!form.mode} form={form} />
+      <GroupFormDialog show={!!form.mode} form={form} />
 
       <Panel.Content>
         <ScrollArea type="always" className="h-36 min-w-0 sm:h-64">
