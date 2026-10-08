@@ -2,13 +2,16 @@ import type { FormEventHandler } from "react"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
 import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
+import { FormSectionTitle } from "@/features/common-code/components/FormSectionTitle"
+import { PanelHeader } from "@/features/common-code/components/PanelHeader"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
 import { Checkbox } from "@/shared/components/ui/checkbox"
 import { DefaultForm } from "@/shared/layout/default-form"
+import { Button } from "@/shared/ui/button"
+import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
 import { Input } from "@/shared/components/ui/input"
 import { Textarea } from "@/shared/components/ui/textarea"
-import { Button } from "@/shared/ui/button"
 
 type CommonCodeGroupFormProps = {
   mode: "create" | "edit" | null
@@ -56,18 +59,12 @@ export function CommonCodeGroupPanel({
 }: CommonCodeGroupPanelProps) {
   return (
     <section className="rounded-lg border border-border bg-card shadow-panel">
-      <div className="border-b border-border p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <h2 className="text-base font-semibold text-foreground">
-              코드 그룹
-            </h2>
-            <p className="mt-1 text-xs text-foreground-soft">
-              Master · 고정 1Depth
-            </p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
+      <PanelHeader
+        title="코드 그룹"
+        description="Master · 고정 1Depth"
+        errorMessage={form.mode ? null : form.errorMessage}
+        actions={
+          <>
             <Button primary size="sm" onClick={form.startCreate}>
               그룹 등록
             </Button>
@@ -86,21 +83,21 @@ export function CommonCodeGroupPanel({
             >
               {form.isDeleting ? "삭제 중" : "삭제"}
             </Button>
-          </div>
-        </div>
-
-        {form.errorMessage ? (
-          <p className="mt-3 text-xs text-destructive">{form.errorMessage}</p>
-        ) : null}
-      </div>
+          </>
+        }
+      />
 
       {form.mode ? (
-        <div className="border-b border-border bg-surface-soft">
-          <div className="px-4 pt-4 text-sm font-semibold text-foreground">
-            {form.mode === "create" ? "그룹 등록" : "그룹 수정"}
-          </div>
-
+        <Dialog
+          open
+          onOpenChange={(open) => {
+            if (!open && !form.isPending) form.cancel()
+          }}
+          title={form.mode === "create" ? "그룹 등록" : "그룹 수정"}
+        >
           <DefaultForm onSubmit={form.submit}>
+            <FormSectionTitle>그룹 정보</FormSectionTitle>
+
             <Field label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
               <Input
                 id="common-code-group-code"
@@ -145,21 +142,28 @@ export function CommonCodeGroupPanel({
                 }
               />
             </Field>
+
+            {form.errorMessage ? (
+              <p role="alert" className="col-span-full text-sm text-destructive">
+                {form.errorMessage}
+              </p>
+            ) : null}
+
             <DefaultForm.Actions>
-              <Button size="sm" onClick={form.cancel}>
+              <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
                 취소
               </Button>
               <Button
                 type="submit"
                 primary
                 size="sm"
-                disabled={form.isPending}
+                loading={form.isPending}
               >
-                {form.isPending ? "저장 중" : "저장"}
+                저장
               </Button>
             </DefaultForm.Actions>
           </DefaultForm>
-        </div>
+        </Dialog>
       ) : null}
 
       <div className="grid max-h-96 gap-2 overflow-y-auto p-3">

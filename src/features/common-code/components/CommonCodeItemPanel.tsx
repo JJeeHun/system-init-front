@@ -1,18 +1,21 @@
 import type { FormEventHandler } from "react"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
+import { FormSectionTitle } from "@/features/common-code/components/FormSectionTitle"
+import { PanelHeader } from "@/features/common-code/components/PanelHeader"
 import type {
   CommonCodeGroup,
   CommonCodeItem,
 } from "@/features/common-code/types/common-code.types"
 import { Checkbox } from "@/shared/components/ui/checkbox"
 import { DefaultForm } from "@/shared/layout/default-form"
-import { Field } from "@/shared/ui/field"
-import { Input } from "@/shared/components/ui/input"
-import { Textarea } from "@/shared/components/ui/textarea"
 import { Button } from "@/shared/ui/button"
 import { DataGrid } from "@/shared/ui/data-grid"
 import type { DataGridColumn } from "@/shared/ui/data-grid"
+import { Dialog } from "@/shared/ui/dialog"
+import { Field } from "@/shared/ui/field"
+import { Input } from "@/shared/components/ui/input"
+import { Textarea } from "@/shared/components/ui/textarea"
 
 type CommonCodeItemFormProps = {
   mode: "create" | "edit" | null
@@ -99,24 +102,12 @@ export function CommonCodeItemPanel({
 
   return (
     <section className="rounded-lg border border-border bg-card shadow-panel">
-      <div className="border-b border-border p-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h2 className="text-base font-semibold text-foreground">
-              상세 코드
-            </h2>
-            {group ? (
-              <p className="mt-1 truncate text-xs text-foreground-soft">
-                {group.code} · {group.name}
-              </p>
-            ) : (
-              <p className="mt-1 text-xs text-foreground-soft">
-                Detail · 고정 2Depth
-              </p>
-            )}
-          </div>
-
-          <div className="flex flex-wrap gap-2">
+      <PanelHeader
+        title="상세 코드"
+        description={group ? `${group.code} · ${group.name}` : "Detail · 고정 2Depth"}
+        errorMessage={form.mode ? null : form.errorMessage}
+        actions={
+          <>
             <Button
               primary
               size="sm"
@@ -140,21 +131,21 @@ export function CommonCodeItemPanel({
             >
               {form.isDeleting ? "삭제 중" : "삭제"}
             </Button>
-          </div>
-        </div>
-
-        {form.errorMessage ? (
-          <p className="mt-3 text-xs text-destructive">{form.errorMessage}</p>
-        ) : null}
-      </div>
+          </>
+        }
+      />
 
       {form.mode ? (
-        <div className="border-b border-border bg-surface-soft">
-          <div className="px-4 pt-4 text-sm font-semibold text-foreground">
-            {form.mode === "create" ? "코드 등록" : "코드 수정"}
-          </div>
-
+        <Dialog
+          open
+          onOpenChange={(open) => {
+            if (!open && !form.isPending) form.cancel()
+          }}
+          title={form.mode === "create" ? "코드 등록" : "코드 수정"}
+        >
           <DefaultForm onSubmit={form.submit}>
+            <FormSectionTitle>상세 코드 정보</FormSectionTitle>
+
             <Field label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
               <Input
                 id="common-code-item-code"
@@ -200,21 +191,27 @@ export function CommonCodeItemPanel({
               />
             </Field>
 
+            {form.errorMessage ? (
+              <p role="alert" className="col-span-full text-sm text-destructive">
+                {form.errorMessage}
+              </p>
+            ) : null}
+
             <DefaultForm.Actions>
-              <Button size="sm" onClick={form.cancel}>
+              <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
                 취소
               </Button>
               <Button
                 type="submit"
                 primary
                 size="sm"
-                disabled={form.isPending}
+                loading={form.isPending}
               >
-                {form.isPending ? "저장 중" : "저장"}
+                저장
               </Button>
             </DefaultForm.Actions>
           </DefaultForm>
-        </div>
+        </Dialog>
       ) : null}
 
       <div className="p-4">
