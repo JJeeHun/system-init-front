@@ -4,6 +4,7 @@ import { Header } from "@/features/navigation/components/Header"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
 import { useMainNavigation } from "@/features/navigation/hooks/use-main-navigation"
 import { useCurrentUser } from "@/features/user/hooks/use-current-user"
+import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
 
 export type MainLayoutContext = {
   navigation: ReturnType<typeof useMainNavigation>
@@ -18,7 +19,7 @@ export function MainLayout() {
   }
 
   return (
-    <div className="min-h-dvh w-screen bg-background">
+    <div className="flex h-dvh w-full min-w-0 flex-col overflow-hidden bg-background">
       <Header
         menus={navigation.menus}
         user={currentUser.data ?? null}
@@ -27,7 +28,7 @@ export function MainLayout() {
         onOpenSidebar={navigation.openSidebar}
       />
 
-      <div className="grid min-h-[calc(100dvh-var(--layout-header-height))] grid-cols-1 lg:grid-cols-[var(--layout-sidebar-width)_minmax(0,1fr)]">
+      <div className="grid min-h-0 min-w-0 flex-1 grid-cols-1 overflow-hidden lg:grid-cols-[var(--layout-sidebar-width)_minmax(0,1fr)]">
         <Sidebar
           title={navigation.activeRootMenu?.label ?? "메뉴"}
           rootMenus={navigation.menus}
@@ -38,8 +39,10 @@ export function MainLayout() {
           onClose={navigation.closeSidebar}
         />
 
-        <main className="min-w-0">
-          {navigation.isLoading ? (
+        <main className="flex min-h-0 min-w-0 flex-col overflow-hidden">
+          <OpenPageTabs />
+          <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
+            {navigation.isLoading ? (
             <div className="px-page-x py-page-y text-sm text-foreground-soft">
               메뉴를 불러오는 중입니다.
             </div>
@@ -49,7 +52,8 @@ export function MainLayout() {
             </div>
           ) : (
             <Outlet context={context} />
-          )}
+            )}
+          </div>
         </main>
       </div>
     </div>

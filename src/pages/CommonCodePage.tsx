@@ -9,7 +9,7 @@ export function CommonCodePage() {
 
   return (
     <PageLayout>
-      <div>
+      <div className="min-w-0">
         <p className="mb-1 text-xs font-bold uppercase tracking-widest text-primary">
           기준정보
         </p>
@@ -19,8 +19,8 @@ export function CommonCodePage() {
         />
       </div>
 
-      <section className="grid grid-cols-1 gap-content xl:grid-cols-3">
-        <div className="xl:col-span-1">
+      <section className="grid min-w-0 grid-cols-1 gap-content xl:grid-cols-3">
+        <div className="min-w-0 xl:col-span-1">
           <CommonCodeGroupPanel
             groups={commonCode.groups}
             selectedGroupId={commonCode.selectedGroup?.id ?? null}
@@ -31,7 +31,7 @@ export function CommonCodePage() {
           />
         </div>
 
-        <div className="xl:col-span-2">
+        <div className="min-w-0 xl:col-span-2">
           <CommonCodeItemPanel
             group={commonCode.selectedGroup}
             items={commonCode.items}

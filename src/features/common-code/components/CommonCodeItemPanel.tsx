@@ -101,7 +101,7 @@ export function CommonCodeItemPanel({
       : "코드 그룹을 선택해주세요."
 
   return (
-    <section className="rounded-lg border border-border bg-card shadow-panel">
+    <section className="min-w-0 rounded-lg border border-border bg-card shadow-panel">
       <PanelHeader
         title="상세 코드"
         description={group ? `${group.code} · ${group.name}` : "Detail · 고정 2Depth"}
@@ -214,7 +214,7 @@ export function CommonCodeItemPanel({
         </Dialog>
       ) : null}
 
-      <div className="p-4">
+      <div className="min-w-0 p-panel">
         <DataGrid
           rows={items}
           columns={columns}
