@@ -1,9 +1,9 @@
-import type { ComponentProps, FormEvent } from "react"
+import type { ComponentProps } from "react"
 
 export type FormProps = ComponentProps<"form">
 
 export function Form({ onSubmit, ...props }: FormProps) {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit: NonNullable<FormProps["onSubmit"]> = (event) => {
     onSubmit?.(event)
   }
 
