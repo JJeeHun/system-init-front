@@ -5,7 +5,7 @@ import type {
   CommonCodeGroup,
   CommonCodeItem,
 } from "@/features/common-code/types/common-code.types"
-import { Checkbox } from "@/shared/components/ui/checkbox"
+import { Switch } from "@/shared/components/ui/switch"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
 import { DataGrid } from "@/shared/ui/data-grid"
@@ -132,12 +132,10 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
         </Field>
 
         <Field label="사용" htmlFor="common-code-item-enabled" orientation="horizontal">
-          <Checkbox
+          <Switch
             id="common-code-item-enabled"
             checked={form.fields.enabled.checked}
-            onCheckedChange={(checked) =>
-              form.fields.enabled.onCheckedChange(checked === true)
-            }
+            onCheckedChange={form.fields.enabled.onCheckedChange}
           />
         </Field>
 
