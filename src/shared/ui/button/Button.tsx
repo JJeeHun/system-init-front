@@ -1,6 +1,7 @@
 import type { ButtonHTMLAttributes } from "react"
 
 import { Button as ShadcnButton } from "@/shared/components/ui/button"
+import { Spinner } from "@/shared/components/ui/spinner"
 import type { ExclusiveBooleanProps } from "@/shared/types/exclusive-boolean-props"
 
 type ButtonTone = "primary" | "success" | "warning" | "error" | "info"
@@ -10,6 +11,7 @@ export type ButtonSize = "sm" | "md" | "lg"
 export type ButtonProps = ExclusiveBooleanProps<ButtonTone> &
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className" | "color"> & {
     size?: ButtonSize
+    loading?: boolean
   }
 
 const shadcnSizeBySize = {
@@ -42,12 +44,17 @@ export function Button({
   info,
   size = "md",
   type = "button",
+  loading = false,
+  disabled,
+  children,
   ...props
 }: ButtonProps) {
   return (
     <ShadcnButton
       {...props}
       type={type}
+      disabled={disabled || loading}
+      aria-busy={loading || undefined}
       variant={resolveTone({
         primary,
         success,
@@ -56,6 +63,9 @@ export function Button({
         info,
       })}
       size={shadcnSizeBySize[size]}
-    />
+    >
+      {loading ? <Spinner aria-hidden="true" /> : null}
+      {children}
+    </ShadcnButton>
   )
 }
