@@ -73,12 +73,14 @@ $ARGUMENTS
 - UI, 모바일, flex/grid, 크기와 Layout: [ui-layout.md](references/ui-layout.md)
 - 컬러, 폰트, light/dark/custom theme: [theme.md](references/theme.md)
 - env/config 사용 규칙: [config.md](references/config.md)
+- 테스트 설계, 실행, 실패 분석, 기존 테스트 변경 승인: [testing.md](references/testing.md)
 
 UI 작업이면 구현 전에 `theme.md`와 `ui-layout.md`를 확인한다.
 상태/폼 작업이면 `state-form.md`를 확인한다.
 서버 통신 작업이면 `api-react-query.md`를 확인한다.
 구조를 추가하거나 이동하는 작업이면 `architecture.md`를 확인한다.
 env 또는 환경 설정 값을 사용하는 작업이면 `config.md`를 확인한다.
+테스트를 작성·실행·수정·삭제하거나 테스트 실패를 판단하는 작업이면 `testing.md`를 확인한다.
 
 ## 작업 방식
 
@@ -86,7 +88,7 @@ env 또는 환경 설정 값을 사용하는 작업이면 `config.md`를 확인�
 2. 필요한 reference만 읽는다.
 3. 현재 구현에 필요한 최소 코드만 확인한다.
 4. 역할 경계를 지켜 구현한다.
-5. 변경한 범위에 필요한 검증만 수행한다.
+5. 변경한 범위에 필요한 검증만 수행한다. 기존 테스트 변경·삭제·비활성화는 개발자 사전 승인 없이는 수행하지 않는다.
 6. unrelated 오류나 개선점은 임의로 수정하지 않는다.
 
 요구사항이 기존 규칙과 충돌하면 개발자의 현재 명시적 요구를 우선한다.
