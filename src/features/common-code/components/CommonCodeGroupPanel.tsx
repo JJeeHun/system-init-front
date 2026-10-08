@@ -2,7 +2,6 @@ import type { FormEventHandler } from "react"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
 import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
-import { FormSectionTitle } from "@/features/common-code/components/FormSectionTitle"
 import { PanelHeader } from "@/features/common-code/components/PanelHeader"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
 import { Checkbox } from "@/shared/components/ui/checkbox"
@@ -10,6 +9,8 @@ import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
 import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
+import { SectionTitle } from "@/shared/ui/section-title"
+import { ScrollArea } from "@/shared/components/ui/scroll-area"
 import { Input } from "@/shared/components/ui/input"
 import { Textarea } from "@/shared/components/ui/textarea"
 
@@ -96,7 +97,7 @@ export function CommonCodeGroupPanel({
           title={form.mode === "create" ? "그룹 등록" : "그룹 수정"}
         >
           <DefaultForm onSubmit={form.submit}>
-            <FormSectionTitle>그룹 정보</FormSectionTitle>
+            <SectionTitle as="h3" className="col-span-full">그룹 정보</SectionTitle>
 
             <Field label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
               <Input
@@ -166,7 +167,8 @@ export function CommonCodeGroupPanel({
         </Dialog>
       ) : null}
 
-      <div className="grid min-w-0 max-h-96 gap-1.5 overflow-y-auto p-panel [&>button]:min-w-0">
+      <ScrollArea type="always" className="h-36 min-w-0 sm:h-64">
+        <div className="grid min-w-0 gap-1.5 p-panel pr-5 [&>button]:w-full [&>button]:min-w-0">
         {loadErrorMessage ? (
           <div className="rounded-md border border-destructive bg-destructive-soft p-3 text-sm text-destructive">
             {loadErrorMessage}
@@ -189,7 +191,8 @@ export function CommonCodeGroupPanel({
             />
           ))
         )}
-      </div>
+        </div>
+      </ScrollArea>
     </section>
   )
 }

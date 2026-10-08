@@ -1,7 +1,6 @@
 import type { FormEventHandler } from "react"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
-import { FormSectionTitle } from "@/features/common-code/components/FormSectionTitle"
 import { PanelHeader } from "@/features/common-code/components/PanelHeader"
 import type {
   CommonCodeGroup,
@@ -14,6 +13,7 @@ import { DataGrid } from "@/shared/ui/data-grid"
 import type { DataGridColumn } from "@/shared/ui/data-grid"
 import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
+import { SectionTitle } from "@/shared/ui/section-title"
 import { Input } from "@/shared/components/ui/input"
 import { Textarea } from "@/shared/components/ui/textarea"
 
@@ -144,7 +144,7 @@ export function CommonCodeItemPanel({
           title={form.mode === "create" ? "코드 등록" : "코드 수정"}
         >
           <DefaultForm onSubmit={form.submit}>
-            <FormSectionTitle>상세 코드 정보</FormSectionTitle>
+            <SectionTitle as="h3" className="col-span-full">상세 코드 정보</SectionTitle>
 
             <Field label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
               <Input
