@@ -4,11 +4,8 @@ import type { UseFormRegisterReturn } from "react-hook-form"
 import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
 import { Checkbox } from "@/shared/components/ui/checkbox"
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/shared/components/ui/field"
+import { DefaultForm } from "@/shared/layout/default-form"
+import { Field } from "@/shared/ui/field"
 import { Input } from "@/shared/components/ui/input"
 import { Textarea } from "@/shared/components/ui/textarea"
 import { Button } from "@/shared/ui/button"
@@ -98,37 +95,32 @@ export function CommonCodeGroupPanel({
       </div>
 
       {form.mode ? (
-        <form
-          className="grid gap-4 border-b border-border bg-surface-soft p-4"
+        <DefaultForm
+          className="border-b border-border bg-surface-soft p-4"
           onSubmit={form.submit}
         >
-          <div className="text-sm font-semibold text-foreground">
+          <div className="@md:col-span-2 @4xl:col-span-4 text-sm font-semibold text-foreground">
             {form.mode === "create" ? "그룹 등록" : "그룹 수정"}
           </div>
 
-          <Field data-invalid={Boolean(form.errors.code)}>
-            <FieldLabel htmlFor="common-code-group-code">그룹 코드</FieldLabel>
+          <Field label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
             <Input
               id="common-code-group-code"
               {...form.fields.code}
               readOnly={form.mode === "edit"}
               aria-invalid={Boolean(form.errors.code)}
             />
-            <FieldError>{form.errors.code}</FieldError>
           </Field>
 
-          <Field data-invalid={Boolean(form.errors.name)}>
-            <FieldLabel htmlFor="common-code-group-name">그룹명</FieldLabel>
+          <Field label="그룹명" htmlFor="common-code-group-name" error={form.errors.name}>
             <Input
               id="common-code-group-name"
               {...form.fields.name}
               aria-invalid={Boolean(form.errors.name)}
             />
-            <FieldError>{form.errors.name}</FieldError>
           </Field>
 
-          <Field>
-            <FieldLabel htmlFor="common-code-group-description">설명</FieldLabel>
+          <Field label="설명" htmlFor="common-code-group-description" className="@md:col-span-2 @4xl:col-span-4">
             <Textarea
               id="common-code-group-description"
               {...form.fields.description}
@@ -136,34 +128,26 @@ export function CommonCodeGroupPanel({
             />
           </Field>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Field data-invalid={Boolean(form.errors.sortOrder)}>
-              <FieldLabel htmlFor="common-code-group-sort-order">
-                정렬순서
-              </FieldLabel>
-              <Input
-                id="common-code-group-sort-order"
-                {...form.fields.sortOrder}
-                type="number"
-                min={0}
-                aria-invalid={Boolean(form.errors.sortOrder)}
-              />
-              <FieldError>{form.errors.sortOrder}</FieldError>
-            </Field>
+          <Field label="정렬순서" htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
+            <Input
+              id="common-code-group-sort-order"
+              {...form.fields.sortOrder}
+              type="number"
+              min={0}
+              aria-invalid={Boolean(form.errors.sortOrder)}
+            />
+          </Field>
 
-            <Field orientation="horizontal">
-              <Checkbox
-                id="common-code-group-enabled"
-                checked={form.fields.enabled.checked}
-                onCheckedChange={(checked) =>
-                  form.fields.enabled.onCheckedChange(checked === true)
-                }
-              />
-              <FieldLabel htmlFor="common-code-group-enabled">사용</FieldLabel>
-            </Field>
-          </div>
-
-          <div className="flex justify-end gap-2">
+          <Field label="사용" htmlFor="common-code-group-enabled" orientation="horizontal">
+            <Checkbox
+              id="common-code-group-enabled"
+              checked={form.fields.enabled.checked}
+              onCheckedChange={(checked) =>
+                form.fields.enabled.onCheckedChange(checked === true)
+              }
+            />
+          </Field>
+          <div className="flex justify-end gap-2 @md:col-span-2 @4xl:col-span-4">
             <Button size="sm" onClick={form.cancel}>
               취소
             </Button>
@@ -176,7 +160,7 @@ export function CommonCodeGroupPanel({
               {form.isPending ? "저장 중" : "저장"}
             </Button>
           </div>
-        </form>
+        </DefaultForm>
       ) : null}
 
       <div className="grid max-h-96 gap-2 overflow-y-auto p-3">
