@@ -95,72 +95,71 @@ export function CommonCodeGroupPanel({
       </div>
 
       {form.mode ? (
-        <DefaultForm
-          className="border-b border-border bg-surface-soft p-4"
-          onSubmit={form.submit}
-        >
-          <div className="@md:col-span-2 @4xl:col-span-4 text-sm font-semibold text-foreground">
+        <div className="border-b border-border bg-surface-soft">
+          <div className="px-4 pt-4 text-sm font-semibold text-foreground">
             {form.mode === "create" ? "그룹 등록" : "그룹 수정"}
           </div>
 
-          <Field label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
-            <Input
-              id="common-code-group-code"
-              {...form.fields.code}
-              readOnly={form.mode === "edit"}
-              aria-invalid={Boolean(form.errors.code)}
-            />
-          </Field>
+          <DefaultForm onSubmit={form.submit}>
+            <Field label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
+              <Input
+                id="common-code-group-code"
+                {...form.fields.code}
+                readOnly={form.mode === "edit"}
+                aria-invalid={Boolean(form.errors.code)}
+              />
+            </Field>
 
-          <Field label="그룹명" htmlFor="common-code-group-name" error={form.errors.name}>
-            <Input
-              id="common-code-group-name"
-              {...form.fields.name}
-              aria-invalid={Boolean(form.errors.name)}
-            />
-          </Field>
+            <Field label="그룹명" htmlFor="common-code-group-name" error={form.errors.name}>
+              <Input
+                id="common-code-group-name"
+                {...form.fields.name}
+                aria-invalid={Boolean(form.errors.name)}
+              />
+            </Field>
 
-          <Field label="설명" htmlFor="common-code-group-description" className="@md:col-span-2 @4xl:col-span-4">
-            <Textarea
-              id="common-code-group-description"
-              {...form.fields.description}
-              rows={2}
-            />
-          </Field>
+            <Field label="설명" htmlFor="common-code-group-description" className="@md:col-span-2 @4xl:col-span-4">
+              <Textarea
+                id="common-code-group-description"
+                {...form.fields.description}
+                rows={2}
+              />
+            </Field>
 
-          <Field label="정렬순서" htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
-            <Input
-              id="common-code-group-sort-order"
-              {...form.fields.sortOrder}
-              type="number"
-              min={0}
-              aria-invalid={Boolean(form.errors.sortOrder)}
-            />
-          </Field>
+            <Field label="정렬순서" htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
+              <Input
+                id="common-code-group-sort-order"
+                {...form.fields.sortOrder}
+                type="number"
+                min={0}
+                aria-invalid={Boolean(form.errors.sortOrder)}
+              />
+            </Field>
 
-          <Field label="사용" htmlFor="common-code-group-enabled" orientation="horizontal">
-            <Checkbox
-              id="common-code-group-enabled"
-              checked={form.fields.enabled.checked}
-              onCheckedChange={(checked) =>
-                form.fields.enabled.onCheckedChange(checked === true)
-              }
-            />
-          </Field>
-          <div className="flex justify-end gap-2 @md:col-span-2 @4xl:col-span-4">
-            <Button size="sm" onClick={form.cancel}>
-              취소
-            </Button>
-            <Button
-              type="submit"
-              primary
-              size="sm"
-              disabled={form.isPending}
-            >
-              {form.isPending ? "저장 중" : "저장"}
-            </Button>
-          </div>
-        </DefaultForm>
+            <Field label="사용" htmlFor="common-code-group-enabled" orientation="horizontal">
+              <Checkbox
+                id="common-code-group-enabled"
+                checked={form.fields.enabled.checked}
+                onCheckedChange={(checked) =>
+                  form.fields.enabled.onCheckedChange(checked === true)
+                }
+              />
+            </Field>
+            <DefaultForm.Actions>
+              <Button size="sm" onClick={form.cancel}>
+                취소
+              </Button>
+              <Button
+                type="submit"
+                primary
+                size="sm"
+                disabled={form.isPending}
+              >
+                {form.isPending ? "저장 중" : "저장"}
+              </Button>
+            </DefaultForm.Actions>
+          </DefaultForm>
+        </div>
       ) : null}
 
       <div className="grid max-h-96 gap-2 overflow-y-auto p-3">
