@@ -149,73 +149,72 @@ export function CommonCodeItemPanel({
       </div>
 
       {form.mode ? (
-        <DefaultForm
-          className="border-b border-border bg-surface-soft p-4"
-          onSubmit={form.submit}
-        >
-          <div className="@md:col-span-2 @4xl:col-span-4 text-sm font-semibold text-foreground">
+        <div className="border-b border-border bg-surface-soft">
+          <div className="px-4 pt-4 text-sm font-semibold text-foreground">
             {form.mode === "create" ? "코드 등록" : "코드 수정"}
           </div>
 
-          <Field label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
-            <Input
-              id="common-code-item-code"
-              {...form.fields.code}
-              readOnly={form.mode === "edit"}
-              aria-invalid={Boolean(form.errors.code)}
-            />
-          </Field>
+          <DefaultForm onSubmit={form.submit}>
+            <Field label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
+              <Input
+                id="common-code-item-code"
+                {...form.fields.code}
+                readOnly={form.mode === "edit"}
+                aria-invalid={Boolean(form.errors.code)}
+              />
+            </Field>
 
-          <Field label="코드명" htmlFor="common-code-item-name" error={form.errors.name}>
-            <Input
-              id="common-code-item-name"
-              {...form.fields.name}
-              aria-invalid={Boolean(form.errors.name)}
-            />
-          </Field>
+            <Field label="코드명" htmlFor="common-code-item-name" error={form.errors.name}>
+              <Input
+                id="common-code-item-name"
+                {...form.fields.name}
+                aria-invalid={Boolean(form.errors.name)}
+              />
+            </Field>
 
-          <Field label="설명" htmlFor="common-code-item-description" className="@md:col-span-2">
-            <Textarea
-              id="common-code-item-description"
-              {...form.fields.description}
-              rows={2}
-            />
-          </Field>
+            <Field label="설명" htmlFor="common-code-item-description" className="@md:col-span-2">
+              <Textarea
+                id="common-code-item-description"
+                {...form.fields.description}
+                rows={2}
+              />
+            </Field>
 
-          <Field label="정렬순서" htmlFor="common-code-item-sort-order" error={form.errors.sortOrder}>
-            <Input
-              id="common-code-item-sort-order"
-              {...form.fields.sortOrder}
-              type="number"
-              min={0}
-              aria-invalid={Boolean(form.errors.sortOrder)}
-            />
-          </Field>
+            <Field label="정렬순서" htmlFor="common-code-item-sort-order" error={form.errors.sortOrder}>
+              <Input
+                id="common-code-item-sort-order"
+                {...form.fields.sortOrder}
+                type="number"
+                min={0}
+                aria-invalid={Boolean(form.errors.sortOrder)}
+              />
+            </Field>
 
-          <Field label="사용" htmlFor="common-code-item-enabled" orientation="horizontal">
-            <Checkbox
-              id="common-code-item-enabled"
-              checked={form.fields.enabled.checked}
-              onCheckedChange={(checked) =>
-                form.fields.enabled.onCheckedChange(checked === true)
-              }
-            />
-          </Field>
+            <Field label="사용" htmlFor="common-code-item-enabled" orientation="horizontal">
+              <Checkbox
+                id="common-code-item-enabled"
+                checked={form.fields.enabled.checked}
+                onCheckedChange={(checked) =>
+                  form.fields.enabled.onCheckedChange(checked === true)
+                }
+              />
+            </Field>
 
-          <div className="flex justify-end gap-2 @md:col-span-2 @4xl:col-span-4">
-            <Button size="sm" onClick={form.cancel}>
-              취소
-            </Button>
-            <Button
-              type="submit"
-              primary
-              size="sm"
-              disabled={form.isPending}
-            >
-              {form.isPending ? "저장 중" : "저장"}
-            </Button>
-          </div>
-        </DefaultForm>
+            <DefaultForm.Actions>
+              <Button size="sm" onClick={form.cancel}>
+                취소
+              </Button>
+              <Button
+                type="submit"
+                primary
+                size="sm"
+                disabled={form.isPending}
+              >
+                {form.isPending ? "저장 중" : "저장"}
+              </Button>
+            </DefaultForm.Actions>
+          </DefaultForm>
+        </div>
       ) : null}
 
       <div className="p-4">
