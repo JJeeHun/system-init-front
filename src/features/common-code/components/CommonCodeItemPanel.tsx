@@ -6,6 +6,7 @@ import type {
   CommonCodeItem,
 } from "@/features/common-code/types/common-code.types"
 import { Checkbox } from "@/shared/components/ui/checkbox"
+import { DefaultForm } from "@/shared/layout/default-form"
 import { Field } from "@/shared/ui/field"
 import { Input } from "@/shared/components/ui/input"
 import { Textarea } from "@/shared/components/ui/textarea"
@@ -148,11 +149,11 @@ export function CommonCodeItemPanel({
       </div>
 
       {form.mode ? (
-        <form
-          className="grid gap-4 border-b border-border bg-surface-soft p-4 md:grid-cols-2"
+        <DefaultForm
+          className="border-b border-border bg-surface-soft p-4"
           onSubmit={form.submit}
         >
-          <div className="md:col-span-2 text-sm font-semibold text-foreground">
+          <div className="@md:col-span-2 @4xl:col-span-4 text-sm font-semibold text-foreground">
             {form.mode === "create" ? "코드 등록" : "코드 수정"}
           </div>
 
@@ -173,7 +174,7 @@ export function CommonCodeItemPanel({
             />
           </Field>
 
-          <Field label="설명" htmlFor="common-code-item-description" className="md:col-span-2">
+          <Field label="설명" htmlFor="common-code-item-description" className="@md:col-span-2">
             <Textarea
               id="common-code-item-description"
               {...form.fields.description}
@@ -201,7 +202,7 @@ export function CommonCodeItemPanel({
             />
           </Field>
 
-          <div className="flex justify-end gap-2 md:col-span-2">
+          <div className="flex justify-end gap-2 @md:col-span-2 @4xl:col-span-4">
             <Button size="sm" onClick={form.cancel}>
               취소
             </Button>
@@ -214,7 +215,7 @@ export function CommonCodeItemPanel({
               {form.isPending ? "저장 중" : "저장"}
             </Button>
           </div>
-        </form>
+        </DefaultForm>
       ) : null}
 
       <div className="p-4">
