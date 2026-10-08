@@ -6,11 +6,7 @@ import type {
   CommonCodeItem,
 } from "@/features/common-code/types/common-code.types"
 import { Checkbox } from "@/shared/components/ui/checkbox"
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/shared/components/ui/field"
+import { Field } from "@/shared/ui/field"
 import { Input } from "@/shared/components/ui/input"
 import { Textarea } from "@/shared/components/ui/textarea"
 import { Button } from "@/shared/ui/button"
@@ -160,29 +156,24 @@ export function CommonCodeItemPanel({
             {form.mode === "create" ? "코드 등록" : "코드 수정"}
           </div>
 
-          <Field data-invalid={Boolean(form.errors.code)}>
-            <FieldLabel htmlFor="common-code-item-code">코드</FieldLabel>
+          <Field label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
             <Input
               id="common-code-item-code"
               {...form.fields.code}
               readOnly={form.mode === "edit"}
               aria-invalid={Boolean(form.errors.code)}
             />
-            <FieldError>{form.errors.code}</FieldError>
           </Field>
 
-          <Field data-invalid={Boolean(form.errors.name)}>
-            <FieldLabel htmlFor="common-code-item-name">코드명</FieldLabel>
+          <Field label="코드명" htmlFor="common-code-item-name" error={form.errors.name}>
             <Input
               id="common-code-item-name"
               {...form.fields.name}
               aria-invalid={Boolean(form.errors.name)}
             />
-            <FieldError>{form.errors.name}</FieldError>
           </Field>
 
-          <Field className="md:col-span-2">
-            <FieldLabel htmlFor="common-code-item-description">설명</FieldLabel>
+          <Field label="설명" htmlFor="common-code-item-description" className="md:col-span-2">
             <Textarea
               id="common-code-item-description"
               {...form.fields.description}
@@ -190,10 +181,7 @@ export function CommonCodeItemPanel({
             />
           </Field>
 
-          <Field data-invalid={Boolean(form.errors.sortOrder)}>
-            <FieldLabel htmlFor="common-code-item-sort-order">
-              정렬순서
-            </FieldLabel>
+          <Field label="정렬순서" htmlFor="common-code-item-sort-order" error={form.errors.sortOrder}>
             <Input
               id="common-code-item-sort-order"
               {...form.fields.sortOrder}
@@ -201,10 +189,9 @@ export function CommonCodeItemPanel({
               min={0}
               aria-invalid={Boolean(form.errors.sortOrder)}
             />
-            <FieldError>{form.errors.sortOrder}</FieldError>
           </Field>
 
-          <Field orientation="horizontal">
+          <Field label="사용" htmlFor="common-code-item-enabled" orientation="horizontal">
             <Checkbox
               id="common-code-item-enabled"
               checked={form.fields.enabled.checked}
@@ -212,7 +199,6 @@ export function CommonCodeItemPanel({
                 form.fields.enabled.onCheckedChange(checked === true)
               }
             />
-            <FieldLabel htmlFor="common-code-item-enabled">사용</FieldLabel>
           </Field>
 
           <div className="flex justify-end gap-2 md:col-span-2">
