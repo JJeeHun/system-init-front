@@ -3,7 +3,7 @@ import type { UseFormRegisterReturn } from "react-hook-form"
 
 import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
-import { Checkbox } from "@/shared/components/ui/checkbox"
+import { Switch } from "@/shared/components/ui/switch"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
 import { Dialog } from "@/shared/ui/dialog"
@@ -147,12 +147,10 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
         </Field>
 
         <Field label="사용" htmlFor="common-code-group-enabled" orientation="horizontal">
-          <Checkbox
+          <Switch
             id="common-code-group-enabled"
             checked={form.fields.enabled.checked}
-            onCheckedChange={(checked) =>
-              form.fields.enabled.onCheckedChange(checked === true)
-            }
+            onCheckedChange={form.fields.enabled.onCheckedChange}
           />
         </Field>
 
