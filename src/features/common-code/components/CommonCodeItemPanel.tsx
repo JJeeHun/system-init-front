@@ -1,7 +1,6 @@
 import type { FormEventHandler } from "react"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
-import { PanelHeader } from "@/features/common-code/components/PanelHeader"
 import type {
   CommonCodeGroup,
   CommonCodeItem,
@@ -13,7 +12,7 @@ import { DataGrid } from "@/shared/ui/data-grid"
 import type { DataGridColumn } from "@/shared/ui/data-grid"
 import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
-import { SectionTitle } from "@/shared/ui/section-title"
+import { Panel } from "@/shared/ui/panel"
 import { Input } from "@/shared/components/ui/input"
 import { Textarea } from "@/shared/components/ui/textarea"
 
@@ -101,8 +100,8 @@ export function CommonCodeItemPanel({
       : "코드 그룹을 선택해주세요."
 
   return (
-    <section className="min-w-0 rounded-lg border border-border bg-card shadow-panel">
-      <PanelHeader
+    <Panel>
+      <Panel.Header
         title="상세 코드"
         description={group ? `${group.code} · ${group.name}` : "Detail · 고정 2Depth"}
         errorMessage={form.mode ? null : form.errorMessage}
@@ -144,8 +143,6 @@ export function CommonCodeItemPanel({
           title={form.mode === "create" ? "코드 등록" : "코드 수정"}
         >
           <DefaultForm onSubmit={form.submit}>
-            <SectionTitle as="h3" className="col-span-full">상세 코드 정보</SectionTitle>
-
             <Field label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
               <Input
                 id="common-code-item-code"
@@ -214,7 +211,7 @@ export function CommonCodeItemPanel({
         </Dialog>
       ) : null}
 
-      <div className="min-w-0 p-panel">
+      <Panel.Content>
         <DataGrid
           rows={items}
           columns={columns}
@@ -224,7 +221,7 @@ export function CommonCodeItemPanel({
           selectedRowKey={selectedItem?.id ?? null}
           onRowClick={onSelect}
         />
-      </div>
-    </section>
+      </Panel.Content>
+    </Panel>
   )
 }
