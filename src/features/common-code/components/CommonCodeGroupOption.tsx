@@ -15,20 +15,20 @@ export function CommonCodeGroupOption({
   return (
     <Button
       primary={selected}
-      size="md"
+      size="sm"
       onClick={() => onSelect(group)}
+      title={group.description || undefined}
     >
-      <span className="grid min-w-0 w-full gap-1 whitespace-normal text-left">
-        <span className="flex items-center justify-between gap-2">
-          <strong>{group.name}</strong>
-          <span className={group.enabled ? "text-success" : "text-foreground-faint"}>
-            {group.enabled ? "사용" : "미사용"}
+      <span className="flex min-w-0 w-full items-center justify-between gap-2 text-left">
+        <span className="flex min-w-0 items-baseline gap-2">
+          <strong className="min-w-0 truncate">{group.name}</strong>
+          <span className="min-w-0 truncate text-xs font-normal opacity-75">
+            {group.code}
           </span>
         </span>
-        <span>{group.code}</span>
-        {group.description ? (
-          <span className="line-clamp-2 font-normal">{group.description}</span>
-        ) : null}
+        <span className="shrink-0 text-xs font-normal">
+          {group.enabled ? "사용" : "미사용"}
+        </span>
       </span>
     </Button>
   )
