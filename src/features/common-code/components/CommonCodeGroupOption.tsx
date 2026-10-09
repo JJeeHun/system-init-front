@@ -1,3 +1,4 @@
+import { useTranslation } from "@/shared/i18n"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
 import { Button } from "@/shared/ui/button"
 
@@ -12,6 +13,7 @@ export function CommonCodeGroupOption({
   selected,
   onSelect,
 }: CommonCodeGroupOptionProps) {
+  const { t } = useTranslation()
   return (
     <Button
       primary={selected}
@@ -27,7 +29,7 @@ export function CommonCodeGroupOption({
           </span>
         </span>
         <span className="shrink-0 text-xs font-normal">
-          {group.enabled ? "사용" : "미사용"}
+          {t(group.enabled ? "common:labels.enabled" : "common:labels.disabled")}
         </span>
       </span>
     </Button>

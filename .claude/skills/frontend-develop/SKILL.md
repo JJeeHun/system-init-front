@@ -102,6 +102,19 @@ env 또는 환경 설정 값을 사용하는 작업이면 `config.md`를 확인�
 테스트를 작성·실행·수정·삭제하거나 테스트 실패를 판단하는 작업이면 `testing.md`를 확인한다.
 API·Feature Hook의 오류를 정의하거나 처리하거나 전역 메시지 정책을 다루는 작업이면 `error-handling.md`를 확인한다.
 
+## i18n 개발 규칙 (필수)
+
+- 범용 관리자 화면의 시스템 문구는 `i18next` + `react-i18next`를 이용한 프론트 JSON 리소스로 관리한다. 다국어 관리용 DB·CRUD·조회 API를 만들지 않는다.
+- Namespace는 업무 기능(Feature) 소유권 기준으로 구분한다. 예: `common`, `auth`, `user`, `role`, `navigation`, `common-code`. 여러 Feature에서 의미까지 동일한 공통 문구만 `common`을 쓴다.
+- Key는 원문이 아닌 의미 중심 영어 camelCase로 정의한다. `namespace:section.element` 형식과 2~4단계 깊이를 따른다. 예: `common:actions.save`, `auth:login.title`, `common-code:group.fields.code`.
+- 한국어(`ko`)와 영어(`en`) 번역 리소스는 `src/shared/i18n/locales/{lang}/{namespace}.json`에 정의한다. 기본 언어와 누락 키 폴백은 한국어로 한다. 언어별 키 목록은 일치시킨다.
+- 메뉴/페이지/폼 라벨/플레이스홀더/Validation/Toast/Dialog/로딩/오류/aria-label·title 등 사용자에게 보이는 **시스템 문구**는 번역 키를 사용한다. 동적 업무 데이터나 사용자 입력 텍스트는 번역하지 않는다.
+- 공통 컴포넌트 내부 기본 문구는 `common`에서 번역한다. Feature 문구는 해당 Feature가 번역하여 props로 넘긴다. 정적 시스템 메뉴는 `labelKey`를 사용하고 서버/사용자 정의 표시명에는 번역 폴백을 유지한다.
+- RHF/Zod 검증 메시지는 의미별 키와 보간값을 사용하고 언어 변경 중 이미 표시된 오류도 갱신한다. API/AppError는 오류 코드를 그대로 유지하고 UI/글로벌 오류 표시 경계에서 코드 → i18n 키로 변환한다.
+- 동적 문장 결합을 지양하고 변수 보간·복수형 규칙을 이용한다. 날짜·숫자·통화는 Intl 기반 locale-aware formatting을 사용한다.
+- 번역 키의 중복·누락·폴백, 한국어/영어 화면 반영 및 주요 메뉴/Validation 시나리오를 검증한다. 새 작업의 i18n 적용을 이유로 무관한 기존 화면까지 일괄 수정하지 않는다.
+- 확정 정책과 상세 기준은 Notion `system-init-front / 범용 관리자 프론트엔드 베이스 — 기능 로드맵·구조·i18n·API 연동 원칙` 문서 6.1절을 참고한다.
+
 ## 작업 방식
 
 개발 작업은 **요구사항 확인 → 필요한 코드 추적 → 구현 → 사용자 동작 검증 → 요청사항 대조 → 결과 보고** 순서로 수행하며, 어느 단계도 생략하지 않는다.

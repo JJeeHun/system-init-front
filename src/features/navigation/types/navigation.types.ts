@@ -15,6 +15,7 @@ export type NavigationIconKey =
 export type NavigationMenuItem = {
   id: string
   label: string
+  labelKey?: string
   path?: string
   icon?: NavigationIconKey
   children?: NavigationMenuItem[]

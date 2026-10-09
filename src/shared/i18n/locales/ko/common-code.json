@@ -1,0 +1,69 @@
+{
+  "page": {
+    "category": "기준정보",
+    "title": "공통코드 관리",
+    "description": "그룹과 상세코드를 Master / Detail 고정 2단계로 관리합니다."
+  },
+  "group": {
+    "title": "코드 그룹",
+    "description": "Master · 고정 1Depth",
+    "loading": "코드 그룹을 불러오는 중",
+    "empty": "등록된 코드 그룹이 없습니다.",
+    "create": "그룹 등록",
+    "edit": "그룹 수정",
+    "delete": "그룹 삭제",
+    "deleteConfirm": "\"{{name}}\" 그룹을 삭제하시겠습니까?",
+    "fields": {
+      "code": "그룹 코드",
+      "name": "그룹명"
+    }
+  },
+  "item": {
+    "title": "상세 코드",
+    "description": "Detail · 고정 2Depth",
+    "empty": "등록된 하위 코드가 없습니다.",
+    "chooseGroup": "코드 그룹을 선택해주세요.",
+    "create": "코드 등록",
+    "edit": "코드 수정",
+    "delete": "상세 코드 삭제",
+    "deleteConfirm": "\"{{name}}\" 코드를 삭제하시겠습니까?",
+    "fields": {
+      "code": "코드",
+      "name": "코드명"
+    }
+  },
+  "fields": {
+    "description": "설명",
+    "sortOrder": "정렬순서",
+    "order": "순서",
+    "enabled": "사용"
+  },
+  "validation": {
+    "groupCodeRequired": "그룹 코드를 입력해주세요.",
+    "groupNameRequired": "그룹명을 입력해주세요.",
+    "itemCodeRequired": "코드를 입력해주세요.",
+    "itemNameRequired": "코드명을 입력해주세요.",
+    "sortOrderRequired": "정렬순서를 입력해주세요.",
+    "sortOrderMin": "정렬순서는 0 이상이어야 합니다."
+  },
+  "messages": {
+    "groupCreated": "코드 그룹이 등록되었습니다.",
+    "groupUpdated": "코드 그룹이 수정되었습니다.",
+    "groupDeleted": "코드 그룹이 삭제되었습니다.",
+    "itemCreated": "상세 코드가 등록되었습니다.",
+    "itemUpdated": "상세 코드가 수정되었습니다.",
+    "itemDeleted": "상세 코드가 삭제되었습니다."
+  },
+  "errors": {
+    "groupCodeRequired": "그룹 코드를 입력해주세요.",
+    "groupNameRequired": "그룹명을 입력해주세요.",
+    "groupDuplicate": "이미 등록된 그룹 코드입니다.",
+    "groupNotFound": "공통코드 그룹을 찾을 수 없습니다.",
+    "groupHasItems": "하위 코드가 있는 그룹은 삭제할 수 없습니다.",
+    "itemGroupNotFound": "공통코드 그룹을 찾을 수 없습니다.",
+    "itemCodeRequired": "코드를 입력해주세요.",
+    "itemNameRequired": "코드명을 입력해주세요.",
+    "itemDuplicate": "선택한 그룹에 이미 등록된 코드입니다.",
+    "itemNotFound": "공통코드를 찾을 수 없습니다."
+  }
+}

@@ -1,3 +1,5 @@
+import { i18n } from "@/shared/i18n"
+
 export type DialogOptions = {
   title?: string
   description: string
@@ -32,10 +34,10 @@ function request(kind: DialogRequest["kind"], options: string | DialogOptions): 
   return new Promise<boolean>((resolve) => {
     active = {
       kind,
-      title: normalized.title ?? (kind === "alert" ? "알림" : "확인"),
+      title: normalized.title ?? (i18n.t(kind === "alert" ? "common:dialog.alertTitle" : "common:dialog.confirmTitle")),
       description: normalized.description,
-      confirmLabel: normalized.confirmLabel ?? "확인",
-      cancelLabel: normalized.cancelLabel ?? "취소",
+      confirmLabel: normalized.confirmLabel ?? i18n.t("common:actions.confirm"),
+      cancelLabel: normalized.cancelLabel ?? i18n.t("common:actions.cancel"),
       destructive: normalized.destructive ?? false,
     }
     resolveActive = resolve

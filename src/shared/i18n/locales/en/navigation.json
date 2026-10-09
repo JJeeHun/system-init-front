@@ -1,0 +1,63 @@
+{
+  "menu": {
+    "master": "Master Data",
+    "master-base": "Master Data",
+    "common-code": "Common Codes",
+    "item": "Item Management",
+    "user": "User Management",
+    "inbound": "Inbound",
+    "inbound-work": "Inbound Operations",
+    "inbound-plan": "Inbound Plan",
+    "inbound-receipt": "Receiving",
+    "outbound": "Outbound",
+    "outbound-work": "Outbound Operations",
+    "outbound-order": "Outbound Orders",
+    "outbound-shipping": "Shipping",
+    "inventory": "Inventory",
+    "inventory-dashboard": "Dashboard",
+    "operations-dashboard": "Operations Dashboard",
+    "operations-monitoring": "Operations Monitoring",
+    "inventory-search": "Inventory Lookup",
+    "inventory-status": "Inventory Status",
+    "inventory-lot": "Inventory by LOT",
+    "operations": "Operations",
+    "operations-system": "Operations Settings",
+    "operations-center": "Center Settings",
+    "operations-log": "Activity History",
+    "ui-playground": "UI Playground"
+  },
+  "header": {
+    "homeLink": "Go to home",
+    "primaryMenu": "Main navigation",
+    "menuLoading": "Loading menus",
+    "userLoadFailed": "Unable to load user details",
+    "mobileOpen": "Open sidebar"
+  },
+  "sidebar": {
+    "label": "Sidebar",
+    "close": "Close sidebar",
+    "collapse": "Collapse desktop sidebar",
+    "expand": "Expand desktop sidebar",
+    "collapseHint": "Collapse sidebar",
+    "expandHint": "Expand sidebar",
+    "subMenu": "{{title}} submenu",
+    "loading": "Loading sidebar menus",
+    "fallbackTitle": "Menu"
+  },
+  "layout": {
+    "loading": "Preparing page menu",
+    "loadingDescription": "Loading menu information.",
+    "loadFailed": "Could not load menu information."
+  },
+  "tabs": {
+    "label": "Open page tabs",
+    "title": "Open pages",
+    "preview": "Page tab preview"
+  },
+  "page": {
+    "notFound": "Menu not found",
+    "notFoundDescription": "Check whether this menu is available to your account.",
+    "placeholderDescription": "This is a placeholder screen linked to menu routing and access.",
+    "placeholderBody": "Build the actual business UI in the corresponding Feature."
+  }
+}

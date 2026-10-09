@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { format, isValid, parseISO } from "date-fns"
-import { ko } from "date-fns/locale"
+import { enUS, ko } from "date-fns/locale"
+import { useTranslation } from "@/shared/i18n"
 import { CalendarDaysIcon } from "lucide-react"
 import { cn } from "cn"
 
@@ -27,12 +28,13 @@ export function DatePicker({
   value,
   onValueChange,
   presentation = "calendar",
-  placeholder = "날짜 선택",
+  placeholder,
   disabled,
   id,
   "aria-label": ariaLabel,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false)
+  const { t, i18n } = useTranslation()
 
   if (presentation === "native") {
     return (
@@ -65,13 +67,13 @@ export function DatePicker({
           )}
         >
           <CalendarDaysIcon aria-hidden="true" />
-          {selectedDate ? format(selectedDate, "yyyy.MM.dd") : placeholder}
+          {selectedDate ? format(selectedDate, "yyyy.MM.dd") : (placeholder ?? t("common:states.datePlaceholder"))}
         </Button>
       </PopoverTrigger>
       <PopoverContent align="start" className="w-auto p-0">
         <Calendar
           mode="single"
-          locale={ko}
+          locale={i18n.resolvedLanguage === "en" ? enUS : ko}
           selected={selectedDate}
           onSelect={(date) => {
             if (!date) return

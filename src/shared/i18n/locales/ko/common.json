@@ -1,0 +1,41 @@
+{
+  "actions": {
+    "save": "저장",
+    "cancel": "취소",
+    "edit": "수정",
+    "delete": "삭제",
+    "confirm": "확인",
+    "retry": "다시 시도",
+    "deleting": "삭제 중"
+  },
+  "dialog": {
+    "alertTitle": "알림",
+    "confirmTitle": "확인"
+  },
+  "labels": {
+    "required": "필수",
+    "enabled": "사용",
+    "disabled": "미사용"
+  },
+  "validation": {
+    "required": "{{field}}을(를) 입력해주세요.",
+    "minimum": "{{field}}은(는) {{min}} 이상이어야 합니다."
+  },
+  "messages": {
+    "saveSuccess": "저장되었습니다.",
+    "requestFailure": "요청을 처리하지 못했습니다. 다시 시도해주세요."
+  },
+  "states": {
+    "loading": "데이터를 불러오는 중",
+    "empty": "표시할 데이터가 없습니다.",
+    "errorTitle": "오류가 발생했습니다",
+    "searchPlaceholder": "검색어 입력",
+    "clearSearch": "검색어 초기화",
+    "datePlaceholder": "날짜 선택",
+    "gridLoading": "데이터를 불러오는 중"
+  },
+  "language": {
+    "switchToEnglish": "영어로 변경",
+    "switchToKorean": "한국어로 변경"
+  }
+}

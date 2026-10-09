@@ -1,6 +1,7 @@
 import { memo } from "react"
 import { Boxes, MapPin, Menu } from "lucide-react"
 import { Link } from "react-router-dom"
+import { i18n, useTranslation } from "@/shared/i18n"
 
 import { getFirstMenuPath } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
@@ -33,6 +34,7 @@ export const Header = memo(function Header({
   onRootSelect,
   onOpenSidebar,
 }: HeaderProps) {
+  const { t } = useTranslation()
   return (
     <header className={[
       "sticky top-0 z-[var(--z-sticky)] grid min-h-[var(--layout-header-height)] grid-cols-[minmax(0,1fr)_auto] border-b border-header-border bg-header text-header-foreground",
@@ -41,7 +43,7 @@ export const Header = memo(function Header({
         : "lg:grid-cols-[4.5rem_minmax(0,1fr)_auto]",
     ].join(" ")}>
       <div className="flex min-w-0 items-center gap-2 px-3 lg:border-r lg:border-header-border">
-        <Link to="/app" aria-label="홈으로 이동" className="flex min-w-0 items-center gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-header-active">
+        <Link to="/app" aria-label={t("navigation:header.homeLink")} className="flex min-w-0 items-center gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-header-active">
           <span className="grid size-9 shrink-0 place-items-center rounded-md bg-header-accent">
             <Boxes aria-hidden="true" className="size-5" />
           </span>
@@ -54,9 +56,9 @@ export const Header = memo(function Header({
         </Link>
       </div>
 
-      <nav className="hidden min-w-0 overflow-x-auto lg:flex" aria-label="주요 업무 메뉴">
+      <nav className="hidden min-w-0 overflow-x-auto lg:flex" aria-label={t("navigation:header.primaryMenu")}>
         {menuLoading ? (
-          <div role="status" aria-label="메뉴 불러오는 중" className="flex items-center gap-4 px-4">
+          <div role="status" aria-label={t("navigation:header.menuLoading")} className="flex items-center gap-4 px-4">
             {Array.from({ length: 3 }, (_, index) => (
               <Skeleton key={index} className="h-4 w-20 bg-header-surface-hover" />
             ))}
@@ -81,7 +83,7 @@ export const Header = memo(function Header({
                 aria-pressed={active}
                 onClick={() => onRootSelect(menu)}
               >
-                {menu.label}
+                {menu.labelKey ? t(menu.labelKey) : menu.label}
               </Button>
             </div>
           )
@@ -110,15 +112,23 @@ export const Header = memo(function Header({
             </div>
           </>
         ) : userError ? (
-          <span role="status" className="hidden text-xs text-header-muted sm:inline">사용자 정보 조회 실패</span>
+          <span role="status" className="hidden text-xs text-header-muted sm:inline">{t("navigation:header.userLoadFailed")}</span>
         ) : null}
 
+        <Button
+          header
+          size="sm"
+          onClick={() => void i18n.changeLanguage(i18n.resolvedLanguage === "en" ? "ko" : "en")}
+          aria-label={t(i18n.resolvedLanguage === "en" ? "common:language.switchToKorean" : "common:language.switchToEnglish")}
+        >
+          {i18n.resolvedLanguage === "en" ? "EN" : "KO"}
+        </Button>
         <div className="lg:hidden">
           <Button
             header
             size="sm"
             onClick={onOpenSidebar}
-            aria-label="사이드 메뉴 열기"
+            aria-label={t("navigation:header.mobileOpen")}
             aria-expanded={mobileSidebarOpen}
             aria-controls="app-sidebar"
             id="sidebar-mobile-open"

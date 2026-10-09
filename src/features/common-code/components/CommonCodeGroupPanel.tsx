@@ -1,4 +1,5 @@
 import type { FormEventHandler } from "react"
+import { useTranslation } from "@/shared/i18n"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
 import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
@@ -61,6 +62,7 @@ const GroupList = ({
   loadErrorMessage,
   onSelect,
 }: GroupListProps) => {
+  const { t } = useTranslation()
   if (loadErrorMessage) {
     return (
       <div role="alert" className="rounded-md border border-destructive bg-destructive-soft p-3 text-sm text-destructive">
@@ -71,7 +73,7 @@ const GroupList = ({
 
   if (isLoading) {
     return (
-      <div role="status" aria-label="코드 그룹을 불러오는 중" className="grid gap-2 p-2">
+      <div role="status" aria-label={t("common-code:group.loading")} className="grid gap-2 p-2">
         {Array.from({ length: 4 }, (_, index) => (
           <div key={index} className="grid gap-2 rounded-md border border-border p-3">
             <Skeleton className="h-4 w-2/3" />
@@ -85,7 +87,7 @@ const GroupList = ({
   if (groups.length === 0) {
     return (
       <div className="p-3 text-sm text-foreground-soft">
-        등록된 코드 그룹이 없습니다.
+        {t("common-code:group.empty")}
       </div>
     )
   }
@@ -105,6 +107,7 @@ const GroupList = ({
 }
 
 const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupFormProps }) => {
+  const { t } = useTranslation()
   if (!show) return null
 
   return (
@@ -113,10 +116,10 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
       onOpenChange={(open) => {
         if (!open && !form.isPending) form.cancel()
       }}
-      title={form.mode === "create" ? "그룹 등록" : "그룹 수정"}
+      title={t(form.mode === "create" ? "common-code:group.create" : "common-code:group.edit")}
     >
       <DefaultForm onSubmit={form.submit}>
-        <Field required label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
+        <Field required label={t("common-code:group.fields.code")} htmlFor="common-code-group-code" error={form.errors.code}>
           <Input
             id="common-code-group-code"
             {...form.fields.code}
@@ -125,7 +128,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
           />
         </Field>
 
-        <Field required label="그룹명" htmlFor="common-code-group-name" error={form.errors.name}>
+        <Field required label={t("common-code:group.fields.name")} htmlFor="common-code-group-name" error={form.errors.name}>
           <Input
             id="common-code-group-name"
             {...form.fields.name}
@@ -133,7 +136,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
           />
         </Field>
 
-        <Field label="설명" htmlFor="common-code-group-description" className="@md:col-span-2 @4xl:col-span-4">
+        <Field label={t("common-code:fields.description")} htmlFor="common-code-group-description" className="@md:col-span-2 @4xl:col-span-4">
           <Textarea
             id="common-code-group-description"
             {...form.fields.description}
@@ -141,7 +144,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
           />
         </Field>
 
-        <Field required label="정렬순서" htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
+        <Field required label={t("common-code:fields.sortOrder")} htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
           <Input
             id="common-code-group-sort-order"
             {...form.fields.sortOrder}
@@ -151,7 +154,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
           />
         </Field>
 
-        <Field label="사용" htmlFor="common-code-group-enabled" orientation="horizontal">
+        <Field label={t("common-code:fields.enabled")} htmlFor="common-code-group-enabled" orientation="horizontal">
           <Switch
             id="common-code-group-enabled"
             checked={form.fields.enabled.checked}
@@ -161,7 +164,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
 
         <DefaultForm.Actions>
           <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
-            취소
+            {t("common:actions.cancel")}
           </Button>
           <Button
             type="submit"
@@ -169,7 +172,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
             size="sm"
             loading={form.isPending}
           >
-            저장
+            {t("common:actions.save")}
           </Button>
         </DefaultForm.Actions>
       </DefaultForm>
@@ -185,22 +188,23 @@ export function CommonCodeGroupPanel({
   onSelect,
   form,
 }: CommonCodeGroupPanelProps) {
+  const { t } = useTranslation()
   return (
     <Panel>
       <Panel.Header
-        title="코드 그룹"
-        description="Master · 고정 1Depth"
+        title={t("common-code:group.title")}
+        description={t("common-code:group.description")}
         actions={
           <>
             <Button primary size="sm" disabled={form.isPending || form.isDeleting} onClick={form.startCreate}>
-              그룹 등록
+              {t("common-code:group.create")}
             </Button>
             <Button
               size="sm"
               disabled={!selectedGroupId || form.isPending || form.isDeleting}
               onClick={form.startEdit}
             >
-              수정
+              {t("common:actions.edit")}
             </Button>
             <Button
               error
@@ -209,7 +213,7 @@ export function CommonCodeGroupPanel({
               onClick={form.delete}
               loading={form.isDeleting}
             >
-              {form.isDeleting ? "삭제 중" : "삭제"}
+              {form.isDeleting ? t("common:actions.deleting") : t("common:actions.delete")}
             </Button>
           </>
         }
