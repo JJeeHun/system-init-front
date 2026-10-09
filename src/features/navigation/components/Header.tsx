@@ -1,6 +1,6 @@
 import { memo } from "react"
 import { Boxes, MapPin, Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react"
-import { Link, NavLink } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 import { getFirstMenuPath } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
@@ -17,6 +17,7 @@ type HeaderProps = {
   activeRootId?: string
   desktopSidebarOpen: boolean
   mobileSidebarOpen: boolean
+  onRootSelect: (menu: NavigationMenuItem) => void
   onToggleDesktopSidebar: () => void
   onOpenSidebar: () => void
 }
@@ -30,6 +31,7 @@ export const Header = memo(function Header({
   activeRootId,
   desktopSidebarOpen,
   mobileSidebarOpen,
+  onRootSelect,
   onToggleDesktopSidebar,
   onOpenSidebar,
 }: HeaderProps) {
@@ -80,18 +82,24 @@ export const Header = memo(function Header({
           if (!path) return null
           const active = menu.id === activeRootId
           return (
-            <NavLink
+            <div
               key={menu.id}
-              to={path}
               className={[
-                "flex min-w-24 items-center justify-center border-b-2 px-4 text-sm transition-colors",
+                "flex min-w-24 items-center justify-center border-b-2 px-2",
                 active
-                  ? "border-header-active bg-header-surface font-semibold text-header-foreground"
-                  : "border-transparent text-header-muted hover:bg-header-surface-hover hover:text-header-foreground",
+                  ? "border-header-active bg-header-surface"
+                  : "border-transparent",
               ].join(" ")}
             >
-              {menu.label}
-            </NavLink>
+              <Button
+                header
+                size="sm"
+                aria-pressed={active}
+                onClick={() => onRootSelect(menu)}
+              >
+                {menu.label}
+              </Button>
+            </div>
           )
         })}
       </nav>
