@@ -3,6 +3,7 @@ import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
 import { message } from "@/shared/lib/message"
+import { useTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
 
 import { commonCodeMutations, commonCodeQueries, commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
@@ -30,6 +31,7 @@ function sortItems(items: CommonCodeItem[]) {
 }
 
 export function useCommonCodeItems(groupId: string | null) {
+  const { t, i18n } = useTranslation()
   const queryClient = useQueryClient()
   const runMutation = useMutationLock()
   const itemQuery = useQuery(commonCodeQueries.items(groupId))
@@ -40,6 +42,10 @@ export function useCommonCodeItems(groupId: string | null) {
   const itemForm = useForm<CommonCodeItemFormValues>({
     defaultValues: EMPTY_ITEM_FORM,
   })
+
+  useEffect(() => {
+    if (Object.keys(itemForm.formState.errors).length > 0) void itemForm.trigger()
+  }, [i18n.resolvedLanguage])
 
   const itemEnabledField = useController({
     control: itemForm.control,
@@ -68,7 +74,7 @@ export function useCommonCodeItems(groupId: string | null) {
       setItemFormMode(null)
       itemForm.reset(EMPTY_ITEM_FORM)
       void invalidateItems(item.groupId)
-      message.success("상세 코드가 등록되었습니다.")
+      message.success(t("common-code:messages.itemCreated"))
     },
   })
 
@@ -77,7 +83,7 @@ export function useCommonCodeItems(groupId: string | null) {
     onSuccess: (item) => {
       setItemFormMode(null)
       void invalidateItems(item.groupId)
-      message.success("상세 코드가 수정되었습니다.")
+      message.success(t("common-code:messages.itemUpdated"))
     },
   })
 
@@ -87,7 +93,7 @@ export function useCommonCodeItems(groupId: string | null) {
       setSelectedItemId(null)
       setItemFormMode(null)
       if (groupId) void invalidateItems(groupId)
-      message.success("상세 코드가 삭제되었습니다.")
+      message.success(t("common-code:messages.itemDeleted"))
     },
   })
 
@@ -181,9 +187,9 @@ export function useCommonCodeItems(groupId: string | null) {
     if (!selectedItem) return
 
     const confirmed = await dialog.confirm({
-      title: "상세 코드 삭제",
-      description: `"${selectedItem.name}" 코드를 삭제하시겠습니까?`,
-      confirmLabel: "삭제",
+      title: t("common-code:item.delete"),
+      description: t("common-code:item.deleteConfirm", { name: selectedItem.name }),
+      confirmLabel: t("common:actions.delete"),
       destructive: true,
     })
     if (!confirmed) return
@@ -203,10 +209,10 @@ export function useCommonCodeItems(groupId: string | null) {
       mode: itemFormMode,
       fields: {
         code: itemForm.register("code", {
-          required: "코드를 입력해주세요.",
+          required: t("common-code:validation.itemCodeRequired"),
         }),
         name: itemForm.register("name", {
-          required: "코드명을 입력해주세요.",
+          required: t("common-code:validation.itemNameRequired"),
         }),
         description: itemForm.register("description"),
         enabled: {
@@ -214,11 +220,11 @@ export function useCommonCodeItems(groupId: string | null) {
           onCheckedChange: itemEnabledField.onChange,
         },
         sortOrder: itemForm.register("sortOrder", {
-          required: "정렬순서를 입력해주세요.",
+          required: t("common-code:validation.sortOrderRequired"),
           valueAsNumber: true,
           min: {
             value: 0,
-            message: "정렬순서는 0 이상이어야 합니다.",
+            message: t("common-code:validation.sortOrderMin"),
           },
         }),
       },

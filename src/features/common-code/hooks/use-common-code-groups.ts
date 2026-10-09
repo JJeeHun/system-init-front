@@ -1,8 +1,9 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
 import { message } from "@/shared/lib/message"
+import { useTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
 
 import { commonCodeMutations, commonCodeQueries, commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
@@ -30,6 +31,7 @@ function sortGroups(groups: CommonCodeGroup[]) {
 }
 
 export function useCommonCodeGroups() {
+  const { t, i18n } = useTranslation()
   const queryClient = useQueryClient()
   const runMutation = useMutationLock()
   const groupQuery = useQuery(commonCodeQueries.groups())
@@ -39,6 +41,10 @@ export function useCommonCodeGroups() {
   const groupForm = useForm<CommonCodeGroupFormValues>({
     defaultValues: EMPTY_GROUP_FORM,
   })
+
+  useEffect(() => {
+    if (Object.keys(groupForm.formState.errors).length > 0) void groupForm.trigger()
+  }, [i18n.resolvedLanguage])
 
   const groupEnabledField = useController({
     control: groupForm.control,
@@ -68,7 +74,7 @@ export function useCommonCodeGroups() {
       setGroupFormMode(null)
       groupForm.reset(EMPTY_GROUP_FORM)
       void invalidateGroups()
-      message.success("코드 그룹이 등록되었습니다.")
+      message.success(t("common-code:messages.groupCreated"))
     },
   })
 
@@ -77,7 +83,7 @@ export function useCommonCodeGroups() {
     onSuccess: () => {
       setGroupFormMode(null)
       void invalidateGroups()
-      message.success("코드 그룹이 수정되었습니다.")
+      message.success(t("common-code:messages.groupUpdated"))
     },
   })
 
@@ -87,7 +93,7 @@ export function useCommonCodeGroups() {
       setSelectedGroupId(null)
       setGroupFormMode(null)
       void invalidateGroups()
-      message.success("코드 그룹이 삭제되었습니다.")
+      message.success(t("common-code:messages.groupDeleted"))
     },
   })
 
@@ -159,9 +165,9 @@ export function useCommonCodeGroups() {
     if (!selectedGroup) return
 
     const confirmed = await dialog.confirm({
-      title: "그룹 삭제",
-      description: `"${selectedGroup.name}" 그룹을 삭제하시겠습니까?`,
-      confirmLabel: "삭제",
+      title: t("common-code:group.delete"),
+      description: t("common-code:group.deleteConfirm", { name: selectedGroup.name }),
+      confirmLabel: t("common:actions.delete"),
       destructive: true,
     })
     if (!confirmed) return
@@ -180,10 +186,10 @@ export function useCommonCodeGroups() {
       mode: groupFormMode,
       fields: {
         code: groupForm.register("code", {
-          required: "그룹 코드를 입력해주세요.",
+          required: t("common-code:validation.groupCodeRequired"),
         }),
         name: groupForm.register("name", {
-          required: "그룹명을 입력해주세요.",
+          required: t("common-code:validation.groupNameRequired"),
         }),
         description: groupForm.register("description"),
         enabled: {
@@ -191,11 +197,11 @@ export function useCommonCodeGroups() {
           onCheckedChange: groupEnabledField.onChange,
         },
         sortOrder: groupForm.register("sortOrder", {
-          required: "정렬순서를 입력해주세요.",
+          required: t("common-code:validation.sortOrderRequired"),
           valueAsNumber: true,
           min: {
             value: 0,
-            message: "정렬순서는 0 이상이어야 합니다.",
+            message: t("common-code:validation.sortOrderMin"),
           },
         }),
       },
