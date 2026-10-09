@@ -32,7 +32,6 @@ type CommonCodeGroupFormProps = {
   }
   isPending: boolean
   isDeleting: boolean
-  errorMessage: string | null
   startCreate: () => void
   startEdit: () => void
   cancel: () => void
@@ -154,12 +153,6 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
           />
         </Field>
 
-        {form.errorMessage ? (
-          <p role="alert" className="col-span-full text-sm text-destructive">
-            {form.errorMessage}
-          </p>
-        ) : null}
-
         <DefaultForm.Actions>
           <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
             취소
@@ -191,7 +184,6 @@ export function CommonCodeGroupPanel({
       <Panel.Header
         title="코드 그룹"
         description="Master · 고정 1Depth"
-        errorMessage={form.mode ? null : form.errorMessage}
         actions={
           <>
             <Button primary size="sm" onClick={form.startCreate}>

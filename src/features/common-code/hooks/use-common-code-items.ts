@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
+import { message } from "@/shared/lib/message"
 
 import { commonCodeMutations, commonCodeQueries, commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
 import type { CommonCodeItem, CommonCodeItemFormValues } from "@/features/common-code/types/common-code.types"
@@ -64,6 +65,7 @@ export function useCommonCodeItems(groupId: string | null) {
       setItemFormMode(null)
       itemForm.reset(EMPTY_ITEM_FORM)
       void invalidateItems(item.groupId)
+      message.success("상세 코드가 등록되었습니다.")
     },
   })
 
@@ -72,6 +74,7 @@ export function useCommonCodeItems(groupId: string | null) {
     onSuccess: (item) => {
       setItemFormMode(null)
       void invalidateItems(item.groupId)
+      message.success("상세 코드가 수정되었습니다.")
     },
   })
 
@@ -81,6 +84,7 @@ export function useCommonCodeItems(groupId: string | null) {
       setSelectedItemId(null)
       setItemFormMode(null)
       if (groupId) void invalidateItems(groupId)
+      message.success("상세 코드가 삭제되었습니다.")
     },
   })
 
@@ -222,11 +226,6 @@ export function useCommonCodeItems(groupId: string | null) {
       },
       isPending: createItemMutation.isPending || updateItemMutation.isPending,
       isDeleting: deleteItemMutation.isPending,
-      errorMessage: getErrorMessage(
-        createItemMutation.error ??
-          updateItemMutation.error ??
-          deleteItemMutation.error,
-      ),
       startCreate: startCreateItem,
       startEdit: startEditItem,
       cancel: cancelItemForm,
