@@ -10,6 +10,8 @@ import koNavigation from "@/shared/i18n/locales/ko/navigation.json"
 import enNavigation from "@/shared/i18n/locales/en/navigation.json"
 import koCommonCode from "@/shared/i18n/locales/ko/common-code.json"
 import enCommonCode from "@/shared/i18n/locales/en/common-code.json"
+import koUser from "@/shared/i18n/locales/ko/user.json"
+import enUser from "@/shared/i18n/locales/en/user.json"
 
 const LANGUAGE_STORAGE_KEY = "system-init-front.language"
 export type AppLanguage = "ko" | "en"
@@ -29,10 +31,10 @@ void translationEngine.use(initReactI18next).init({
   fallbackLng: "ko",
   supportedLngs: ["ko", "en"],
   defaultNS: "common",
-  ns: ["common", "auth", "home", "navigation", "common-code"],
+  ns: ["common", "auth", "home", "navigation", "common-code", "user"],
   resources: {
-    ko: { common: koCommon, auth: koAuth, home: koHome, navigation: koNavigation, "common-code": koCommonCode },
-    en: { common: enCommon, auth: enAuth, home: enHome, navigation: enNavigation, "common-code": enCommonCode },
+    ko: { common: koCommon, auth: koAuth, home: koHome, navigation: koNavigation, "common-code": koCommonCode, user: koUser },
+    en: { common: enCommon, auth: enAuth, home: enHome, navigation: enNavigation, "common-code": enCommonCode, user: enUser },
   },
   interpolation: { escapeValue: false },
   initAsync: false,

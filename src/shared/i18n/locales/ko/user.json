@@ -1,0 +1,67 @@
+{
+  "page": {
+    "category": "사용자·권한",
+    "title": "사용자 관리",
+    "description": "사용자 계정을 조회하고 등록·수정하거나 사용 상태를 변경합니다."
+  },
+  "filters": {
+    "keyword": "통합 검색",
+    "keywordPlaceholder": "아이디 / 이름 / 이메일",
+    "all": "전체"
+  },
+  "fields": {
+    "id": "로그인 아이디",
+    "name": "사용자명",
+    "email": "이메일",
+    "center": "소속 센터",
+    "role": "역할",
+    "status": "사용 상태"
+  },
+  "roles": {
+    "ADMIN": "관리자",
+    "STAFF": "일반 사용자"
+  },
+  "centers": {
+    "SEOUL": "서울물류센터",
+    "BUSAN": "부산물류센터"
+  },
+  "list": {
+    "title": "사용자 목록",
+    "count": "조회 결과 {{count}}건",
+    "empty": "조회된 사용자가 없습니다."
+  },
+  "actions": {
+    "create": "사용자 등록",
+    "createTitle": "사용자 등록",
+    "editTitle": "사용자 수정",
+    "disable": "사용 중지",
+    "enable": "재활성화"
+  },
+  "confirm": {
+    "disableTitle": "사용자 사용 중지",
+    "disableDescription": "{{name}} 사용자를 중지하시겠습니까?",
+    "enableTitle": "사용자 재활성화",
+    "enableDescription": "{{name}} 사용자를 다시 사용하시겠습니까?"
+  },
+  "validation": {
+    "idRequired": "로그인 아이디를 입력해주세요.",
+    "idFormat": "3~30자의 영문, 숫자, 밑줄 또는 하이픈을 사용해주세요.",
+    "nameRequired": "사용자명을 입력해주세요.",
+    "emailRequired": "이메일을 입력해주세요.",
+    "emailFormat": "올바른 이메일 주소를 입력해주세요."
+  },
+  "messages": {
+    "created": "사용자가 등록되었습니다.",
+    "updated": "사용자 정보가 수정되었습니다.",
+    "statusChanged": "사용 상태가 변경되었습니다.",
+    "loadError": "사용자 목록을 불러오지 못했습니다."
+  },
+  "errors": {
+    "invalidId": "로그인 아이디 형식이 올바르지 않습니다.",
+    "nameRequired": "사용자명을 입력해주세요.",
+    "invalidEmail": "올바른 이메일 주소를 입력해주세요.",
+    "duplicateId": "이미 등록된 로그인 아이디입니다.",
+    "duplicateEmail": "이미 등록된 이메일입니다.",
+    "notFound": "사용자 정보를 찾을 수 없습니다."
+  }
+}

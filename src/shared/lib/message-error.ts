@@ -3,6 +3,12 @@ import { message } from "@/shared/lib/message"
 import { translate } from "@/shared/i18n"
 
 const errorTranslationKeys: Record<string, string> = {
+  USER_INVALID_ID: "user:errors.invalidId",
+  USER_NAME_REQUIRED: "user:errors.nameRequired",
+  USER_INVALID_EMAIL: "user:errors.invalidEmail",
+  USER_DUPLICATE_ID: "user:errors.duplicateId",
+  USER_DUPLICATE_EMAIL: "user:errors.duplicateEmail",
+  USER_NOT_FOUND: "user:errors.notFound",
   MENU_INVALID_ID: "navigation:management.errors.invalidId",
   MENU_NAME_REQUIRED: "navigation:management.errors.nameRequired",
   MENU_INVALID_ORDER: "navigation:management.errors.invalidOrder",

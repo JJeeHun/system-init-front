@@ -1,0 +1,67 @@
+{
+  "page": {
+    "category": "Users & Permissions",
+    "title": "User Management",
+    "description": "Search, create and update user accounts and manage account status."
+  },
+  "filters": {
+    "keyword": "Search",
+    "keywordPlaceholder": "Login ID / Name / Email",
+    "all": "All"
+  },
+  "fields": {
+    "id": "Login ID",
+    "name": "Name",
+    "email": "Email",
+    "center": "Center",
+    "role": "Role",
+    "status": "Status"
+  },
+  "roles": {
+    "ADMIN": "Administrator",
+    "STAFF": "Standard User"
+  },
+  "centers": {
+    "SEOUL": "Seoul Center",
+    "BUSAN": "Busan Center"
+  },
+  "list": {
+    "title": "Users",
+    "count": "{{count}} results",
+    "empty": "No users found."
+  },
+  "actions": {
+    "create": "Add User",
+    "createTitle": "Add User",
+    "editTitle": "Edit User",
+    "disable": "Disable",
+    "enable": "Reactivate"
+  },
+  "confirm": {
+    "disableTitle": "Disable User",
+    "disableDescription": "Disable the account for {{name}}?",
+    "enableTitle": "Reactivate User",
+    "enableDescription": "Reactivate the account for {{name}}?"
+  },
+  "validation": {
+    "idRequired": "Enter a login ID.",
+    "idFormat": "Use 3–30 letters, digits, underscores or hyphens.",
+    "nameRequired": "Enter a name.",
+    "emailRequired": "Enter an email address.",
+    "emailFormat": "Enter a valid email address."
+  },
+  "messages": {
+    "created": "User created.",
+    "updated": "User updated.",
+    "statusChanged": "Account status updated.",
+    "loadError": "Could not load the user list."
+  },
+  "errors": {
+    "invalidId": "Invalid login ID.",
+    "nameRequired": "Enter a name.",
+    "invalidEmail": "Enter a valid email address.",
+    "duplicateId": "Login ID already exists.",
+    "duplicateEmail": "Email already exists.",
+    "notFound": "User not found."
+  }
+}
