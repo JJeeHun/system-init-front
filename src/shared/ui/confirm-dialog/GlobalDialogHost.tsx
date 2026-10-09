@@ -16,7 +16,7 @@ export function GlobalDialogHost() {
       confirmLabel={request.confirmLabel}
       cancelLabel={request.cancelLabel}
       showCancel={request.kind === "confirm"}
-      destructive={request.kind === "confirm"}
+      destructive={request.destructive}
       onConfirm={() => dialogStore.complete(true)}
       onOpenChange={(open) => {
         if (!open) dialogStore.complete(false)
