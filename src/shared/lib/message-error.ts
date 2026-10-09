@@ -1,6 +1,6 @@
 import { AppError } from "@/shared/lib/app-error"
 import { message } from "@/shared/lib/message"
-import { i18n } from "@/shared/i18n"
+import { translate } from "@/shared/i18n"
 
 const errorTranslationKeys: Record<string, string> = {
   COMMON_CODE_GROUP_CODE_REQUIRED: "common-code:errors.groupCodeRequired",
@@ -17,7 +17,7 @@ const errorTranslationKeys: Record<string, string> = {
 
 export function translateAppError(error: unknown): string {
   const code = error instanceof AppError ? error.code : "UNEXPECTED_ERROR"
-  return i18n.t(errorTranslationKeys[code] ?? "common:messages.requestFailure")
+  return translate(errorTranslationKeys[code] ?? "common:messages.requestFailure")
 }
 
 export function notifyGlobalError(error: unknown) {

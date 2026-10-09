@@ -1,4 +1,4 @@
-import { i18n } from "@/shared/i18n"
+import { translate } from "@/shared/i18n"
 
 export type DialogOptions = {
   title?: string
@@ -34,10 +34,10 @@ function request(kind: DialogRequest["kind"], options: string | DialogOptions): 
   return new Promise<boolean>((resolve) => {
     active = {
       kind,
-      title: normalized.title ?? (i18n.t(kind === "alert" ? "common:dialog.alertTitle" : "common:dialog.confirmTitle")),
+      title: normalized.title ?? (translate(kind === "alert" ? "common:dialog.alertTitle" : "common:dialog.confirmTitle")),
       description: normalized.description,
-      confirmLabel: normalized.confirmLabel ?? i18n.t("common:actions.confirm"),
-      cancelLabel: normalized.cancelLabel ?? i18n.t("common:actions.cancel"),
+      confirmLabel: normalized.confirmLabel ?? translate("common:actions.confirm"),
+      cancelLabel: normalized.cancelLabel ?? translate("common:actions.cancel"),
       destructive: normalized.destructive ?? false,
     }
     resolveActive = resolve

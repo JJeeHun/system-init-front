@@ -104,7 +104,11 @@ API·Feature Hook의 오류를 정의하거나 처리하거나 전역 메시지 
 
 ## i18n 개발 규칙 (필수)
 
-- 범용 관리자 화면의 시스템 문구는 `i18next` + `react-i18next`를 이용한 프론트 JSON 리소스로 관리한다. 다국어 관리용 DB·CRUD·조회 API를 만들지 않는다.
+- 범용 관리자 화면의 시스템 문구는 현재 내부 엔진인 `i18next` + `react-i18next`와 프론트 JSON 리소스로 관리한다. 다국어 관리용 DB·CRUD·조회 API를 현재 요청 없이 추가하지 않는다.
+- **번역 사용 경계**: UI, Page, Feature Hook, shared 일반 코드는 `@/shared/i18n`의 프로젝트 API(`useAppTranslation`, `translate`, `getLanguage`, `changeLanguage`)만 사용한다. `i18next`/`react-i18next` 직접 import, `useTranslation` 직접 사용, `i18n.t`, `i18n.changeLanguage`, `i18n.resolvedLanguage` 직접 접근을 금지한다. 엔진 접근은 `src/shared/i18n` 내부 구현에서만 허용한다.
+- React 컴포넌트/Hook은 `useAppTranslation()`에서 `t`, `language`, `changeLanguage`를 얻는다. React Hook을 쓸 수 없는 일반 함수·전역 메시지 처리에서는 `translate()`, `getLanguage()`, `changeLanguage()`를 사용한다.
+- `src/shared/i18n/engine.ts`는 현재 i18next 초기화·JSON 리소스 등록·언어 저장을 담당하며, `src/shared/i18n/index.ts`는 소비자가 의존하는 공개 번역 인터페이스를 담당한다. 번역 소스가 JSON→DB 또는 혼합으로 변경되더라도 화면·Feature의 호출 계약을 유지한다. **현재 DB Provider/API/병합 구현을 미리 추가하지 않는다.**
+- 기존 테스트 호환을 위한 `i18n`/`useTranslation` 재수출은 신규 코드에서 사용하지 않는다. 테스트 수정 승인을 받은 후 제거 여부를 별도로 결정한다.
 - Namespace는 업무 기능(Feature) 소유권 기준으로 구분한다. 예: `common`, `auth`, `user`, `role`, `navigation`, `common-code`. 여러 Feature에서 의미까지 동일한 공통 문구만 `common`을 쓴다.
 - Key는 원문이 아닌 의미 중심 영어 camelCase로 정의한다. `namespace:section.element` 형식과 2~4단계 깊이를 따른다. 예: `common:actions.save`, `auth:login.title`, `common-code:group.fields.code`.
 - 한국어(`ko`)와 영어(`en`) 번역 리소스는 `src/shared/i18n/locales/{lang}/{namespace}.json`에 정의한다. 기본 언어와 누락 키 폴백은 한국어로 한다. 언어별 키 목록은 일치시킨다.
