@@ -1,4 +1,5 @@
 import { SearchIcon, XIcon } from "lucide-react"
+import { useTranslation } from "@/shared/i18n"
 
 import {
   InputGroup,
@@ -21,10 +22,11 @@ export type SearchFieldProps = {
 export function SearchField({
   value,
   onValueChange,
-  placeholder = "검색어 입력",
+  placeholder,
   disabled,
   ...inputProps
 }: SearchFieldProps) {
+  const { t } = useTranslation()
   return (
     <InputGroup data-disabled={disabled}>
       <InputGroupAddon>
@@ -35,7 +37,7 @@ export function SearchField({
         type="search"
         className="[&::-webkit-search-cancel-button]:hidden"
         value={value}
-        placeholder={placeholder}
+        placeholder={placeholder ?? t("common:states.searchPlaceholder")}
         disabled={disabled}
         onChange={(event) => onValueChange(event.target.value)}
       />
@@ -43,7 +45,7 @@ export function SearchField({
         <InputGroupAddon align="inline-end">
           <InputGroupButton
             size="icon-xs"
-            aria-label="검색어 초기화"
+            aria-label={t("common:states.clearSearch")}
             disabled={disabled}
             onClick={() => onValueChange("")}
           >

@@ -1,4 +1,5 @@
 import { AlertCircleIcon } from "lucide-react"
+import { useTranslation } from "@/shared/i18n"
 
 import {
   Empty,
@@ -19,23 +20,24 @@ export type ErrorStateProps = {
 
 export function ErrorState({
   message,
-  title = "오류가 발생했습니다",
+  title,
   onRetry,
   isRetrying = false,
 }: ErrorStateProps) {
+  const { t } = useTranslation()
   return (
     <Empty role="alert">
       <EmptyHeader>
         <EmptyMedia variant="icon">
           <AlertCircleIcon aria-hidden="true" />
         </EmptyMedia>
-        <EmptyTitle>{title}</EmptyTitle>
+        <EmptyTitle>{title ?? t("common:states.errorTitle")}</EmptyTitle>
         <EmptyDescription>{message}</EmptyDescription>
       </EmptyHeader>
       {onRetry ? (
         <EmptyContent>
           <Button onClick={onRetry} loading={isRetrying} disabled={isRetrying}>
-            다시 시도
+            {t("common:actions.retry")}
           </Button>
         </EmptyContent>
       ) : null}

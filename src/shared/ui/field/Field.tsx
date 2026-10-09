@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { useTranslation } from "@/shared/i18n"
 
 import {
   Field as ShadcnField,
@@ -28,13 +29,14 @@ export function Field({
   orientation = "vertical",
   className,
 }: FieldProps) {
+  const { t } = useTranslation()
   const fieldLabel = (
     <ShadcnFieldLabel htmlFor={htmlFor}>
       {label}
       {required ? (
         <>
           <span aria-hidden="true" className="text-destructive">*</span>
-          <span className="sr-only">필수</span>
+          <span className="sr-only">{t("common:labels.required")}</span>
         </>
       ) : null}
     </ShadcnFieldLabel>

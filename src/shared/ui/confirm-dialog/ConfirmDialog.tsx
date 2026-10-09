@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { useTranslation } from "@/shared/i18n"
 
 import {
   AlertDialog as ShadcnAlertDialog,
@@ -30,13 +31,14 @@ export function ConfirmDialog({
   title,
   description,
   onConfirm,
-  confirmLabel = "확인",
-  cancelLabel = "취소",
+  confirmLabel,
+  cancelLabel,
   showCancel = true,
   destructive = false,
   trigger,
   ...props
 }: ConfirmDialogProps) {
+  const { t } = useTranslation()
   return (
     <ShadcnAlertDialog {...props}>
       {trigger ? <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger> : null}
@@ -46,9 +48,9 @@ export function ConfirmDialog({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          {showCancel ? <AlertDialogCancel>{cancelLabel}</AlertDialogCancel> : null}
+          {showCancel ? <AlertDialogCancel>{cancelLabel ?? t("common:actions.cancel")}</AlertDialogCancel> : null}
           <AlertDialogAction variant={destructive ? "destructive" : "default"} onClick={onConfirm}>
-            {confirmLabel}
+            {confirmLabel ?? t("common:actions.confirm")}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
