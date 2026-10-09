@@ -4,9 +4,12 @@ import { fireEvent, render, screen, waitFor, within } from "@testing-library/rea
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import { describe, expect, it } from "vitest"
+import { devSettings } from "@/shared/dev-tools/settings"
 
 import { MainLayout } from "@/app/layouts/MainLayout"
 import { HomePage } from "@/pages/HomePage"
+
+const mockUiWait = { timeout: devSettings.mockDelayMs * 2 + 1000 }
 
 function renderNavigation() {
   const client = new QueryClient({
@@ -30,7 +33,7 @@ function renderNavigation() {
 describe("main navigation shell", () => {
   it("uses home as the default screen and allows desktop sidebar collapse and restore", async () => {
     renderNavigation()
-    expect(await screen.findByRole("heading", { name: "홈" })).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { name: "홈" }, mockUiWait)).toBeInTheDocument()
 
     const sidebar = screen.getByRole("complementary", { name: "사이드 메뉴" })
     const collapse = within(sidebar).getByRole("button", { name: "PC 사이드바 접기" })
@@ -57,7 +60,7 @@ describe("main navigation shell", () => {
     renderNavigation()
     const sidebar = screen.getByRole("complementary", { name: "사이드 메뉴" })
     const header = screen.getByRole("banner")
-    expect(await screen.findByRole("heading", { name: "홈" })).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { name: "홈" }, mockUiWait)).toBeInTheDocument()
 
     const system = within(header).getByRole("button", { name: "시스템 관리" })
     expect(system).toHaveAttribute("aria-pressed", "true")
@@ -73,7 +76,7 @@ describe("main navigation shell", () => {
     expect(sidebar).toHaveAttribute("data-collapsed", "true")
 
     fireEvent.click(within(header).getByRole("link", { name: "홈으로 이동" }))
-    expect(await screen.findByRole("heading", { name: "홈" })).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { name: "홈" }, mockUiWait)).toBeInTheDocument()
     expect(sidebar).toHaveAttribute("data-collapsed", "true")
     expect(system).toHaveAttribute("aria-pressed", "true")
 
@@ -113,6 +116,6 @@ describe("main navigation shell", () => {
     expect(menuButton).toHaveAttribute("aria-expanded", "false")
 
     fireEvent.click(screen.getByRole("link", { name: "홈으로 이동" }))
-    expect(await screen.findByRole("heading", { name: "홈" })).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { name: "홈" }, mockUiWait)).toBeInTheDocument()
   })
 })

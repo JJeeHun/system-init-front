@@ -9,6 +9,7 @@ import { MainLayout } from "@/app/layouts/MainLayout"
 import { MenuManagementPage } from "@/pages/MenuManagementPage"
 import { resetMockMenusForTest } from "@/features/navigation/api/navigation.mock"
 import { changeLanguage } from "@/shared/i18n"
+import { devSettings } from "@/shared/dev-tools/settings"
 
 beforeAll(() => {
   vi.stubGlobal("ResizeObserver", class {
@@ -22,6 +23,8 @@ afterEach(async () => {
   resetMockMenusForTest()
   await act(async () => { await changeLanguage("ko") })
 })
+
+const mockUiWait = { timeout: devSettings.mockDelayMs * 3 + 1000 }
 
 describe("menu management screen", () => {
   it("opens from the system menu, edits a label and reflects it in the sidebar", async () => {
@@ -38,7 +41,7 @@ describe("menu management screen", () => {
       </QueryClientProvider>,
     )
 
-    expect(await screen.findByRole("heading", { level: 1, name: "메뉴 관리" })).toBeInTheDocument()
+    expect(await screen.findByRole("heading", { level: 1, name: "메뉴 관리" }, mockUiWait)).toBeInTheDocument()
     const sidebar = screen.getByRole("complementary", { name: "사이드 메뉴" })
     expect(within(sidebar).getByRole("link", { name: "메뉴 관리" })).toHaveAttribute("aria-current", "page")
 
@@ -49,7 +52,7 @@ describe("menu management screen", () => {
     fireEvent.change(within(formDialog).getByRole("textbox", { name: /메뉴명/ }), { target: { value: "사용자 관리 변경" } })
     fireEvent.click(within(formDialog).getByRole("button", { name: "저장" }))
 
-    expect(await within(sidebar).findByRole("link", { name: "사용자 관리 변경" })).toBeInTheDocument()
+    expect(await within(sidebar).findByRole("link", { name: "사용자 관리 변경" }, mockUiWait)).toBeInTheDocument()
     expect(screen.queryByRole("dialog", { name: "메뉴 수정" })).not.toBeInTheDocument()
-  })
+  }, devSettings.mockDelayMs * 6 + 2000)
 })
