@@ -52,16 +52,19 @@ describe("menu management mock contract", () => {
   it("rejects duplicate IDs, paths, and invalid parents without corrupting the menu tree", async () => {
     vi.useFakeTimers()
     const duplicatedId = createMenu(sample({ id: "user" }))
+    const duplicatedIdRejected = expect(duplicatedId).rejects.toMatchObject({ code: "MENU_DUPLICATE_ID" })
     await vi.advanceTimersByTimeAsync(240)
-    await expect(duplicatedId).rejects.toMatchObject({ code: "MENU_DUPLICATE_ID" })
+    await duplicatedIdRejected
 
     const duplicatedPath = createMenu(sample({ path: "/app/system/menus" }))
+    const duplicatedPathRejected = expect(duplicatedPath).rejects.toMatchObject({ code: "MENU_DUPLICATE_PATH" })
     await vi.advanceTimersByTimeAsync(240)
-    await expect(duplicatedPath).rejects.toMatchObject({ code: "MENU_DUPLICATE_PATH" })
+    await duplicatedPathRejected
 
     const invalidParent = createMenu(sample({ parentId: "user" }))
+    const invalidParentRejected = expect(invalidParent).rejects.toMatchObject({ code: "MENU_INVALID_PARENT" })
     await vi.advanceTimersByTimeAsync(240)
-    await expect(invalidParent).rejects.toMatchObject({ code: "MENU_INVALID_PARENT" })
+    await invalidParentRejected
 
     const query = getMenuRecords()
     await vi.advanceTimersByTimeAsync(500)
@@ -71,20 +74,23 @@ describe("menu management mock contract", () => {
   it("prevents deleting parents, cycles, and converting parent groups into pages", async () => {
     vi.useFakeTimers()
     const remove = deleteMenu("system-settings")
+    const removeRejected = expect(remove).rejects.toMatchObject({ code: "MENU_HAS_CHILDREN" })
     await vi.advanceTimersByTimeAsync(240)
-    await expect(remove).rejects.toMatchObject({ code: "MENU_HAS_CHILDREN" })
+    await removeRejected
 
     const cycle = updateMenu({ id: "system", request: sample({
       id: "system", label: "시스템 관리", parentId: "system-settings", kind: "group", path: "",
     }) })
+    const cycleRejected = expect(cycle).rejects.toMatchObject({ code: "MENU_CYCLE" })
     await vi.advanceTimersByTimeAsync(240)
-    await expect(cycle).rejects.toMatchObject({ code: "MENU_CYCLE" })
+    await cycleRejected
 
     const conversion = updateMenu({ id: "system-settings", request: sample({
       id: "system-settings", label: "시스템 설정", parentId: "system", kind: "page",
     }) })
+    const conversionRejected = expect(conversion).rejects.toMatchObject({ code: "MENU_HAS_CHILDREN" })
     await vi.advanceTimersByTimeAsync(240)
-    await expect(conversion).rejects.toMatchObject({ code: "MENU_HAS_CHILDREN" })
+    await conversionRejected
   })
 
   it("keeps all descendants hidden when their parent is disabled and preserves built-in menu labels", async () => {
