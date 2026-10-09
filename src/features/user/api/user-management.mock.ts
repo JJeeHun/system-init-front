@@ -46,7 +46,7 @@ export function createMockUser(input: UserAccountInput): UserAccount {
 export function updateMockUser(id: string, request: Omit<UserAccountInput, "id">): UserAccount {
   const previous = users.find(user => user.id === id)
   if (!previous) throw new AppError("USER_NOT_FOUND", "User not found")
-  const updated = normalize({ ...request, id })
+  const updated = normalize({ ...request, id }, id)
   users = users.map(user => user.id === id ? updated : user)
   return { ...updated }
 }
