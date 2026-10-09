@@ -181,14 +181,14 @@ export function CommonCodeItemPanel({
             <Button
               primary
               size="sm"
-              disabled={!group}
+              disabled={!group || form.isPending || form.isDeleting}
               onClick={form.startCreate}
             >
               코드 등록
             </Button>
             <Button
               size="sm"
-              disabled={!selectedItem}
+              disabled={!selectedItem || form.isPending || form.isDeleting}
               onClick={form.startEdit}
             >
               수정
@@ -196,8 +196,9 @@ export function CommonCodeItemPanel({
             <Button
               error
               size="sm"
-              disabled={!selectedItem || form.isDeleting}
+              disabled={!selectedItem || form.isPending || form.isDeleting}
               onClick={form.delete}
+              loading={form.isDeleting}
             >
               {form.isDeleting ? "삭제 중" : "삭제"}
             </Button>

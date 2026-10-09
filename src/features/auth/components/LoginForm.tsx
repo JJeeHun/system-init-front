@@ -2,6 +2,7 @@ import type { FormEventHandler } from "react"
 import type { UseFormRegister } from "react-hook-form"
 
 import type { LoginRequest } from "@/features/auth/types/auth.types"
+import { Button } from "@/shared/ui/button"
 
 type LoginFormProps = {
   register: UseFormRegister<LoginRequest>
@@ -55,13 +56,11 @@ export function LoginForm({
           <p className="text-sm text-destructive">{errorMessage}</p>
         ) : null}
 
-        <button
-          type="submit"
-          disabled={isPending}
-          className="mt-2 inline-flex h-[var(--control-height-md)] items-center justify-center rounded-sm bg-primary px-4 text-sm font-semibold text-primary-foreground transition-opacity disabled:cursor-not-allowed disabled:opacity-60"
-        >
-          {isPending ? "로그인 중..." : "로그인"}
-        </button>
+        <div className="mt-2 grid">
+          <Button primary type="submit" loading={isPending}>
+            {isPending ? "로그인 중..." : "로그인"}
+          </Button>
+        </div>
       </div>
     </form>
   )

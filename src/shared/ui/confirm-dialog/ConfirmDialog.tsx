@@ -33,7 +33,7 @@ export function ConfirmDialog({
   confirmLabel = "확인",
   cancelLabel = "취소",
   showCancel = true,
-  destructive = true,
+  destructive = false,
   trigger,
   ...props
 }: ConfirmDialogProps) {

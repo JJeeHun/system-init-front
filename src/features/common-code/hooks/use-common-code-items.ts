@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
 import { message } from "@/shared/lib/message"
@@ -30,6 +31,7 @@ function sortItems(items: CommonCodeItem[]) {
 
 export function useCommonCodeItems(groupId: string | null) {
   const queryClient = useQueryClient()
+  const runMutation = useMutationLock()
   const itemQuery = useQuery(commonCodeQueries.items(groupId))
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
   const [itemFormMode, setItemFormMode] = useState<FormMode>(null)
@@ -152,18 +154,18 @@ export function useCommonCodeItems(groupId: string | null) {
     }
 
     if (itemFormMode === "create") {
-      createItemMutation.mutate({
+      runMutation(() => createItemMutation.mutateAsync({
         ...values,
         groupId,
         code: values.code.trim(),
         name: values.name.trim(),
         description: values.description.trim(),
-      })
+      }))
       return
     }
 
     if (itemFormMode === "edit" && selectedItem) {
-      updateItemMutation.mutate({
+      runMutation(() => updateItemMutation.mutateAsync({
         id: selectedItem.id,
         request: {
           name: values.name.trim(),
@@ -171,7 +173,7 @@ export function useCommonCodeItems(groupId: string | null) {
           enabled: values.enabled,
           sortOrder: values.sortOrder,
         },
-      })
+      }))
     }
   })
 
@@ -182,11 +184,12 @@ export function useCommonCodeItems(groupId: string | null) {
       title: "상세 코드 삭제",
       description: `"${selectedItem.name}" 코드를 삭제하시겠습니까?`,
       confirmLabel: "삭제",
+      destructive: true,
     })
     if (!confirmed) return
 
     resetItemMutationErrors()
-    deleteItemMutation.mutate(selectedItem.id)
+    runMutation(() => deleteItemMutation.mutateAsync(selectedItem.id))
   }
 
   return {

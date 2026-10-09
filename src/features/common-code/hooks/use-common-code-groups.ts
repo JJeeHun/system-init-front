@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react"
+import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
 import { message } from "@/shared/lib/message"
@@ -30,6 +31,7 @@ function sortGroups(groups: CommonCodeGroup[]) {
 
 export function useCommonCodeGroups() {
   const queryClient = useQueryClient()
+  const runMutation = useMutationLock()
   const groupQuery = useQuery(commonCodeQueries.groups())
   const [selectedGroupId, setSelectedGroupId] = useState<string | null>(null)
   const [groupFormMode, setGroupFormMode] = useState<FormMode>(null)
@@ -131,17 +133,17 @@ export function useCommonCodeGroups() {
 
   const submitGroup = groupForm.handleSubmit((values) => {
     if (groupFormMode === "create") {
-      createGroupMutation.mutate({
+      runMutation(() => createGroupMutation.mutateAsync({
         ...values,
         code: values.code.trim(),
         name: values.name.trim(),
         description: values.description.trim(),
-      })
+      }))
       return
     }
 
     if (groupFormMode === "edit" && selectedGroup) {
-      updateGroupMutation.mutate({
+      runMutation(() => updateGroupMutation.mutateAsync({
         id: selectedGroup.id,
         request: {
           name: values.name.trim(),
@@ -149,7 +151,7 @@ export function useCommonCodeGroups() {
           enabled: values.enabled,
           sortOrder: values.sortOrder,
         },
-      })
+      }))
     }
   })
 
@@ -160,11 +162,12 @@ export function useCommonCodeGroups() {
       title: "그룹 삭제",
       description: `"${selectedGroup.name}" 그룹을 삭제하시겠습니까?`,
       confirmLabel: "삭제",
+      destructive: true,
     })
     if (!confirmed) return
 
     resetGroupMutationErrors()
-    deleteGroupMutation.mutate(selectedGroup.id)
+    runMutation(() => deleteGroupMutation.mutateAsync(selectedGroup.id))
   }
 
   return {

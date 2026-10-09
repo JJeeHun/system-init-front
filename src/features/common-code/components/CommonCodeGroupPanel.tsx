@@ -4,6 +4,7 @@ import type { UseFormRegisterReturn } from "react-hook-form"
 import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
 import { Switch } from "@/shared/components/ui/switch"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
 import { Dialog } from "@/shared/ui/dialog"
@@ -70,8 +71,13 @@ const GroupList = ({
 
   if (isLoading) {
     return (
-      <div className="p-3 text-sm text-foreground-soft">
-        그룹을 불러오는 중입니다.
+      <div role="status" aria-label="코드 그룹을 불러오는 중" className="grid gap-2 p-2">
+        {Array.from({ length: 4 }, (_, index) => (
+          <div key={index} className="grid gap-2 rounded-md border border-border p-3">
+            <Skeleton className="h-4 w-2/3" />
+            <Skeleton className="h-3 w-1/3" />
+          </div>
+        ))}
       </div>
     )
   }
@@ -186,12 +192,12 @@ export function CommonCodeGroupPanel({
         description="Master · 고정 1Depth"
         actions={
           <>
-            <Button primary size="sm" onClick={form.startCreate}>
+            <Button primary size="sm" disabled={form.isPending || form.isDeleting} onClick={form.startCreate}>
               그룹 등록
             </Button>
             <Button
               size="sm"
-              disabled={!selectedGroupId}
+              disabled={!selectedGroupId || form.isPending || form.isDeleting}
               onClick={form.startEdit}
             >
               수정
@@ -199,8 +205,9 @@ export function CommonCodeGroupPanel({
             <Button
               error
               size="sm"
-              disabled={!selectedGroupId || form.isDeleting}
+              disabled={!selectedGroupId || form.isPending || form.isDeleting}
               onClick={form.delete}
+              loading={form.isDeleting}
             >
               {form.isDeleting ? "삭제 중" : "삭제"}
             </Button>
