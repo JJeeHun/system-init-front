@@ -2,13 +2,21 @@
 import "@testing-library/jest-dom/vitest"
 import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
-import { afterEach, describe, expect, it } from "vitest"
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 
 import { MainLayout } from "@/app/layouts/MainLayout"
 import { CommonCodePage } from "@/pages/CommonCodePage"
 import { HomePage } from "@/pages/HomePage"
 import { i18n } from "@/shared/i18n"
+
+beforeAll(() => {
+  vi.stubGlobal("ResizeObserver", class {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  })
+})
 
 afterEach(async () => {
   await act(async () => { await i18n.changeLanguage("ko") })
