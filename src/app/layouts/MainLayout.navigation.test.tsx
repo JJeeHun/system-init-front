@@ -37,7 +37,7 @@ describe("main navigation shell", () => {
     expect(collapse).toHaveAttribute("aria-expanded", "true")
     expect(within(sidebar).getByRole("link", { name: "공통코드" })).toBeInTheDocument()
     expect(within(sidebar).getByRole("navigation", { name: "기준정보 하위 메뉴" })).toBeInTheDocument()
-    expect(within(screen.getByRole("banner")).queryByRole("button", { name: "PC 사이드바 접기" })).not.toBeInTheDocument()
+    expect(within(screen.getAllByRole("banner")[0]).queryByRole("button", { name: "PC 사이드바 접기" })).not.toBeInTheDocument()
     expect(within(sidebar).queryByRole("link", { name: "홈" })).not.toBeInTheDocument()
     expect(screen.getByRole("link", { name: "홈으로 이동" })).toHaveAttribute("href", "/app")
 
