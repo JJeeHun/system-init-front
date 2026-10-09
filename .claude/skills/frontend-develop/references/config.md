@@ -80,3 +80,12 @@ if (config.feature.enableMock) {
 
 빌드 도구 자체의 설정 파일은 runtime application config와 별개다.
 단, `src/` 아래 애플리케이션 코드는 반드시 위 규칙을 따른다.
+
+## 영구 환경 설정과 임시 개발 도구
+
+- Vite 환경 모드 판별은 `src/shared/config/config.ts`에서만 수행한다. 화면은 `config.app.environment`와 `config.app.isProduction`을 사용한다.
+- 운영 모드에서는 환경 표시를 숨기고 비운영 모드에서만 명칭을 표시한다.
+- 현행 GitHub Pages는 시험용 배포로서 빌드 워크플로에서 `npm run build -- --mode test`를 사용한다. `vite build`의 빌드 최적화 여부와 환경 모드 `MODE`는 다르다.
+- Mock에만 적용되는 인위적 지연 등 제거 가능한 임시 설정은 `src/shared/dev-tools/settings.ts`로 집중한다. 모든 Mock API는 `src/shared/dev-tools/mock-delay.ts`의 `waitForMockDelay()`만 호출한다.
+- 모든 Mock API의 기본 지연 시간은 `devSettings.mockDelayMs` 하나로 제어한다. 개발 중 값을 변경하면 다음 API 요청부터 적용하고, 이미 배포된 정적 번들은 재빌드·재배포가 필요하다.
+- 운영 모드에서는 인위적인 Mock 지연을 0ms로 취급한다. 실제 HTTP 구현에서 Mock 지연 함수를 사용하지 않는다.

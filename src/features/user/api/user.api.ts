@@ -1,8 +1,8 @@
+import { waitForMockDelay } from "@/shared/dev-tools/mock-delay"
 import { queryOptions } from "@tanstack/react-query"
 
 import type { CurrentUser } from "@/features/user/types/user.types"
 
-const MOCK_DELAY = 500
 
 const mockCurrentUser: CurrentUser = {
   id: "admin",
@@ -12,7 +12,7 @@ const mockCurrentUser: CurrentUser = {
 }
 
 export async function getCurrentUser(): Promise<CurrentUser> {
-  await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY))
+  await waitForMockDelay()
   return mockCurrentUser
 }
 

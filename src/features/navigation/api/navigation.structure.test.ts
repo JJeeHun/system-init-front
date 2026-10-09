@@ -1,5 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
+import { devSettings } from "@/shared/dev-tools/settings"
+
 import { getNavigationMenus } from "@/features/navigation/api/navigation.api"
 import { findMenuByPath, getFirstMenuPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import koNavigation from "@/shared/i18n/locales/ko/navigation.json"
@@ -11,7 +13,7 @@ describe("administrator base navigation", () => {
   it("exposes only the four planned system screens grouped by ownership", async () => {
     vi.useFakeTimers()
     const pending = getNavigationMenus()
-    await vi.advanceTimersByTimeAsync(500)
+    await vi.advanceTimersByTimeAsync(devSettings.mockDelayMs)
     const menus = await pending
 
     expect(menus).toHaveLength(1)
@@ -32,7 +34,7 @@ describe("administrator base navigation", () => {
   it("provides a matching Korean and English label for every menu", async () => {
     vi.useFakeTimers()
     const pending = getNavigationMenus()
-    await vi.advanceTimersByTimeAsync(500)
+    await vi.advanceTimersByTimeAsync(devSettings.mockDelayMs)
     const menus = await pending
     const ids = (items: typeof menus): string[] => items.flatMap(item => [item.id, ...ids(item.children ?? [])])
     const expected = ids(menus)

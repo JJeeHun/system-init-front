@@ -37,5 +37,12 @@
   "language": {
     "switchToEnglish": "Switch to English",
     "switchToKorean": "Switch to Korean"
+  },
+  "environment": {
+    "development": "DEV",
+    "test": "TEST",
+    "staging": "STAGING",
+    "production": "PRODUCTION",
+    "current": "Environment: {{mode}}"
   }
 }
