@@ -1,7 +1,7 @@
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 
 export function OpenPageTabs() {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   return (
     <section
       aria-label={t("navigation:tabs.label")}

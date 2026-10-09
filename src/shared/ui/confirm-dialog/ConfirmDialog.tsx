@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 
 import {
   AlertDialog as ShadcnAlertDialog,
@@ -38,7 +38,7 @@ export function ConfirmDialog({
   trigger,
   ...props
 }: ConfirmDialogProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   return (
     <ShadcnAlertDialog {...props}>
       {trigger ? <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger> : null}

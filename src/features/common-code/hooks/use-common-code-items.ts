@@ -3,7 +3,7 @@ import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
 import { message } from "@/shared/lib/message"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
 
 import { commonCodeMutations, commonCodeQueries, commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
@@ -31,7 +31,7 @@ function sortItems(items: CommonCodeItem[]) {
 }
 
 export function useCommonCodeItems(groupId: string | null) {
-  const { t, i18n } = useTranslation()
+  const { t, language } = useAppTranslation()
   const queryClient = useQueryClient()
   const runMutation = useMutationLock()
   const itemQuery = useQuery(commonCodeQueries.items(groupId))
@@ -45,7 +45,7 @@ export function useCommonCodeItems(groupId: string | null) {
 
   useEffect(() => {
     if (Object.keys(itemForm.formState.errors).length > 0) void itemForm.trigger()
-  }, [i18n.resolvedLanguage])
+  }, [language])
 
   const itemEnabledField = useController({
     control: itemForm.control,

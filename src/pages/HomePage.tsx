@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import { House, ArrowRight } from "lucide-react"
 
 import { PageLayout } from "@/shared/layout/page"
@@ -7,7 +7,7 @@ import { PageHeader } from "@/shared/ui/page-header"
 import { Panel } from "@/shared/ui/panel"
 
 export function HomePage() {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   return (
     <PageLayout>
       <PageHeader title={t("home:title")} description={t("home:description")} />

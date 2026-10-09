@@ -1,4 +1,4 @@
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import { AgGridDataGrid } from "@/shared/ui/data-grid/internal/AgGridDataGrid"
 import type { DataGridProps } from "@/shared/ui/data-grid/data-grid.types"
 import { Skeleton } from "@/shared/components/ui/skeleton"
@@ -8,7 +8,7 @@ export function DataGrid<T extends object>({
   emptyMessage,
   ...props
 }: DataGridProps<T>) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   if (loading) {
     return (
       <div role="status" aria-label={t("common:states.gridLoading")} className="h-[var(--layout-grid-height)] min-h-48 min-w-0 w-full overflow-hidden rounded-md border border-border bg-card">

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import { AppError } from "@/shared/lib/app-error"
 import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 
@@ -11,7 +11,7 @@ import type { LoginRequest } from "@/features/auth/types/auth.types"
 
 export function useLoginForm() {
   const navigate = useNavigate()
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   const queryClient = useQueryClient()
   const runMutation = useMutationLock()
 

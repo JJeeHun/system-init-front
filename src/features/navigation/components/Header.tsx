@@ -1,7 +1,7 @@
 import { memo } from "react"
 import { Boxes, MapPin, Menu } from "lucide-react"
 import { Link } from "react-router-dom"
-import { i18n, useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 
 import { getFirstMenuPath } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
@@ -34,7 +34,7 @@ export const Header = memo(function Header({
   onRootSelect,
   onOpenSidebar,
 }: HeaderProps) {
-  const { t } = useTranslation()
+  const { t, language, changeLanguage } = useAppTranslation()
   return (
     <header className={[
       "sticky top-0 z-[var(--z-sticky)] grid min-h-[var(--layout-header-height)] grid-cols-[minmax(0,1fr)_auto] border-b border-header-border bg-header text-header-foreground",
@@ -118,10 +118,10 @@ export const Header = memo(function Header({
         <Button
           header
           size="sm"
-          onClick={() => void i18n.changeLanguage(i18n.resolvedLanguage === "en" ? "ko" : "en")}
-          aria-label={t(i18n.resolvedLanguage === "en" ? "common:language.switchToKorean" : "common:language.switchToEnglish")}
+          onClick={() => void changeLanguage(language === "en" ? "ko" : "en")}
+          aria-label={t(language === "en" ? "common:language.switchToKorean" : "common:language.switchToEnglish")}
         >
-          {i18n.resolvedLanguage === "en" ? "EN" : "KO"}
+          {language === "en" ? "EN" : "KO"}
         </Button>
         <div className="lg:hidden">
           <Button
