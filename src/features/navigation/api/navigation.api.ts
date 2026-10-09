@@ -2,7 +2,7 @@ import { queryOptions } from "@tanstack/react-query"
 
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 
-const MOCK_DELAY = 420
+const MOCK_DELAY = 1000
 
 const mockNavigationMenus: NavigationMenuItem[] = [
   {
