@@ -27,9 +27,10 @@ export function MainLayout() {
         user={currentUser.data ?? null}
         userLoading={currentUser.isLoading}
         userError={currentUser.isError}
-        activeRootId={navigation.activeRootMenu?.id}
+        activeRootId={navigation.selectedRootMenu?.id}
         desktopSidebarOpen={navigation.desktopSidebarOpen}
         mobileSidebarOpen={navigation.sidebarOpen}
+        onRootSelect={navigation.selectRootMenu}
         onToggleDesktopSidebar={navigation.toggleDesktopSidebar}
         onOpenSidebar={navigation.openSidebar}
       />
@@ -41,14 +42,15 @@ export function MainLayout() {
           : "lg:grid-cols-[minmax(0,1fr)]",
       ].join(" ")}>
         <Sidebar
-          title={navigation.activeRootMenu?.label ?? "메뉴"}
+          title={navigation.selectedRootMenu?.label ?? "메뉴"}
           rootMenus={navigation.menus}
-          activeRootId={navigation.activeRootMenu?.id}
+          activeRootId={navigation.selectedRootMenu?.id}
           menus={navigation.sidebarMenus}
           loading={navigation.isLoading}
           open={navigation.sidebarOpen}
           desktopOpen={navigation.desktopSidebarOpen}
           onClose={navigation.closeSidebar}
+          onRootSelect={navigation.selectRootMenu}
         />
 
         <main className="flex min-h-0 min-w-0 flex-col overflow-hidden">
