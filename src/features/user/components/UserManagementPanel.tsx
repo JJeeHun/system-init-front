@@ -7,8 +7,8 @@ import { Input } from "@/shared/components/ui/input"
 import { Switch } from "@/shared/components/ui/switch"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
-import { DataGrid } from "@/shared/ui/data-grid"
 import type { DataGridColumn } from "@/shared/ui/data-grid"
+import { PaginatedDataGrid } from "@/shared/ui/paginated-data-grid"
 import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
 import { Panel } from "@/shared/ui/panel"
@@ -128,7 +128,7 @@ function UserList({ management }: { management: Management }) {
     <Panel>
       <Panel.Header
         title={t("user:list.title")}
-        description={t("user:list.count", { count: management.users.length })}
+        description={t("user:list.count", { count: management.totalCount })}
         errorMessage={management.loadError}
         actions={
           <>
@@ -146,8 +146,14 @@ function UserList({ management }: { management: Management }) {
         }
       />
       <Panel.Content>
-        <DataGrid
+        <PaginatedDataGrid
           rows={management.users}
+          page={management.page}
+          pageSize={management.pageSize}
+          totalCount={management.totalCount}
+          onPageChange={management.changePage}
+          onPageSizeChange={management.changePageSize}
+          paginationDisabled={management.isFetching}
           columns={columns}
           rowKey="id"
           selectedRowKey={selected?.id ?? null}

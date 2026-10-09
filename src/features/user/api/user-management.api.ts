@@ -1,17 +1,23 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
 
-import { createMockUser, listMockUsers, setMockUserEnabled, updateMockUser } from "@/features/user/api/user-management.mock"
-import type { UserAccountInput, UserFilters } from "@/features/user/types/user-management.types"
+import { createMockUser, listMockUsers, listMockUsersPage, setMockUserEnabled, updateMockUser } from "@/features/user/api/user-management.mock"
+import type { UserAccountInput, UserFilters, UserListParams } from "@/features/user/types/user-management.types"
 import { waitForMockDelay } from "@/shared/dev-tools/mock-delay"
 
 export const userManagementQueryKeys = {
   all: ["user", "management"] as const,
-  list: (filters: UserFilters) => [...userManagementQueryKeys.all, "list", filters] as const,
+  lists: () => [...userManagementQueryKeys.all, "list"] as const,
+  list: (params: UserListParams) => [...userManagementQueryKeys.lists(), params] as const,
 }
 
 export async function getUserAccounts(filters: UserFilters) {
   await waitForMockDelay()
   return listMockUsers(filters)
+}
+
+export async function getPagedUserAccounts(params: UserListParams) {
+  await waitForMockDelay()
+  return listMockUsersPage(params)
 }
 
 export async function createUserAccount(input: UserAccountInput) {
@@ -30,9 +36,9 @@ export async function changeUserEnabled({ id, enabled }: { id: string; enabled: 
 }
 
 export const userManagementQueries = {
-  list: (filters: UserFilters) => queryOptions({
-    queryKey: userManagementQueryKeys.list(filters),
-    queryFn: () => getUserAccounts(filters),
+  list: (params: UserListParams) => queryOptions({
+    queryKey: userManagementQueryKeys.list(params),
+    queryFn: () => getPagedUserAccounts(params),
   }),
 }
 

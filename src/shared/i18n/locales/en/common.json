@@ -49,5 +49,14 @@
   },
   "searchPanel": {
     "title": "Search Filters"
+  },
+  "pagination": {
+    "pageSize": "Rows per page",
+    "range": "{{start}}–{{end}} of {{total}}",
+    "first": "First page",
+    "previous": "Previous page",
+    "next": "Next page",
+    "last": "Last page",
+    "gotoPage": "Go to page {{page}}"
   }
 }

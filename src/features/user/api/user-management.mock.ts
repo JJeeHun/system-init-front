@@ -1,5 +1,5 @@
 import { AppError } from "@/shared/lib/app-error"
-import type { UserAccount, UserAccountInput, UserFilters } from "@/features/user/types/user-management.types"
+import type { UserAccount, UserAccountInput, UserFilters, UserListParams, UserListResult } from "@/features/user/types/user-management.types"
 
 const initialUsers: UserAccount[] = [
   { id: "admin01", name: "김관리", email: "admin01@example.com", center: "SEOUL", role: "ADMIN", enabled: true },
@@ -19,6 +19,12 @@ export function listMockUsers(filters: UserFilters): UserAccount[] {
       (filters.role === "all" || user.role === filters.role),
     )
     .map(user => ({ ...user }))
+}
+
+export function listMockUsersPage({ page, pageSize, ...filters }: UserListParams): UserListResult {
+  const matched = listMockUsers(filters)
+  const start = (page - 1) * pageSize
+  return { items: matched.slice(start, start + pageSize), totalCount: matched.length }
 }
 
 function normalize(input: UserAccountInput, editingId?: string): UserAccount {
