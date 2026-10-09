@@ -17,6 +17,7 @@ type SidebarProps = {
   open: boolean
   desktopOpen: boolean
   onClose: () => void
+  onRootSelect: (menu: NavigationMenuItem) => void
 }
 
 type SidebarItemsProps = {
@@ -89,6 +90,7 @@ export const Sidebar = memo(function Sidebar({
   open,
   desktopOpen,
   onClose,
+  onRootSelect,
 }: SidebarProps) {
   useEffect(() => {
     if (!open) return
@@ -157,19 +159,14 @@ export const Sidebar = memo(function Sidebar({
               const path = getFirstMenuPath(menu)
               if (!path) return null
               return (
-                <NavLink
+                <Button
                   key={menu.id}
-                  to={path}
-                  onClick={onClose}
-                  className={[
-                    "flex min-h-10 items-center rounded-sm px-3 text-left text-sm transition-colors",
-                    menu.id === activeRootId
-                      ? "bg-primary-soft font-semibold text-primary"
-                      : "bg-surface-soft text-foreground-soft hover:text-foreground",
-                  ].join(" ")}
+                  primary={menu.id === activeRootId}
+                  aria-pressed={menu.id === activeRootId}
+                  onClick={() => onRootSelect(menu)}
                 >
                   {menu.label}
-                </NavLink>
+                </Button>
               )
             })}
           </div>
