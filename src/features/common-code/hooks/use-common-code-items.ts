@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
 import { message } from "@/shared/lib/message"
+import { dialog } from "@/shared/lib/dialog"
 
 import { commonCodeMutations, commonCodeQueries, commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
 import type { CommonCodeItem, CommonCodeItemFormValues } from "@/features/common-code/types/common-code.types"
@@ -174,19 +175,18 @@ export function useCommonCodeItems(groupId: string | null) {
     }
   })
 
-  function deleteItem() {
-    if (!selectedItem) {
-      return
-    }
+  async function deleteItem() {
+    if (!selectedItem) return
 
-    const confirmed = window.confirm(
-      '"' + selectedItem.name + '" 코드를 삭제하시겠습니까?',
-    )
+    const confirmed = await dialog.confirm({
+      title: "상세 코드 삭제",
+      description: `"${selectedItem.name}" 코드를 삭제하시겠습니까?`,
+      confirmLabel: "삭제",
+    })
+    if (!confirmed) return
 
-    if (confirmed) {
-      resetItemMutationErrors()
-      deleteItemMutation.mutate(selectedItem.id)
-    }
+    resetItemMutationErrors()
+    deleteItemMutation.mutate(selectedItem.id)
   }
 
   return {
