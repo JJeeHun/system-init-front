@@ -1,4 +1,5 @@
 import type { FormEventHandler } from "react"
+import { useTranslation } from "@/shared/i18n"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
 import type {
@@ -52,38 +53,9 @@ type CommonCodeItemPanelProps = {
   form: CommonCodeItemFormProps
 }
 
-const columns = [
-  {
-    key: "code",
-    header: "코드",
-    size: "md",
-  },
-  {
-    key: "name",
-    header: "코드명",
-    size: "lg",
-  },
-  {
-    key: "sortOrder",
-    header: "순서",
-    size: "sm",
-    align: "right",
-  },
-  {
-    key: "enabled",
-    header: "사용",
-    size: "sm",
-    align: "center",
-    format: (value) => (value === true ? "사용" : "미사용"),
-  },
-  {
-    key: "description",
-    header: "설명",
-    size: "fill",
-  },
-] satisfies DataGridColumn<CommonCodeItem>[]
 
 const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFormProps }) => {
+  const { t } = useTranslation()
   if (!show) return null
 
   return (
@@ -92,10 +64,10 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
       onOpenChange={(open) => {
         if (!open && !form.isPending) form.cancel()
       }}
-      title={form.mode === "create" ? "코드 등록" : "코드 수정"}
+      title={t(form.mode === "create" ? "common-code:item.create" : "common-code:item.edit")}
     >
       <DefaultForm onSubmit={form.submit}>
-        <Field required label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
+        <Field required label={t("common-code:item.fields.code")} htmlFor="common-code-item-code" error={form.errors.code}>
           <Input
             id="common-code-item-code"
             {...form.fields.code}
@@ -104,7 +76,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
           />
         </Field>
 
-        <Field required label="코드명" htmlFor="common-code-item-name" error={form.errors.name}>
+        <Field required label={t("common-code:item.fields.name")} htmlFor="common-code-item-name" error={form.errors.name}>
           <Input
             id="common-code-item-name"
             {...form.fields.name}
@@ -112,7 +84,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
           />
         </Field>
 
-        <Field label="설명" htmlFor="common-code-item-description" className="@md:col-span-2">
+        <Field label={t("common-code:fields.description")} htmlFor="common-code-item-description" className="@md:col-span-2">
           <Textarea
             id="common-code-item-description"
             {...form.fields.description}
@@ -120,7 +92,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
           />
         </Field>
 
-        <Field required label="정렬순서" htmlFor="common-code-item-sort-order" error={form.errors.sortOrder}>
+        <Field required label={t("common-code:fields.sortOrder")} htmlFor="common-code-item-sort-order" error={form.errors.sortOrder}>
           <Input
             id="common-code-item-sort-order"
             {...form.fields.sortOrder}
@@ -130,7 +102,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
           />
         </Field>
 
-        <Field label="사용" htmlFor="common-code-item-enabled" orientation="horizontal">
+        <Field label={t("common-code:fields.enabled")} htmlFor="common-code-item-enabled" orientation="horizontal">
           <Switch
             id="common-code-item-enabled"
             checked={form.fields.enabled.checked}
@@ -140,7 +112,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
 
         <DefaultForm.Actions>
           <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
-            취소
+            {t("common:actions.cancel")}
           </Button>
           <Button
             type="submit"
@@ -148,7 +120,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
             size="sm"
             loading={form.isPending}
           >
-            저장
+            {t("common:actions.save")}
           </Button>
         </DefaultForm.Actions>
       </DefaultForm>
@@ -165,17 +137,28 @@ export function CommonCodeItemPanel({
   onSelect,
   form,
 }: CommonCodeItemPanelProps) {
+  const { t } = useTranslation()
+  const columns = [
+    { key: "code", header: t("common-code:item.fields.code"), size: "md" },
+    { key: "name", header: t("common-code:item.fields.name"), size: "lg" },
+    { key: "sortOrder", header: t("common-code:fields.order"), size: "sm", align: "right" },
+    {
+      key: "enabled", header: t("common-code:fields.enabled"), size: "sm", align: "center",
+      format: (value) => t(value === true ? "common:labels.enabled" : "common:labels.disabled"),
+    },
+    { key: "description", header: t("common-code:fields.description"), size: "fill" },
+  ] satisfies DataGridColumn<CommonCodeItem>[]
   const emptyMessage = loadErrorMessage
     ? loadErrorMessage
     : group
-      ? "등록된 하위 코드가 없습니다."
-      : "코드 그룹을 선택해주세요."
+      ? t("common-code:item.empty")
+      : t("common-code:item.chooseGroup")
 
   return (
     <Panel>
       <Panel.Header
-        title="상세 코드"
-        description={group ? `${group.code} · ${group.name}` : "Detail · 고정 2Depth"}
+        title={t("common-code:item.title")}
+        description={group ? `${group.code} · ${group.name}` : t("common-code:item.description")}
         actions={
           <>
             <Button
@@ -184,14 +167,14 @@ export function CommonCodeItemPanel({
               disabled={!group || form.isPending || form.isDeleting}
               onClick={form.startCreate}
             >
-              코드 등록
+              {t("common-code:item.create")}
             </Button>
             <Button
               size="sm"
               disabled={!selectedItem || form.isPending || form.isDeleting}
               onClick={form.startEdit}
             >
-              수정
+              {t("common:actions.edit")}
             </Button>
             <Button
               error
@@ -200,7 +183,7 @@ export function CommonCodeItemPanel({
               onClick={form.delete}
               loading={form.isDeleting}
             >
-              {form.isDeleting ? "삭제 중" : "삭제"}
+              {form.isDeleting ? t("common:actions.deleting") : t("common:actions.delete")}
             </Button>
           </>
         }

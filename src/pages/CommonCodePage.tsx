@@ -1,3 +1,4 @@
+import { useTranslation } from "@/shared/i18n"
 import { CommonCodeGroupPanel } from "@/features/common-code/components/CommonCodeGroupPanel"
 import { CommonCodeItemPanel } from "@/features/common-code/components/CommonCodeItemPanel"
 import { useCommonCodePage } from "@/features/common-code/hooks/use-common-code-page"
@@ -5,17 +6,18 @@ import { PageLayout } from "@/shared/layout/page"
 import { PageHeader } from "@/shared/ui/page-header"
 
 export function CommonCodePage() {
+  const { t } = useTranslation()
   const commonCode = useCommonCodePage()
 
   return (
     <PageLayout>
       <div className="min-w-0">
         <p className="mb-1 text-xs font-bold uppercase tracking-widest text-primary">
-          기준정보
+          {t("common-code:page.category")}
         </p>
         <PageHeader
-          title="공통코드 관리"
-          description="그룹과 상세코드를 Master / Detail 고정 2단계로 관리합니다."
+          title={t("common-code:page.title")}
+          description={t("common-code:page.description")}
         />
       </div>
 
