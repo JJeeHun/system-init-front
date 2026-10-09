@@ -53,7 +53,8 @@ describe("feature-based translations in the existing admin screens", () => {
     fireEvent.click(screen.getByRole("button", { name: "Save" }))
     expect(await screen.findByText("Please enter a group code.")).toBeInTheDocument()
 
-    fireEvent.click(screen.getByRole("button", { name: "한국어로 변경" }))
+    // The modal makes the header inaccessible; emulate an external locale change while the form is open.
+    await act(async () => { await i18n.changeLanguage("ko") })
     await waitFor(() => expect(screen.getByText("그룹 코드를 입력해주세요.")).toBeInTheDocument())
     expect(screen.getByRole("heading", { name: "공통코드 관리" })).toBeInTheDocument()
     expect(within(sidebar).getByRole("link", { name: "공통코드" })).toBeInTheDocument()
