@@ -5,6 +5,7 @@ import { MainLayout } from "@/app/layouts/MainLayout"
 import { RequireAuth } from "@/app/routing/RequireAuth"
 import { CommonCodePage } from "@/pages/CommonCodePage"
 import { LoginPage } from "@/pages/LoginPage"
+import { HomePage } from "@/pages/HomePage"
 import { MenuPage } from "@/pages/MenuPage"
 import { UiPlaygroundPage } from "@/pages/UiPlaygroundPage"
 
@@ -24,6 +25,7 @@ export default function App() {
           </RequireAuth>
         }
       >
+        <Route index element={<HomePage />} />
         <Route path="master/common-code" element={<CommonCodePage />} />
         <Route path="dev/ui" element={<UiPlaygroundPage />} />
         <Route path="*" element={<MenuPage />} />
