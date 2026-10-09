@@ -1,5 +1,5 @@
 import type { FormEventHandler } from "react"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
 import { CommonCodeGroupOption } from "@/features/common-code/components/CommonCodeGroupOption"
@@ -62,7 +62,7 @@ const GroupList = ({
   loadErrorMessage,
   onSelect,
 }: GroupListProps) => {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   if (loadErrorMessage) {
     return (
       <div role="alert" className="rounded-md border border-destructive bg-destructive-soft p-3 text-sm text-destructive">
@@ -107,7 +107,7 @@ const GroupList = ({
 }
 
 const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupFormProps }) => {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   if (!show) return null
 
   return (
@@ -188,7 +188,7 @@ export function CommonCodeGroupPanel({
   onSelect,
   form,
 }: CommonCodeGroupPanelProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   return (
     <Panel>
       <Panel.Header

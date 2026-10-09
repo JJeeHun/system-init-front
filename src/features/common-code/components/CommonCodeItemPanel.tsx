@@ -1,5 +1,5 @@
 import type { FormEventHandler } from "react"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
 import type {
@@ -55,7 +55,7 @@ type CommonCodeItemPanelProps = {
 
 
 const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFormProps }) => {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   if (!show) return null
 
   return (
@@ -137,7 +137,7 @@ export function CommonCodeItemPanel({
   onSelect,
   form,
 }: CommonCodeItemPanelProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   const columns = [
     { key: "code", header: t("common-code:item.fields.code"), size: "md" },
     { key: "name", header: t("common-code:item.fields.name"), size: "lg" },

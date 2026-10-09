@@ -1,5 +1,5 @@
 import type { FormEventHandler } from "react"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import type { UseFormRegister } from "react-hook-form"
 
 import type { LoginRequest } from "@/features/auth/types/auth.types"
@@ -18,7 +18,7 @@ export function LoginForm({
   isPending,
   errorMessage,
 }: LoginFormProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   return (
     <form
       className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-panel sm:p-8"

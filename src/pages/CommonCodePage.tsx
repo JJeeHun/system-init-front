@@ -1,4 +1,4 @@
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import { CommonCodeGroupPanel } from "@/features/common-code/components/CommonCodeGroupPanel"
 import { CommonCodeItemPanel } from "@/features/common-code/components/CommonCodeItemPanel"
 import { useCommonCodePage } from "@/features/common-code/hooks/use-common-code-page"
@@ -6,7 +6,7 @@ import { PageLayout } from "@/shared/layout/page"
 import { PageHeader } from "@/shared/ui/page-header"
 
 export function CommonCodePage() {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   const commonCode = useCommonCodePage()
 
   return (

@@ -1,5 +1,5 @@
 import { useOutletContext } from "react-router-dom"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 
 import type { MainLayoutContext } from "@/app/layouts/MainLayout"
 import { PageLayout } from "@/shared/layout/page"
@@ -7,7 +7,7 @@ import { PageHeader } from "@/shared/ui/page-header"
 
 export function MenuPage() {
   const { navigation } = useOutletContext<MainLayoutContext>()
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
 
   if (!navigation.currentMenu) {
     return (

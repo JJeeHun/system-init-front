@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 
 import { Header } from "@/features/navigation/components/Header"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
@@ -13,7 +13,7 @@ export type MainLayoutContext = {
 }
 
 export function MainLayout() {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   const navigation = useMainNavigation()
   const currentUser = useCurrentUser()
 

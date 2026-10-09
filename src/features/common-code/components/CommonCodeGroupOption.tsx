@@ -1,4 +1,4 @@
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
 import { Button } from "@/shared/ui/button"
 
@@ -13,7 +13,7 @@ export function CommonCodeGroupOption({
   selected,
   onSelect,
 }: CommonCodeGroupOptionProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   return (
     <Button
       primary={selected}

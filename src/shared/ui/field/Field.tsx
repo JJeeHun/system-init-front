@@ -1,5 +1,5 @@
 import type { ReactNode } from "react"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 
 import {
   Field as ShadcnField,
@@ -29,7 +29,7 @@ export function Field({
   orientation = "vertical",
   className,
 }: FieldProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   const fieldLabel = (
     <ShadcnFieldLabel htmlFor={htmlFor}>
       {label}
