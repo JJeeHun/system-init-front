@@ -91,6 +91,8 @@ $ARGUMENTS
 - UI, 모바일, flex/grid, 크기와 Layout: [ui-layout.md](references/ui-layout.md)
 - 컬러, 폰트, light/dark/custom theme: [theme.md](references/theme.md)
 - env/config 사용 규칙: [config.md](references/config.md)
+- 임시 Mock 응답 지연과 테스트 설정은 `src/shared/dev-tools`에만 정의한다. 각 Feature API에 지연 상수를 중복 작성하지 않고 공통 `waitForMockDelay()`만 사용한다. 기준값은 `settings.ts` 한 곳에서 변경한다.
+- 실행 환경 판별과 비운영 표시 기능은 영구 설정이며 `shared/config`가 담당한다. GitHub Pages의 현행 시험 배포는 Vite `--mode test`를 명시한다. 운영 빌드에서는 Mock 지연이 실행되지 않아야 한다.
 - 테스트 설계, 실행, 실패 분석, 기존 테스트 변경 승인: [testing.md](references/testing.md)
 - 비즈니스 예외, AppError 타입, 전역 오류 처리와 지역 복구 경계: [error-handling.md](references/error-handling.md)
 

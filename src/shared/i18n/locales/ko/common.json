@@ -37,5 +37,12 @@
   "language": {
     "switchToEnglish": "영어로 변경",
     "switchToKorean": "한국어로 변경"
+  },
+  "environment": {
+    "development": "개발",
+    "test": "테스트",
+    "staging": "스테이징",
+    "production": "운영",
+    "current": "실행 환경: {{mode}}"
   }
 }

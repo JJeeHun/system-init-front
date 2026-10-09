@@ -8,6 +8,7 @@ export type AppConfig = Readonly<{
   app: Readonly<{
     name: string
     environment: AppEnvironment
+    isProduction: boolean
     baseUrl: string
   }>
 }>
@@ -28,10 +29,13 @@ function resolveEnvironment(mode: string): AppEnvironment {
   return "development"
 }
 
+const environment = resolveEnvironment(import.meta.env.MODE)
+
 export const config: AppConfig = Object.freeze({
   app: Object.freeze({
     name: "system-init-front",
-    environment: resolveEnvironment(import.meta.env.MODE),
+    environment,
+    isProduction: environment === "production",
     baseUrl: import.meta.env.BASE_URL,
   }),
 })

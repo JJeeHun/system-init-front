@@ -1,3 +1,4 @@
+import { waitForMockDelay } from "@/shared/dev-tools/mock-delay"
 import { mutationOptions, queryOptions, skipToken } from "@tanstack/react-query"
 import { AppError } from "@/shared/lib/app-error"
 
@@ -10,8 +11,6 @@ import type {
   UpdateCommonCodeItemRequest,
 } from "@/features/common-code/types/common-code.types"
 
-const READ_DELAY = 500
-const MUTATION_DELAY = 240
 
 let groupSequence = 4
 let itemSequence = 9
@@ -118,9 +117,6 @@ let mockItems: CommonCodeItem[] = [
   },
 ]
 
-function wait(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
 
 function cloneGroup(group: CommonCodeGroup): CommonCodeGroup {
   return { ...group }
@@ -141,19 +137,19 @@ function requireText(value: string, code: string, message: string) {
 }
 
 export async function getCommonCodeGroups(): Promise<CommonCodeGroup[]> {
-  await wait(READ_DELAY)
+  await waitForMockDelay()
   return mockGroups.map(cloneGroup)
 }
 
 export async function getCommonCodeItems(groupId: string): Promise<CommonCodeItem[]> {
-  await wait(READ_DELAY)
+  await waitForMockDelay()
   return mockItems.filter((item) => item.groupId === groupId).map(cloneItem)
 }
 
 export async function createCommonCodeGroup(
   request: CreateCommonCodeGroupRequest,
 ): Promise<CommonCodeGroup> {
-  await wait(MUTATION_DELAY)
+  await waitForMockDelay()
 
   const code = requireText(request.code, "COMMON_CODE_GROUP_CODE_REQUIRED", "그룹 코드를 입력해주세요.")
   const name = requireText(request.name, "COMMON_CODE_GROUP_NAME_REQUIRED", "그룹명을 입력해주세요.")
@@ -179,7 +175,7 @@ export async function updateCommonCodeGroup(input: {
   id: string
   request: UpdateCommonCodeGroupRequest
 }): Promise<CommonCodeGroup> {
-  await wait(MUTATION_DELAY)
+  await waitForMockDelay()
 
   const group = mockGroups.find((item) => item.id === input.id)
 
@@ -200,7 +196,7 @@ export async function updateCommonCodeGroup(input: {
 }
 
 export async function deleteCommonCodeGroup(id: string): Promise<void> {
-  await wait(MUTATION_DELAY)
+  await waitForMockDelay()
 
   if (mockItems.some((item) => item.groupId === id)) {
     throw new AppError("COMMON_CODE_GROUP_HAS_ITEMS", "하위 코드가 있는 그룹은 삭제할 수 없습니다.")
@@ -212,7 +208,7 @@ export async function deleteCommonCodeGroup(id: string): Promise<void> {
 export async function createCommonCodeItem(
   request: CreateCommonCodeItemRequest,
 ): Promise<CommonCodeItem> {
-  await wait(MUTATION_DELAY)
+  await waitForMockDelay()
 
   if (!mockGroups.some((group) => group.id === request.groupId)) {
     throw new AppError("COMMON_CODE_ITEM_GROUP_NOT_FOUND", "공통코드 그룹을 찾을 수 없습니다.")
@@ -246,7 +242,7 @@ export async function updateCommonCodeItem(input: {
   id: string
   request: UpdateCommonCodeItemRequest
 }): Promise<CommonCodeItem> {
-  await wait(MUTATION_DELAY)
+  await waitForMockDelay()
 
   const item = mockItems.find((current) => current.id === input.id)
 
@@ -269,7 +265,7 @@ export async function updateCommonCodeItem(input: {
 }
 
 export async function deleteCommonCodeItem(id: string): Promise<void> {
-  await wait(MUTATION_DELAY)
+  await waitForMockDelay()
   mockItems = mockItems.filter((item) => item.id !== id)
 }
 

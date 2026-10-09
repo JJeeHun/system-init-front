@@ -36,7 +36,7 @@ jobs:
         run: npm install
 
       - name: Build
-        run: npm run build
+        run: npm run build -- --mode test
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

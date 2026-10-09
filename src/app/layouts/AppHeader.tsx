@@ -1,5 +1,6 @@
 import { Boxes, MapPin, Menu } from "lucide-react"
 import { Link } from "react-router-dom"
+import { config } from "@/shared/config/config"
 
 import { HeaderMenu } from "@/features/navigation/components/HeaderMenu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
@@ -87,6 +88,14 @@ function HeaderActions({
 
   return (
     <div className="flex items-center gap-2 px-3">
+      {!config.app.isProduction ? (
+        <span
+          className="inline-flex shrink-0 items-center rounded-md border border-header-border bg-header-surface px-2 py-1 text-xs font-semibold text-header-muted"
+          aria-label={t("common:environment.current", { mode: t(`common:environment.${config.app.environment}`) })}
+        >
+          {t(`common:environment.${config.app.environment}`)}
+        </span>
+      ) : null}
       <UserSummary user={user} loading={userLoading} error={userError} />
       <Button
         header
