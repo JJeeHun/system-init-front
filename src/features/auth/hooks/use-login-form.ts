@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { useNavigate } from "react-router-dom"
+import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 
 import { authMutations } from "@/features/auth/api/auth.api"
 import { setAuthSession } from "@/features/auth/storage/auth-session"
@@ -9,6 +10,7 @@ import type { LoginRequest } from "@/features/auth/types/auth.types"
 export function useLoginForm() {
   const navigate = useNavigate()
   const queryClient = useQueryClient()
+  const runMutation = useMutationLock()
 
   const form = useForm<LoginRequest>({
     defaultValues: {
@@ -27,7 +29,7 @@ export function useLoginForm() {
   })
 
   const submit = form.handleSubmit((values) => {
-    loginMutation.mutate(values)
+    runMutation(() => loginMutation.mutateAsync(values))
   })
 
   return {
