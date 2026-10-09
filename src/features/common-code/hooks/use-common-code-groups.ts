@@ -2,6 +2,7 @@ import { useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
 import { message } from "@/shared/lib/message"
+import { dialog } from "@/shared/lib/dialog"
 
 import { commonCodeMutations, commonCodeQueries, commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
 import type { CommonCodeGroup, CommonCodeGroupFormValues } from "@/features/common-code/types/common-code.types"
@@ -152,19 +153,18 @@ export function useCommonCodeGroups() {
     }
   })
 
-  function deleteGroup() {
-    if (!selectedGroup) {
-      return
-    }
+  async function deleteGroup() {
+    if (!selectedGroup) return
 
-    const confirmed = window.confirm(
-      '"' + selectedGroup.name + '" 그룹을 삭제하시겠습니까?',
-    )
+    const confirmed = await dialog.confirm({
+      title: "그룹 삭제",
+      description: `"${selectedGroup.name}" 그룹을 삭제하시겠습니까?`,
+      confirmLabel: "삭제",
+    })
+    if (!confirmed) return
 
-    if (confirmed) {
-      resetGroupMutationErrors()
-      deleteGroupMutation.mutate(selectedGroup.id)
-    }
+    resetGroupMutationErrors()
+    deleteGroupMutation.mutate(selectedGroup.id)
   }
 
   return {
