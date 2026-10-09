@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
+import { message } from "@/shared/lib/message"
 
 import { commonCodeMutations, commonCodeQueries, commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
 import type { CommonCodeGroup, CommonCodeGroupFormValues } from "@/features/common-code/types/common-code.types"
@@ -64,6 +65,7 @@ export function useCommonCodeGroups() {
       setGroupFormMode(null)
       groupForm.reset(EMPTY_GROUP_FORM)
       void invalidateGroups()
+      message.success("코드 그룹이 등록되었습니다.")
     },
   })
 
@@ -72,6 +74,7 @@ export function useCommonCodeGroups() {
     onSuccess: () => {
       setGroupFormMode(null)
       void invalidateGroups()
+      message.success("코드 그룹이 수정되었습니다.")
     },
   })
 
@@ -81,6 +84,7 @@ export function useCommonCodeGroups() {
       setSelectedGroupId(null)
       setGroupFormMode(null)
       void invalidateGroups()
+      message.success("코드 그룹이 삭제되었습니다.")
     },
   })
 
@@ -200,11 +204,6 @@ export function useCommonCodeGroups() {
       isPending:
         createGroupMutation.isPending || updateGroupMutation.isPending,
       isDeleting: deleteGroupMutation.isPending,
-      errorMessage: getErrorMessage(
-        createGroupMutation.error ??
-          updateGroupMutation.error ??
-          deleteGroupMutation.error,
-      ),
       startCreate: startCreateGroup,
       startEdit: startEditGroup,
       cancel: cancelGroupForm,
