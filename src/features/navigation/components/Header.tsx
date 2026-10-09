@@ -1,5 +1,5 @@
 import { memo } from "react"
-import { Boxes, MapPin, Menu, PanelLeftClose, PanelLeftOpen } from "lucide-react"
+import { Boxes, MapPin, Menu } from "lucide-react"
 import { Link } from "react-router-dom"
 
 import { getFirstMenuPath } from "@/features/navigation/lib/navigation-menu"
@@ -18,7 +18,6 @@ type HeaderProps = {
   desktopSidebarOpen: boolean
   mobileSidebarOpen: boolean
   onRootSelect: (menu: NavigationMenuItem) => void
-  onToggleDesktopSidebar: () => void
   onOpenSidebar: () => void
 }
 
@@ -32,7 +31,6 @@ export const Header = memo(function Header({
   desktopSidebarOpen,
   mobileSidebarOpen,
   onRootSelect,
-  onToggleDesktopSidebar,
   onOpenSidebar,
 }: HeaderProps) {
   return (
@@ -40,28 +38,14 @@ export const Header = memo(function Header({
       "sticky top-0 z-[var(--z-sticky)] grid min-h-[var(--layout-header-height)] grid-cols-[minmax(0,1fr)_auto] border-b border-header-border bg-header text-header-foreground",
       desktopSidebarOpen
         ? "lg:grid-cols-[var(--layout-sidebar-width)_minmax(0,1fr)_auto]"
-        : "lg:grid-cols-[auto_minmax(0,1fr)_auto]",
+        : "lg:grid-cols-[4.5rem_minmax(0,1fr)_auto]",
     ].join(" ")}>
       <div className="flex min-w-0 items-center gap-2 px-3 lg:border-r lg:border-header-border">
-        <div className="hidden lg:block">
-          <Button
-            header
-            size="sm"
-            onClick={onToggleDesktopSidebar}
-            aria-label={desktopSidebarOpen ? "PC 사이드바 접기" : "PC 사이드바 펼치기"}
-            aria-expanded={desktopSidebarOpen}
-            aria-controls="app-sidebar"
-          >
-            {desktopSidebarOpen
-              ? <PanelLeftClose aria-hidden="true" className="size-4" />
-              : <PanelLeftOpen aria-hidden="true" className="size-4" />}
-          </Button>
-        </div>
         <Link to="/app" aria-label="홈으로 이동" className="flex min-w-0 items-center gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-header-active">
           <span className="grid size-9 shrink-0 place-items-center rounded-md bg-header-accent">
             <Boxes aria-hidden="true" className="size-5" />
           </span>
-          <span className="grid min-w-0">
+          <span className={desktopSidebarOpen ? "grid min-w-0" : "grid min-w-0 lg:hidden"}>
             <strong className="truncate text-sm">FlowStock</strong>
             <small className="hidden truncate text-xs uppercase tracking-wider text-header-faint sm:block">
               WMS Console
