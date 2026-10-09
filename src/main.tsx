@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client"
 import { HashRouter } from "react-router-dom"
 import { MutationCache, QueryClient, QueryClientProvider } from "@tanstack/react-query"
 
+import "@/shared/i18n"
 import App from "@/app/App"
 import { Toaster } from "@/shared/components/ui/sonner"
 import { GlobalDialogHost } from "@/shared/ui/confirm-dialog/GlobalDialogHost"

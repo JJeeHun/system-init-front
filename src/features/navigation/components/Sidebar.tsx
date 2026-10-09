@@ -1,6 +1,7 @@
 import { memo, useEffect } from "react"
 import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react"
 import { NavLink } from "react-router-dom"
+import { useTranslation } from "@/shared/i18n"
 
 import { MenuIcon } from "@/features/navigation/components/MenuIcon"
 import { getFirstMenuPath } from "@/features/navigation/lib/navigation-menu"
@@ -34,6 +35,7 @@ function SidebarItems({
   depth = 0,
   collapsed,
 }: SidebarItemsProps) {
+  const { t } = useTranslation()
   return (
     <>
       {menus.map((menu) => {
@@ -46,7 +48,7 @@ function SidebarItems({
               className={(depth === 0 ? "mt-5 first:mt-0" : "mt-3") + (collapsed ? " lg:mt-2" : "")}
             >
               <p className={"mb-2 px-3 text-xs font-bold uppercase tracking-wide text-foreground-faint" + (collapsed ? " lg:hidden" : "")}>
-                {menu.label}
+                {menu.labelKey ? t(menu.labelKey) : menu.label}
               </p>
               <div className="grid gap-1">
                 <SidebarItems
@@ -67,8 +69,8 @@ function SidebarItems({
             key={menu.id}
             to={menu.path}
             onClick={onNavigate}
-            title={collapsed ? menu.label : undefined}
-            aria-label={collapsed ? menu.label : undefined}
+            title={collapsed ? (menu.labelKey ? t(menu.labelKey) : menu.label) : undefined}
+            aria-label={collapsed ? (menu.labelKey ? t(menu.labelKey) : menu.label) : undefined}
             className={({ isActive }) =>
               [
                 "flex min-h-10 items-center gap-3 rounded-sm px-3 text-sm transition-colors",
@@ -80,7 +82,7 @@ function SidebarItems({
             }
           >
             <MenuIcon name={menu.icon} />
-            <span className={collapsed ? "truncate lg:hidden" : "truncate"}>{menu.label}</span>
+            <span className={collapsed ? "truncate lg:hidden" : "truncate"}>{menu.labelKey ? t(menu.labelKey) : menu.label}</span>
           </NavLink>
         )
       })}
@@ -100,6 +102,7 @@ export const Sidebar = memo(function Sidebar({
   onRootSelect,
   onToggleDesktopSidebar,
 }: SidebarProps) {
+  const { t } = useTranslation()
   useEffect(() => {
     if (!open) return
 
@@ -119,7 +122,7 @@ export const Sidebar = memo(function Sidebar({
     <>
       <button
         type="button"
-        aria-label="사이드 메뉴 닫기"
+        aria-label={t("navigation:sidebar.close")}
         onClick={onClose}
         data-open={open}
         tabIndex={open ? 0 : -1}
@@ -128,7 +131,7 @@ export const Sidebar = memo(function Sidebar({
 
       <aside
         id="app-sidebar"
-        aria-label="사이드 메뉴"
+        aria-label={t("navigation:sidebar.label")}
         data-open={open}
         data-collapsed={!desktopOpen}
         className={[
@@ -145,10 +148,10 @@ export const Sidebar = memo(function Sidebar({
             <Button
               size="sm"
               onClick={onToggleDesktopSidebar}
-              aria-label={desktopOpen ? "PC 사이드바 접기" : "PC 사이드바 펼치기"}
+              aria-label={t(desktopOpen ? "navigation:sidebar.collapse" : "navigation:sidebar.expand")}
               aria-expanded={desktopOpen}
               aria-controls="app-sidebar"
-              title={desktopOpen ? "사이드바 접기" : "사이드바 펼치기"}
+              title={t(desktopOpen ? "navigation:sidebar.collapseHint" : "navigation:sidebar.expandHint")}
             >
               {desktopOpen
                 ? <PanelLeftClose aria-hidden="true" className="size-4" />
@@ -162,7 +165,7 @@ export const Sidebar = memo(function Sidebar({
           </div>
         </div>
 
-        <nav className="border-b border-border p-3 lg:hidden" aria-label="주요 업무 메뉴">
+        <nav className="border-b border-border p-3 lg:hidden" aria-label={t("navigation:header.primaryMenu")}>
           <div className="grid grid-cols-2 gap-2">
             {rootMenus.map((menu) => {
               const path = getFirstMenuPath(menu)
@@ -174,16 +177,16 @@ export const Sidebar = memo(function Sidebar({
                   aria-pressed={menu.id === activeRootId}
                   onClick={() => onRootSelect(menu)}
                 >
-                  {menu.label}
+                  {menu.labelKey ? t(menu.labelKey) : menu.label}
                 </Button>
               )
             })}
           </div>
         </nav>
 
-        <nav className={desktopOpen ? "p-3" : "p-3 lg:p-2"} aria-label={title + " 하위 메뉴"}>
+        <nav className={desktopOpen ? "p-3" : "p-3 lg:p-2"} aria-label={t("navigation:sidebar.subMenu", { title })}>
           {loading ? (
-            <div role="status" aria-label="사이드 메뉴 불러오는 중" className="grid gap-4 p-2">
+            <div role="status" aria-label={t("navigation:sidebar.loading")} className="grid gap-4 p-2">
               {Array.from({ length: 4 }, (_, index) => (
                 <Skeleton key={index} className="h-9 w-full" />
               ))}

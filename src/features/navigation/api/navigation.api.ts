@@ -157,9 +157,13 @@ const mockNavigationMenus: NavigationMenuItem[] = [
   },
 ]
 
+function withTranslationKeys(menu: NavigationMenuItem): NavigationMenuItem {
+  return { ...menu, labelKey: `navigation:menu.${menu.id}`, children: menu.children?.map(withTranslationKeys) }
+}
+
 export async function getNavigationMenus(): Promise<NavigationMenuItem[]> {
   await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY))
-  return mockNavigationMenus
+  return mockNavigationMenus.map(withTranslationKeys)
 }
 
 export const navigationQueryKeys = {

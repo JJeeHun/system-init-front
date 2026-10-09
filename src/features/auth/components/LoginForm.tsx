@@ -1,4 +1,5 @@
 import type { FormEventHandler } from "react"
+import { useTranslation } from "@/shared/i18n"
 import type { UseFormRegister } from "react-hook-form"
 
 import type { LoginRequest } from "@/features/auth/types/auth.types"
@@ -17,6 +18,7 @@ export function LoginForm({
   isPending,
   errorMessage,
 }: LoginFormProps) {
+  const { t } = useTranslation()
   return (
     <form
       className="w-full max-w-md rounded-lg border border-border bg-card p-6 shadow-panel sm:p-8"
@@ -26,15 +28,15 @@ export function LoginForm({
         <div className="mb-2 text-sm font-semibold tracking-wide text-primary">
           ERP CONSOLE
         </div>
-        <h1 className="text-2xl font-bold text-foreground">로그인</h1>
+        <h1 className="text-2xl font-bold text-foreground">{t("auth:login.title")}</h1>
         <p className="mt-2 text-sm text-foreground-soft">
-          Mock 인증 후 권한 메뉴를 비동기로 조회합니다.
+          {t("auth:login.description")}
         </p>
       </div>
 
       <div className="grid gap-5">
         <label className="grid gap-2">
-          <span className="text-sm font-medium text-foreground">아이디</span>
+          <span className="text-sm font-medium text-foreground">{t("auth:login.username")}</span>
           <input
             {...register("username")}
             autoComplete="username"
@@ -43,7 +45,7 @@ export function LoginForm({
         </label>
 
         <label className="grid gap-2">
-          <span className="text-sm font-medium text-foreground">비밀번호</span>
+          <span className="text-sm font-medium text-foreground">{t("auth:login.password")}</span>
           <input
             {...register("password")}
             type="password"
@@ -58,7 +60,7 @@ export function LoginForm({
 
         <div className="mt-2 grid">
           <Button primary type="submit" loading={isPending}>
-            {isPending ? "로그인 중..." : "로그인"}
+            {isPending ? t("auth:login.submitting") : t("auth:login.submit")}
           </Button>
         </div>
       </div>
