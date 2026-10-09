@@ -17,7 +17,7 @@ describe("GlobalDialogHost", () => {
     act(() => { response = dialog.alert("완료되었습니다.") })
 
     expect(screen.getByRole("alertdialog", { name: "알림" })).toHaveTextContent("완료되었습니다.")
-    expect(screen.getByRole("button", { name: "취소", hidden: true })).not.toBeInTheDocument()
+    expect(screen.queryByRole("button", { name: "취소" })).not.toBeInTheDocument()
     fireEvent.click(screen.getByRole("button", { name: "확인" }))
     await response
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument()
