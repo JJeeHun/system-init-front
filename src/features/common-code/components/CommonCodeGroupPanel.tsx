@@ -116,7 +116,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
       title={form.mode === "create" ? "그룹 등록" : "그룹 수정"}
     >
       <DefaultForm onSubmit={form.submit}>
-        <Field label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
+        <Field required label="그룹 코드" htmlFor="common-code-group-code" error={form.errors.code}>
           <Input
             id="common-code-group-code"
             {...form.fields.code}
@@ -125,7 +125,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
           />
         </Field>
 
-        <Field label="그룹명" htmlFor="common-code-group-name" error={form.errors.name}>
+        <Field required label="그룹명" htmlFor="common-code-group-name" error={form.errors.name}>
           <Input
             id="common-code-group-name"
             {...form.fields.name}
@@ -141,7 +141,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
           />
         </Field>
 
-        <Field label="정렬순서" htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
+        <Field required label="정렬순서" htmlFor="common-code-group-sort-order" error={form.errors.sortOrder}>
           <Input
             id="common-code-group-sort-order"
             {...form.fields.sortOrder}
