@@ -1,5 +1,6 @@
 import { AgGridDataGrid } from "@/shared/ui/data-grid/internal/AgGridDataGrid"
 import type { DataGridProps } from "@/shared/ui/data-grid/data-grid.types"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 
 export function DataGrid<T extends object>({
   loading = false,
@@ -8,8 +9,19 @@ export function DataGrid<T extends object>({
 }: DataGridProps<T>) {
   if (loading) {
     return (
-      <div className="grid h-[var(--layout-grid-height)] min-h-48 min-w-0 w-full place-items-center rounded-md border border-border bg-card text-sm text-foreground-soft">
-        데이터를 불러오는 중입니다.
+      <div role="status" aria-label="데이터를 불러오는 중" className="h-[var(--layout-grid-height)] min-h-48 min-w-0 w-full overflow-hidden rounded-md border border-border bg-card">
+        <div className="flex gap-4 border-b border-border bg-surface-soft p-3">
+          {props.columns.map((column) => (
+            <Skeleton key={column.key} className="h-4 min-w-0 flex-1" />
+          ))}
+        </div>
+        {Array.from({ length: 5 }, (_, index) => (
+          <div key={index} className="flex gap-4 border-b border-border p-3">
+            {props.columns.map((column) => (
+              <Skeleton key={column.key} className="h-4 min-w-0 flex-1" />
+            ))}
+          </div>
+        ))}
       </div>
     )
   }
