@@ -10,6 +10,25 @@ const initialUsers: UserAccount[] = [
 ]
 let users = initialUsers.map(user => ({ ...user }))
 
+// Extra records are loaded by the user-management API for pagination demos.
+// The five baseline records remain unchanged for existing mock-contract tests.
+const demoUsers: UserAccount[] = Array.from({ length: 62 }, (_, index) => {
+  const number = String(index + 6).padStart(2, "0")
+  return {
+    id: `user${number}`,
+    name: `테스트사용자${number}`,
+    email: `user${number}@example.com`,
+    center: index % 3 === 0 ? "BUSAN" : "SEOUL",
+    role: index % 5 === 0 ? "ADMIN" : "STAFF",
+    enabled: index % 4 !== 0,
+  }
+})
+
+export function ensureDemoMockUsers() {
+  if (users.some(user => user.id === demoUsers[0].id)) return
+  users = [...users, ...demoUsers.map(user => ({ ...user }))]
+}
+
 export function listMockUsers(filters: UserFilters): UserAccount[] {
   const keyword = filters.keyword.trim().toLocaleLowerCase()
   return users
