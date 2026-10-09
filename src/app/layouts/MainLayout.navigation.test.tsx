@@ -34,7 +34,8 @@ describe("main navigation shell", () => {
     const sidebar = screen.getByRole("complementary", { name: "사이드 메뉴" })
     const collapse = screen.getByRole("button", { name: "PC 사이드바 접기" })
     expect(collapse).toHaveAttribute("aria-expanded", "true")
-    expect(within(sidebar).getByRole("link", { name: "홈" })).toHaveAttribute("href", "/app")
+    expect(within(sidebar).queryByRole("link", { name: "홈" })).not.toBeInTheDocument()
+    expect(screen.getByRole("link", { name: "홈으로 이동" })).toHaveAttribute("href", "/app")
 
     fireEvent.click(collapse)
     const expand = screen.getByRole("button", { name: "PC 사이드바 펼치기" })
@@ -47,7 +48,7 @@ describe("main navigation shell", () => {
     expect(sidebar).not.toHaveClass("lg:hidden")
   })
 
-  it("closes the mobile sidebar after selection and with Escape", async () => {
+  it("keeps the mobile sidebar open for category selection, closes for a page, and supports Escape", async () => {
     renderNavigation()
 
     const menuButton = screen.getByRole("button", { name: "사이드 메뉴 열기" })
@@ -60,13 +61,16 @@ describe("main navigation shell", () => {
 
     fireEvent.click(menuButton)
     const mobileRoots = within(sidebar).getByRole("navigation", { name: "주요 업무 메뉴" })
-    const master = await within(mobileRoots).findByRole("link", { name: "기준정보" })
+    const master = await within(mobileRoots).findByRole("button", { name: "기준정보" })
     fireEvent.click(master)
 
+    expect(menuButton).toHaveAttribute("aria-expanded", "true")
+    expect(screen.getByRole("heading", { name: "홈" })).toBeInTheDocument()
+    fireEvent.click(within(sidebar).getByRole("link", { name: "공통코드" }))
     await waitFor(() => expect(screen.getByText("공통코드 화면")).toBeInTheDocument())
     expect(menuButton).toHaveAttribute("aria-expanded", "false")
 
-    fireEvent.click(within(sidebar).getByRole("link", { name: "홈" }))
+    fireEvent.click(screen.getByRole("link", { name: "홈으로 이동" }))
     expect(await screen.findByRole("heading", { name: "홈" })).toBeInTheDocument()
   })
 })
