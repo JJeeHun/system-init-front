@@ -6,7 +6,9 @@
     "delete": "삭제",
     "confirm": "확인",
     "retry": "다시 시도",
-    "deleting": "삭제 중"
+    "deleting": "삭제 중",
+    "search": "조회",
+    "reset": "초기화"
   },
   "dialog": {
     "alertTitle": "알림",
@@ -44,5 +46,8 @@
     "staging": "스테이징",
     "production": "운영",
     "current": "실행 환경: {{mode}}"
+  },
+  "searchPanel": {
+    "title": "검색 조건"
   }
 }

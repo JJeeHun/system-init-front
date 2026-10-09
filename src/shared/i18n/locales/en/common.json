@@ -6,7 +6,9 @@
     "delete": "Delete",
     "confirm": "Confirm",
     "retry": "Try again",
-    "deleting": "Deleting"
+    "deleting": "Deleting",
+    "search": "Search",
+    "reset": "Reset"
   },
   "dialog": {
     "alertTitle": "Notice",
@@ -44,5 +46,8 @@
     "staging": "STAGING",
     "production": "PRODUCTION",
     "current": "Environment: {{mode}}"
+  },
+  "searchPanel": {
+    "title": "Search Filters"
   }
 }
