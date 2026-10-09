@@ -1,5 +1,5 @@
 import { memo, useEffect } from "react"
-import { House, X } from "lucide-react"
+import { X } from "lucide-react"
 import { NavLink } from "react-router-dom"
 
 import { MenuIcon } from "@/features/navigation/components/MenuIcon"
@@ -17,6 +17,7 @@ type SidebarProps = {
   open: boolean
   desktopOpen: boolean
   onClose: () => void
+  onRootSelect: (menu: NavigationMenuItem) => void
 }
 
 type SidebarItemsProps = {
@@ -89,6 +90,7 @@ export const Sidebar = memo(function Sidebar({
   open,
   desktopOpen,
   onClose,
+  onRootSelect,
 }: SidebarProps) {
   useEffect(() => {
     if (!open) return
@@ -134,42 +136,20 @@ export const Sidebar = memo(function Sidebar({
           </div>
         </div>
 
-        <nav className="border-b border-border p-3" aria-label="홈 메뉴">
-          <NavLink
-            to="/app"
-            end
-            onClick={onClose}
-            className={({ isActive }) => [
-              "flex min-h-10 items-center gap-3 rounded-sm px-3 text-sm transition-colors",
-              isActive
-                ? "bg-sidebar-active font-semibold text-sidebar-active-foreground"
-                : "text-sidebar-foreground hover:bg-surface-soft hover:text-foreground",
-            ].join(" ")}
-          >
-            <House aria-hidden="true" className="size-4 shrink-0" />
-            <span>홈</span>
-          </NavLink>
-        </nav>
-
         <nav className="border-b border-border p-3 lg:hidden" aria-label="주요 업무 메뉴">
           <div className="grid grid-cols-2 gap-2">
             {rootMenus.map((menu) => {
               const path = getFirstMenuPath(menu)
               if (!path) return null
               return (
-                <NavLink
+                <Button
                   key={menu.id}
-                  to={path}
-                  onClick={onClose}
-                  className={[
-                    "flex min-h-10 items-center rounded-sm px-3 text-left text-sm transition-colors",
-                    menu.id === activeRootId
-                      ? "bg-primary-soft font-semibold text-primary"
-                      : "bg-surface-soft text-foreground-soft hover:text-foreground",
-                  ].join(" ")}
+                  primary={menu.id === activeRootId}
+                  aria-pressed={menu.id === activeRootId}
+                  onClick={() => onRootSelect(menu)}
                 >
                   {menu.label}
-                </NavLink>
+                </Button>
               )
             })}
           </div>
