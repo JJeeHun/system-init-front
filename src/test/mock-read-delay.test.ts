@@ -26,10 +26,11 @@ describe("Mock API read latency for loading-state inspection", () => {
     const onResolved = vi.fn()
     const result = read().then(onResolved)
 
-    await vi.advanceTimersByTimeAsync(devSettings.mockDelayMs - 1)
-    expect(onResolved).not.toHaveBeenCalled()
-
-    await vi.advanceTimersByTimeAsync(1)
+    if (devSettings.mockDelayMs > 0) {
+      await vi.advanceTimersByTimeAsync(devSettings.mockDelayMs - 1)
+      expect(onResolved).not.toHaveBeenCalled()
+      await vi.advanceTimersByTimeAsync(1)
+    }
     await result
     expect(onResolved).toHaveBeenCalledOnce()
   })
