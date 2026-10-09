@@ -18,6 +18,8 @@ export type ConfirmDialogProps = {
   onConfirm: () => void
   confirmLabel?: string
   cancelLabel?: string
+  showCancel?: boolean
+  destructive?: boolean
   trigger?: ReactNode
   open?: boolean
   defaultOpen?: boolean
@@ -30,20 +32,22 @@ export function ConfirmDialog({
   onConfirm,
   confirmLabel = "확인",
   cancelLabel = "취소",
+  showCancel = true,
+  destructive = true,
   trigger,
   ...props
 }: ConfirmDialogProps) {
   return (
     <ShadcnAlertDialog {...props}>
       {trigger ? <AlertDialogTrigger asChild>{trigger}</AlertDialogTrigger> : null}
-      <AlertDialogContent>
+      <AlertDialogContent className="max-h-[calc(100dvh-2rem)] overflow-y-auto">
         <AlertDialogHeader>
           <AlertDialogTitle>{title}</AlertDialogTitle>
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{cancelLabel}</AlertDialogCancel>
-          <AlertDialogAction variant="destructive" onClick={onConfirm}>
+          {showCancel ? <AlertDialogCancel>{cancelLabel}</AlertDialogCancel> : null}
+          <AlertDialogAction variant={destructive ? "destructive" : "default"} onClick={onConfirm}>
             {confirmLabel}
           </AlertDialogAction>
         </AlertDialogFooter>
