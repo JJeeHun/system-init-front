@@ -10,7 +10,7 @@ import type {
   UpdateCommonCodeItemRequest,
 } from "@/features/common-code/types/common-code.types"
 
-const READ_DELAY = 1000
+const READ_DELAY = 500
 const MUTATION_DELAY = 240
 
 let groupSequence = 4
