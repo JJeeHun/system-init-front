@@ -10,6 +10,7 @@ export function DataGrid<T extends object>({
   if (loading) {
     return (
       <div role="status" aria-label="데이터를 불러오는 중" className="h-[var(--layout-grid-height)] min-h-48 min-w-0 w-full overflow-hidden rounded-md border border-border bg-card">
+        <span className="sr-only">데이터를 불러오는 중입니다.</span>
         <div className="flex gap-4 border-b border-border bg-surface-soft p-3">
           {props.columns.map((column) => (
             <Skeleton key={column.key} className="h-4 min-w-0 flex-1" />
