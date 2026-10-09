@@ -19,12 +19,12 @@ afterEach(() => {
 })
 
 describe("Mock API read latency for loading-state inspection", () => {
-  it.each(mockReads)("%s does not resolve before 1 second", async (_name, read) => {
+  it.each(mockReads)("%s does not resolve before 500 milliseconds", async (_name, read) => {
     vi.useFakeTimers()
     const onResolved = vi.fn()
     const result = read().then(onResolved)
 
-    await vi.advanceTimersByTimeAsync(999)
+    await vi.advanceTimersByTimeAsync(499)
     expect(onResolved).not.toHaveBeenCalled()
 
     await vi.advanceTimersByTimeAsync(1)
