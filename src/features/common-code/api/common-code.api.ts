@@ -1,4 +1,5 @@
 import { mutationOptions, queryOptions, skipToken } from "@tanstack/react-query"
+import { AppError } from "@/shared/lib/app-error"
 
 import type {
   CommonCodeGroup,
@@ -129,11 +130,11 @@ function cloneItem(item: CommonCodeItem): CommonCodeItem {
   return { ...item }
 }
 
-function requireText(value: string, message: string) {
+function requireText(value: string, code: string, message: string) {
   const normalized = value.trim()
 
   if (!normalized) {
-    throw new Error(message)
+    throw new AppError(code, message)
   }
 
   return normalized
@@ -154,11 +155,11 @@ export async function createCommonCodeGroup(
 ): Promise<CommonCodeGroup> {
   await wait(MUTATION_DELAY)
 
-  const code = requireText(request.code, "그룹 코드를 입력해주세요.")
-  const name = requireText(request.name, "그룹명을 입력해주세요.")
+  const code = requireText(request.code, "COMMON_CODE_GROUP_CODE_REQUIRED", "그룹 코드를 입력해주세요.")
+  const name = requireText(request.name, "COMMON_CODE_GROUP_NAME_REQUIRED", "그룹명을 입력해주세요.")
 
   if (mockGroups.some((group) => group.code === code)) {
-    throw new Error("이미 등록된 그룹 코드입니다.")
+    throw new AppError("COMMON_CODE_GROUP_DUPLICATE", "이미 등록된 그룹 코드입니다.")
   }
 
   const created: CommonCodeGroup = {
@@ -183,13 +184,13 @@ export async function updateCommonCodeGroup(input: {
   const group = mockGroups.find((item) => item.id === input.id)
 
   if (!group) {
-    throw new Error("공통코드 그룹을 찾을 수 없습니다.")
+    throw new AppError("COMMON_CODE_GROUP_NOT_FOUND", "공통코드 그룹을 찾을 수 없습니다.")
   }
 
   const updated: CommonCodeGroup = {
     ...group,
     ...input.request,
-    name: requireText(input.request.name, "그룹명을 입력해주세요."),
+    name: requireText(input.request.name, "COMMON_CODE_GROUP_NAME_REQUIRED", "그룹명을 입력해주세요."),
     description: input.request.description.trim(),
   }
 
@@ -202,7 +203,7 @@ export async function deleteCommonCodeGroup(id: string): Promise<void> {
   await wait(MUTATION_DELAY)
 
   if (mockItems.some((item) => item.groupId === id)) {
-    throw new Error("하위 코드가 있는 그룹은 삭제할 수 없습니다.")
+    throw new AppError("COMMON_CODE_GROUP_HAS_ITEMS", "하위 코드가 있는 그룹은 삭제할 수 없습니다.")
   }
 
   mockGroups = mockGroups.filter((group) => group.id !== id)
@@ -214,18 +215,18 @@ export async function createCommonCodeItem(
   await wait(MUTATION_DELAY)
 
   if (!mockGroups.some((group) => group.id === request.groupId)) {
-    throw new Error("공통코드 그룹을 찾을 수 없습니다.")
+    throw new AppError("COMMON_CODE_ITEM_GROUP_NOT_FOUND", "공통코드 그룹을 찾을 수 없습니다.")
   }
 
-  const code = requireText(request.code, "코드를 입력해주세요.")
-  const name = requireText(request.name, "코드명을 입력해주세요.")
+  const code = requireText(request.code, "COMMON_CODE_ITEM_CODE_REQUIRED", "코드를 입력해주세요.")
+  const name = requireText(request.name, "COMMON_CODE_ITEM_NAME_REQUIRED", "코드명을 입력해주세요.")
 
   if (
     mockItems.some(
       (item) => item.groupId === request.groupId && item.code === code,
     )
   ) {
-    throw new Error("선택한 그룹에 이미 등록된 코드입니다.")
+    throw new AppError("COMMON_CODE_ITEM_DUPLICATE", "선택한 그룹에 이미 등록된 코드입니다.")
   }
 
   const created: CommonCodeItem = {
@@ -250,13 +251,13 @@ export async function updateCommonCodeItem(input: {
   const item = mockItems.find((current) => current.id === input.id)
 
   if (!item) {
-    throw new Error("공통코드를 찾을 수 없습니다.")
+    throw new AppError("COMMON_CODE_ITEM_NOT_FOUND", "공통코드를 찾을 수 없습니다.")
   }
 
   const updated: CommonCodeItem = {
     ...item,
     ...input.request,
-    name: requireText(input.request.name, "코드명을 입력해주세요."),
+    name: requireText(input.request.name, "COMMON_CODE_ITEM_NAME_REQUIRED", "코드명을 입력해주세요."),
     description: input.request.description.trim(),
   }
 
@@ -296,30 +297,36 @@ export const commonCodeMutations = {
   createGroup: () =>
     mutationOptions({
       mutationFn: createCommonCodeGroup,
+      meta: { globalError: true },
     }),
 
   updateGroup: () =>
     mutationOptions({
       mutationFn: updateCommonCodeGroup,
+      meta: { globalError: true },
     }),
 
   deleteGroup: () =>
     mutationOptions({
       mutationFn: deleteCommonCodeGroup,
+      meta: { globalError: true },
     }),
 
   createItem: () =>
     mutationOptions({
       mutationFn: createCommonCodeItem,
+      meta: { globalError: true },
     }),
 
   updateItem: () =>
     mutationOptions({
       mutationFn: updateCommonCodeItem,
+      meta: { globalError: true },
     }),
 
   deleteItem: () =>
     mutationOptions({
       mutationFn: deleteCommonCodeItem,
+      meta: { globalError: true },
     }),
 }
