@@ -95,7 +95,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
       title={form.mode === "create" ? "코드 등록" : "코드 수정"}
     >
       <DefaultForm onSubmit={form.submit}>
-        <Field label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
+        <Field required label="코드" htmlFor="common-code-item-code" error={form.errors.code}>
           <Input
             id="common-code-item-code"
             {...form.fields.code}
@@ -104,7 +104,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
           />
         </Field>
 
-        <Field label="코드명" htmlFor="common-code-item-name" error={form.errors.name}>
+        <Field required label="코드명" htmlFor="common-code-item-name" error={form.errors.name}>
           <Input
             id="common-code-item-name"
             {...form.fields.name}
@@ -120,7 +120,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
           />
         </Field>
 
-        <Field label="정렬순서" htmlFor="common-code-item-sort-order" error={form.errors.sortOrder}>
+        <Field required label="정렬순서" htmlFor="common-code-item-sort-order" error={form.errors.sortOrder}>
           <Input
             id="common-code-item-sort-order"
             {...form.fields.sortOrder}
