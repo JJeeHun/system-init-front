@@ -4,7 +4,7 @@ import { Button as ShadcnButton } from "@/shared/components/ui/button"
 import { Spinner } from "@/shared/components/ui/spinner"
 import type { ExclusiveBooleanProps } from "@/shared/types/exclusive-boolean-props"
 
-type ButtonTone = "primary" | "success" | "warning" | "error" | "info"
+type ButtonTone = "primary" | "success" | "warning" | "error" | "info" | "header"
 
 export type ButtonSize = "sm" | "md" | "lg"
 
@@ -26,12 +26,14 @@ function resolveTone({
   warning,
   error,
   info,
+  header,
 }: Pick<ButtonProps, ButtonTone>) {
   if (primary) return "primary"
   if (success) return "success"
   if (warning) return "warning"
   if (error) return "error"
   if (info) return "info"
+  if (header) return "header"
 
   return "neutral"
 }
@@ -42,6 +44,7 @@ export function Button({
   warning,
   error,
   info,
+  header,
   size = "md",
   type = "button",
   loading = false,
@@ -61,6 +64,7 @@ export function Button({
         warning,
         error,
         info,
+        header,
       })}
       size={shadcnSizeBySize[size]}
     >
