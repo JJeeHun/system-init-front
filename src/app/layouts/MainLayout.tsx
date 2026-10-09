@@ -1,8 +1,9 @@
 import { Outlet } from "react-router-dom"
 import { useAppTranslation } from "@/shared/i18n"
 
-import { Header } from "@/features/navigation/components/Header"
+import { AppHeader } from "@/app/layouts/AppHeader"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
+import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { useMainNavigation } from "@/features/navigation/hooks/use-main-navigation"
 import { useCurrentUser } from "@/features/user/hooks/use-current-user"
 import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
@@ -23,7 +24,7 @@ export function MainLayout() {
 
   return (
     <div className="flex h-dvh w-full min-w-0 flex-col overflow-hidden bg-background">
-      <Header
+      <AppHeader
         menus={navigation.menus}
         menuLoading={navigation.isLoading}
         user={currentUser.data ?? null}
@@ -43,7 +44,7 @@ export function MainLayout() {
           : "lg:grid-cols-[4.5rem_minmax(0,1fr)]",
       ].join(" ")}>
         <Sidebar
-          title={navigation.selectedRootMenu ? (navigation.selectedRootMenu.labelKey ? t(navigation.selectedRootMenu.labelKey) : navigation.selectedRootMenu.label) : t("navigation:sidebar.fallbackTitle")}
+          title={navigation.selectedRootMenu ? getMenuLabel(navigation.selectedRootMenu, t) : t("navigation:sidebar.fallbackTitle")}
           rootMenus={navigation.menus}
           activeRootId={navigation.selectedRootMenu?.id}
           menus={navigation.sidebarMenus}

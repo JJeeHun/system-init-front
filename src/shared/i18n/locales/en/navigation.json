@@ -13,7 +13,8 @@
     "primaryMenu": "Main navigation",
     "menuLoading": "Loading menus",
     "userLoadFailed": "Unable to load user details",
-    "mobileOpen": "Open sidebar"
+    "mobileOpen": "Open sidebar",
+    "userLoading": "Loading user information"
   },
   "sidebar": {
     "label": "Sidebar",
