@@ -29,13 +29,16 @@ export function useMainNavigation() {
     [location.pathname, menus],
   )
 
-  // A route change takes precedence over a category selected for browsing.
+  // Update the category when navigating to an actual menu page.
+  // Home has no active menu and must keep the last selected category.
   useEffect(() => {
-    setSelectedRootId(null)
-  }, [location.pathname])
+    if (activeRootMenu) {
+      setSelectedRootId(activeRootMenu.id)
+    }
+  }, [activeRootMenu])
 
   const selectedRootMenu = useMemo(
-    () => menus.find((menu) => menu.id === selectedRootId) ?? activeRootMenu,
+    () => menus.find((menu) => menu.id === selectedRootId) ?? activeRootMenu ?? menus[0] ?? null,
     [menus, selectedRootId, activeRootMenu],
   )
 

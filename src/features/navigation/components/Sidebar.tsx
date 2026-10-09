@@ -1,5 +1,5 @@
 import { memo, useEffect } from "react"
-import { X } from "lucide-react"
+import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react"
 import { NavLink } from "react-router-dom"
 
 import { MenuIcon } from "@/features/navigation/components/MenuIcon"
@@ -18,18 +18,21 @@ type SidebarProps = {
   desktopOpen: boolean
   onClose: () => void
   onRootSelect: (menu: NavigationMenuItem) => void
+  onToggleDesktopSidebar: () => void
 }
 
 type SidebarItemsProps = {
   menus: NavigationMenuItem[]
   onNavigate: () => void
   depth?: number
+  collapsed: boolean
 }
 
 function SidebarItems({
   menus,
   onNavigate,
   depth = 0,
+  collapsed,
 }: SidebarItemsProps) {
   return (
     <>
@@ -40,9 +43,9 @@ function SidebarItems({
           return (
             <section
               key={menu.id}
-              className={depth === 0 ? "mt-5 first:mt-0" : "mt-3"}
+              className={(depth === 0 ? "mt-5 first:mt-0" : "mt-3") + (collapsed ? " lg:mt-2" : "")}
             >
-              <p className="mb-2 px-3 text-xs font-bold uppercase tracking-wide text-foreground-faint">
+              <p className={"mb-2 px-3 text-xs font-bold uppercase tracking-wide text-foreground-faint" + (collapsed ? " lg:hidden" : "")}>
                 {menu.label}
               </p>
               <div className="grid gap-1">
@@ -50,6 +53,7 @@ function SidebarItems({
                   menus={children}
                   onNavigate={onNavigate}
                   depth={depth + 1}
+                  collapsed={collapsed}
                 />
               </div>
             </section>
@@ -63,9 +67,12 @@ function SidebarItems({
             key={menu.id}
             to={menu.path}
             onClick={onNavigate}
+            title={collapsed ? menu.label : undefined}
+            aria-label={collapsed ? menu.label : undefined}
             className={({ isActive }) =>
               [
                 "flex min-h-10 items-center gap-3 rounded-sm px-3 text-sm transition-colors",
+                collapsed ? "lg:justify-center lg:px-0" : "",
                 isActive
                   ? "bg-sidebar-active font-semibold text-sidebar-active-foreground"
                   : "text-sidebar-foreground hover:bg-surface-soft hover:text-foreground",
@@ -73,7 +80,7 @@ function SidebarItems({
             }
           >
             <MenuIcon name={menu.icon} />
-            <span className="truncate">{menu.label}</span>
+            <span className={collapsed ? "truncate lg:hidden" : "truncate"}>{menu.label}</span>
           </NavLink>
         )
       })}
@@ -91,6 +98,7 @@ export const Sidebar = memo(function Sidebar({
   desktopOpen,
   onClose,
   onRootSelect,
+  onToggleDesktopSidebar,
 }: SidebarProps) {
   useEffect(() => {
     if (!open) return
@@ -122,13 +130,31 @@ export const Sidebar = memo(function Sidebar({
         id="app-sidebar"
         aria-label="사이드 메뉴"
         data-open={open}
+        data-collapsed={!desktopOpen}
         className={[
-          "fixed bottom-0 left-0 top-[var(--layout-header-height)] z-[var(--z-sidebar)] w-[var(--layout-sidebar-mobile-width)] -translate-x-full overflow-y-auto border-r border-border bg-sidebar shadow-drawer transition-transform duration-200 data-[open=true]:translate-x-0 lg:sticky lg:top-[var(--layout-header-height)] lg:h-[calc(100dvh-var(--layout-header-height))] lg:w-auto lg:translate-x-0 lg:shadow-none",
-          desktopOpen ? "" : "lg:hidden",
+          "fixed bottom-0 left-0 top-[var(--layout-header-height)] z-[var(--z-sidebar)] w-[var(--layout-sidebar-mobile-width)] -translate-x-full overflow-x-hidden overflow-y-auto border-r border-border bg-sidebar shadow-drawer transition-transform duration-200 data-[open=true]:translate-x-0 lg:sticky lg:top-[var(--layout-header-height)] lg:h-[calc(100dvh-var(--layout-header-height))] lg:w-auto lg:translate-x-0 lg:shadow-none",
+
         ].join(" ")}
       >
-        <div className="flex min-h-16 items-center justify-between border-b border-border px-4">
-          <strong className="text-sm text-foreground">{title}</strong>
+        <div className={[
+          "flex min-h-16 items-center justify-between border-b border-border px-4",
+          desktopOpen ? "" : "lg:justify-center lg:px-2",
+        ].join(" ")}>
+          <strong className={desktopOpen ? "text-sm text-foreground" : "text-sm text-foreground lg:hidden"}>{title}</strong>
+          <div className="hidden lg:block">
+            <Button
+              size="sm"
+              onClick={onToggleDesktopSidebar}
+              aria-label={desktopOpen ? "PC 사이드바 접기" : "PC 사이드바 펼치기"}
+              aria-expanded={desktopOpen}
+              aria-controls="app-sidebar"
+              title={desktopOpen ? "사이드바 접기" : "사이드바 펼치기"}
+            >
+              {desktopOpen
+                ? <PanelLeftClose aria-hidden="true" className="size-4" />
+                : <PanelLeftOpen aria-hidden="true" className="size-4" />}
+            </Button>
+          </div>
           <div className="lg:hidden">
             <Button size="sm" onClick={onClose} id="sidebar-mobile-close" aria-label="사이드 메뉴 닫기">
               <X aria-hidden="true" className="size-4" />
@@ -155,14 +181,14 @@ export const Sidebar = memo(function Sidebar({
           </div>
         </nav>
 
-        <nav className="p-3" aria-label={title + " 하위 메뉴"}>
+        <nav className={desktopOpen ? "p-3" : "p-3 lg:p-2"} aria-label={title + " 하위 메뉴"}>
           {loading ? (
             <div role="status" aria-label="사이드 메뉴 불러오는 중" className="grid gap-4 p-2">
               {Array.from({ length: 4 }, (_, index) => (
                 <Skeleton key={index} className="h-9 w-full" />
               ))}
             </div>
-          ) : <SidebarItems menus={menus} onNavigate={onClose} />}
+          ) : <SidebarItems menus={menus} onNavigate={onClose} collapsed={!desktopOpen} />}
         </nav>
       </aside>
     </>
