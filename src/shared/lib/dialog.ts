@@ -3,6 +3,7 @@ export type DialogOptions = {
   description: string
   confirmLabel?: string
   cancelLabel?: string
+  destructive?: boolean
 }
 
 export type DialogRequest = {
@@ -11,6 +12,7 @@ export type DialogRequest = {
   description: string
   confirmLabel: string
   cancelLabel: string
+  destructive: boolean
 }
 
 let active: DialogRequest | null = null
@@ -34,6 +36,7 @@ function request(kind: DialogRequest["kind"], options: string | DialogOptions): 
       description: normalized.description,
       confirmLabel: normalized.confirmLabel ?? "확인",
       cancelLabel: normalized.cancelLabel ?? "취소",
+      destructive: normalized.destructive ?? false,
     }
     resolveActive = resolve
     notify()
