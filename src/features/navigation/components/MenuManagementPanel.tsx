@@ -43,7 +43,7 @@ function MenuTree({ menus, parentId, depth, selectedId, onSelect }: {
             onClick={() => onSelect(menu)}
             title={menu.path || getMenuLabel(menu, t)}
           >
-            <span className="flex min-w-0 w-full items-center gap-2 text-left" style={{ paddingLeft: `${Math.min(depth, 4) * 10}px` }}>
+            <span className="flex min-w-0 w-full items-center gap-2 text-left" className={["", "pl-3", "pl-6", "pl-9", "pl-12"][Math.min(depth, 4)]}>
               <MenuIcon name={menu.icon} />
               <span className="min-w-0 flex-1 truncate">{getMenuLabel(menu, t)}</span>
               {!menu.enabled ? <span className="shrink-0 text-xs opacity-70">{t("common:labels.disabled")}</span> : null}

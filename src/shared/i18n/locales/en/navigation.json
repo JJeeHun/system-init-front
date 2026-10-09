@@ -42,5 +42,67 @@
     "notFoundDescription": "Check whether this menu is available to your account.",
     "placeholderDescription": "This is a placeholder screen linked to menu routing and access.",
     "placeholderBody": "Build the actual business UI in the corresponding Feature."
+  },
+  "management": {
+    "pageTitle": "Menu Management",
+    "pageDescription": "Manage menu structure and display properties. Changes are saved in the current in-memory mock.",
+    "category": "System Management",
+    "treeTitle": "Menu Structure",
+    "treeDescription": "Select a menu or group.",
+    "detailsTitle": "Menu Details",
+    "choose": "Select a menu from the tree.",
+    "addRoot": "Add Root Menu",
+    "addChild": "Add Child Menu",
+    "create": "Add Menu",
+    "edit": "Edit Menu",
+    "deleteTitle": "Delete Menu",
+    "deleteConfirm": "Delete “{{name}}”?",
+    "loading": "Loading menu list",
+    "empty": "No menus registered.",
+    "loadError": "Failed to load menus.",
+    "root": "Root",
+    "noIcon": "No icon",
+    "permissionNotice": "Permission codes are stored for future role management; they do not enforce access yet.",
+    "fields": {
+      "id": "Menu ID",
+      "name": "Menu Name",
+      "kind": "Type",
+      "parent": "Parent Menu",
+      "path": "Page Path",
+      "icon": "Icon",
+      "sortOrder": "Sort Order",
+      "enabled": "Enabled",
+      "permissionCode": "Permission Code"
+    },
+    "kinds": {
+      "group": "Group",
+      "page": "Page"
+    },
+    "validation": {
+      "idRequired": "Enter a menu ID.",
+      "idFormat": "Use lowercase letters, numbers, and hyphens.",
+      "nameRequired": "Enter a menu name.",
+      "pathRequired": "Enter a page path.",
+      "pathFormat": "The path must start with /app/.",
+      "orderRequired": "Enter a sort order.",
+      "orderInvalid": "Sort order must be a nonnegative integer."
+    },
+    "messages": {
+      "created": "Menu created.",
+      "updated": "Menu updated.",
+      "deleted": "Menu deleted."
+    },
+    "errors": {
+      "invalidId": "Invalid menu ID.",
+      "nameRequired": "Enter a menu name.",
+      "invalidOrder": "Check the sort order.",
+      "duplicateId": "Menu ID already exists.",
+      "invalidParent": "Choose a valid parent group.",
+      "cycle": "A menu cannot be nested under itself or one of its descendants.",
+      "invalidPath": "Check the page path.",
+      "duplicatePath": "Page path already exists.",
+      "hasChildren": "Cannot delete or convert a group with child menus.",
+      "notFound": "Menu not found."
+    }
   }
 }

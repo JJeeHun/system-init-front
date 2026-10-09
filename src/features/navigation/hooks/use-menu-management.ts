@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { useController, useForm } from "react-hook-form"
+import { useForm } from "react-hook-form"
 
 import { navigationMutations, navigationQueries, navigationQueryKeys } from "@/features/navigation/api/navigation.api"
 import type { MenuInput, MenuRecord } from "@/features/navigation/types/menu-management.types"
@@ -34,7 +34,6 @@ export function useMenuManagement() {
   const [mode, setMode] = useState<FormMode>(null)
   const selected = useMemo(() => menus.find((menu) => menu.id === selectedId) ?? null, [menus, selectedId])
   const form = useForm<MenuInput>({ defaultValues: EMPTY_MENU })
-  const enabledField = useController({ control: form.control, name: "enabled" }).field
 
   useEffect(() => {
     if (Object.keys(form.formState.errors).length > 0) void form.trigger()
@@ -155,7 +154,6 @@ export function useMenuManagement() {
     cancel,
     submit,
     form,
-    enabledField: { checked: enabledField.value, onCheckedChange: enabledField.onChange },
     saving,
     deleting: deleteMutation.isPending,
   }

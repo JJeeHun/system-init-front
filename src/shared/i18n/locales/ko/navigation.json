@@ -42,5 +42,67 @@
     "notFoundDescription": "현재 권한에 포함된 메뉴 경로인지 확인해주세요.",
     "placeholderDescription": "권한 메뉴와 라우팅 골격이 연결된 기본 화면입니다.",
     "placeholderBody": "실제 업무 UI는 해당 Feature에서 구현합니다."
+  },
+  "management": {
+    "pageTitle": "메뉴 관리",
+    "pageDescription": "메뉴 구조와 표시 정보를 관리합니다. 변경 사항은 이 화면의 Mock 데이터에 반영됩니다.",
+    "category": "시스템 관리",
+    "treeTitle": "메뉴 구조",
+    "treeDescription": "상위 메뉴와 하위 메뉴를 선택하세요.",
+    "detailsTitle": "메뉴 상세",
+    "choose": "왼쪽에서 메뉴를 선택해주세요.",
+    "addRoot": "상위 메뉴 등록",
+    "addChild": "하위 메뉴 등록",
+    "create": "메뉴 등록",
+    "edit": "메뉴 수정",
+    "deleteTitle": "메뉴 삭제",
+    "deleteConfirm": "“{{name}}” 메뉴를 삭제하시겠습니까?",
+    "loading": "메뉴 목록 불러오는 중",
+    "empty": "등록된 메뉴가 없습니다.",
+    "loadError": "메뉴 목록을 불러오지 못했습니다.",
+    "root": "최상위",
+    "noIcon": "아이콘 없음",
+    "permissionNotice": "권한 코드는 향후 역할·권한 기능과 연결할 예정이며 현재 접근 제한에는 사용하지 않습니다.",
+    "fields": {
+      "id": "메뉴 ID",
+      "name": "메뉴명",
+      "kind": "메뉴 유형",
+      "parent": "상위 메뉴",
+      "path": "화면 경로",
+      "icon": "아이콘",
+      "sortOrder": "정렬순서",
+      "enabled": "사용 여부",
+      "permissionCode": "권한 코드"
+    },
+    "kinds": {
+      "group": "그룹",
+      "page": "화면"
+    },
+    "validation": {
+      "idRequired": "메뉴 ID를 입력해주세요.",
+      "idFormat": "영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
+      "nameRequired": "메뉴명을 입력해주세요.",
+      "pathRequired": "화면 경로를 입력해주세요.",
+      "pathFormat": "경로는 /app/으로 시작해야 합니다.",
+      "orderRequired": "정렬순서를 입력해주세요.",
+      "orderInvalid": "정렬순서는 0 이상의 정수여야 합니다."
+    },
+    "messages": {
+      "created": "메뉴가 등록되었습니다.",
+      "updated": "메뉴가 수정되었습니다.",
+      "deleted": "메뉴가 삭제되었습니다."
+    },
+    "errors": {
+      "invalidId": "유효하지 않은 메뉴 ID입니다.",
+      "nameRequired": "메뉴명을 입력해주세요.",
+      "invalidOrder": "정렬순서를 확인해주세요.",
+      "duplicateId": "이미 존재하는 메뉴 ID입니다.",
+      "invalidParent": "유효한 상위 메뉴를 선택해주세요.",
+      "cycle": "자기 자신이나 하위 메뉴를 상위 메뉴로 지정할 수 없습니다.",
+      "invalidPath": "화면 경로를 확인해주세요.",
+      "duplicatePath": "이미 등록된 화면 경로입니다.",
+      "hasChildren": "하위 메뉴가 있는 그룹은 삭제하거나 화면 메뉴로 변경할 수 없습니다.",
+      "notFound": "메뉴를 찾을 수 없습니다."
+    }
   }
 }
