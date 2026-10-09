@@ -25,7 +25,7 @@ function request(kind: DialogRequest["kind"], options: string | DialogOptions): 
   // The lock is acquired synchronously, before React updates the dialog UI.
   if (active) return Promise.resolve(false)
 
-  const normalized = typeof options === "string" ? { description: options } : options
+  const normalized: DialogOptions = typeof options === "string" ? { description: options } : options
 
   return new Promise<boolean>((resolve) => {
     active = {
