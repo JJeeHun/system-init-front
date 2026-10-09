@@ -1,6 +1,6 @@
 import { mutationOptions, queryOptions } from "@tanstack/react-query"
 
-import { createMockUser, listMockUsers, listMockUsersPage, setMockUserEnabled, updateMockUser } from "@/features/user/api/user-management.mock"
+import { createMockUser, ensureDemoMockUsers, listMockUsers, listMockUsersPage, setMockUserEnabled, updateMockUser } from "@/features/user/api/user-management.mock"
 import type { UserAccountInput, UserFilters, UserListParams } from "@/features/user/types/user-management.types"
 import { waitForMockDelay } from "@/shared/dev-tools/mock-delay"
 
@@ -17,6 +17,7 @@ export async function getUserAccounts(filters: UserFilters) {
 
 export async function getPagedUserAccounts(params: UserListParams) {
   await waitForMockDelay()
+  ensureDemoMockUsers()
   return listMockUsersPage(params)
 }
 
