@@ -1,3 +1,4 @@
+import type { AppTranslate } from "@/shared/i18n"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 
 function isPathActive(menuPath: string, pathname: string) {
@@ -52,4 +53,10 @@ export function findRootMenuByPath(
       return findMenuByPath(menu.children ?? [], pathname) !== null
     }) ?? null
   )
+}
+
+export function getMenuLabel(menu: NavigationMenuItem, t: AppTranslate): string {
+  if (!menu.labelKey) return menu.label
+  const translated = t(menu.labelKey)
+  return translated === menu.labelKey ? menu.label : translated
 }

@@ -19,7 +19,7 @@ export function useMainNavigation() {
   const navigationQuery = useQuery(navigationQueries.menus())
   const menus = navigationQuery.data ?? []
 
-  const activeRootMenu = useMemo(
+  const routeRootMenu = useMemo(
     () => findRootMenuByPath(menus, location.pathname),
     [location.pathname, menus],
   )
@@ -32,14 +32,14 @@ export function useMainNavigation() {
   // Update the category when navigating to an actual menu page.
   // Home has no active menu and must keep the last selected category.
   useEffect(() => {
-    if (activeRootMenu) {
-      setSelectedRootId(activeRootMenu.id)
+    if (routeRootMenu) {
+      setSelectedRootId(routeRootMenu.id)
     }
-  }, [activeRootMenu])
+  }, [routeRootMenu])
 
   const selectedRootMenu = useMemo(
-    () => menus.find((menu) => menu.id === selectedRootId) ?? activeRootMenu ?? menus[0] ?? null,
-    [menus, selectedRootId, activeRootMenu],
+    () => menus.find((menu) => menu.id === selectedRootId) ?? routeRootMenu ?? menus[0] ?? null,
+    [menus, selectedRootId, routeRootMenu],
   )
 
   return {
@@ -47,7 +47,7 @@ export function useMainNavigation() {
     sidebarMenus: selectedRootMenu?.children ?? [],
     selectedRootMenu,
     selectRootMenu: (menu: NavigationMenuItem) => setSelectedRootId(menu.id),
-    activeRootMenu,
+    routeRootMenu,
     currentMenu,
     isLoading: navigationQuery.isLoading,
     isError: navigationQuery.isError,
