@@ -2,7 +2,7 @@ import { queryOptions } from "@tanstack/react-query"
 
 import type { CurrentUser } from "@/features/user/types/user.types"
 
-const MOCK_DELAY = 300
+const MOCK_DELAY = 1000
 
 const mockCurrentUser: CurrentUser = {
   id: "admin",
