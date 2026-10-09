@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { format, isValid, parseISO } from "date-fns"
 import { enUS, ko } from "date-fns/locale"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 import { CalendarDaysIcon } from "lucide-react"
 import { cn } from "cn"
 
@@ -34,7 +34,7 @@ export function DatePicker({
   "aria-label": ariaLabel,
 }: DatePickerProps) {
   const [open, setOpen] = useState(false)
-  const { t, i18n } = useTranslation()
+  const { t, language } = useAppTranslation()
 
   if (presentation === "native") {
     return (
@@ -73,7 +73,7 @@ export function DatePicker({
       <PopoverContent align="start" className="w-auto p-0">
         <Calendar
           mode="single"
-          locale={i18n.resolvedLanguage === "en" ? enUS : ko}
+          locale={language === "en" ? enUS : ko}
           selected={selectedDate}
           onSelect={(date) => {
             if (!date) return

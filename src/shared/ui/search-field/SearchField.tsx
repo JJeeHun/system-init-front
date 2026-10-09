@@ -1,5 +1,5 @@
 import { SearchIcon, XIcon } from "lucide-react"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 
 import {
   InputGroup,
@@ -26,7 +26,7 @@ export function SearchField({
   disabled,
   ...inputProps
 }: SearchFieldProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   return (
     <InputGroup data-disabled={disabled}>
       <InputGroupAddon>

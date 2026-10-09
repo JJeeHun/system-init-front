@@ -1,7 +1,7 @@
 import { memo, useEffect } from "react"
 import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react"
 import { NavLink } from "react-router-dom"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 
 import { MenuIcon } from "@/features/navigation/components/MenuIcon"
 import { getFirstMenuPath } from "@/features/navigation/lib/navigation-menu"
@@ -35,7 +35,7 @@ function SidebarItems({
   depth = 0,
   collapsed,
 }: SidebarItemsProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   return (
     <>
       {menus.map((menu) => {
@@ -102,7 +102,7 @@ export const Sidebar = memo(function Sidebar({
   onRootSelect,
   onToggleDesktopSidebar,
 }: SidebarProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   useEffect(() => {
     if (!open) return
 

@@ -1,5 +1,5 @@
 import { AlertCircleIcon } from "lucide-react"
-import { useTranslation } from "@/shared/i18n"
+import { useAppTranslation } from "@/shared/i18n"
 
 import {
   Empty,
@@ -24,7 +24,7 @@ export function ErrorState({
   onRetry,
   isRetrying = false,
 }: ErrorStateProps) {
-  const { t } = useTranslation()
+  const { t } = useAppTranslation()
   return (
     <Empty role="alert">
       <EmptyHeader>
