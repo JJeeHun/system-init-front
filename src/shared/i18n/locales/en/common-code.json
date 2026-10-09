@@ -1,0 +1,69 @@
+{
+  "page": {
+    "category": "Master Data",
+    "title": "Common Code Management",
+    "description": "Manage groups and codes in a fixed master-detail layout."
+  },
+  "group": {
+    "title": "Code Groups",
+    "description": "Master · Fixed level 1",
+    "loading": "Loading code groups",
+    "empty": "No code groups registered.",
+    "create": "Add Group",
+    "edit": "Edit Group",
+    "delete": "Delete Group",
+    "deleteConfirm": "Delete the group \"{{name}}\"?",
+    "fields": {
+      "code": "Group Code",
+      "name": "Group Name"
+    }
+  },
+  "item": {
+    "title": "Detail Codes",
+    "description": "Detail · Fixed level 2",
+    "empty": "No detail codes registered.",
+    "chooseGroup": "Select a code group.",
+    "create": "Add Code",
+    "edit": "Edit Code",
+    "delete": "Delete Detail Code",
+    "deleteConfirm": "Delete the code \"{{name}}\"?",
+    "fields": {
+      "code": "Code",
+      "name": "Code Name"
+    }
+  },
+  "fields": {
+    "description": "Description",
+    "sortOrder": "Sort Order",
+    "order": "Order",
+    "enabled": "Enabled"
+  },
+  "validation": {
+    "groupCodeRequired": "Please enter a group code.",
+    "groupNameRequired": "Please enter a group name.",
+    "itemCodeRequired": "Please enter a code.",
+    "itemNameRequired": "Please enter a code name.",
+    "sortOrderRequired": "Please enter a sort order.",
+    "sortOrderMin": "Sort order must be 0 or greater."
+  },
+  "messages": {
+    "groupCreated": "Code group created.",
+    "groupUpdated": "Code group updated.",
+    "groupDeleted": "Code group deleted.",
+    "itemCreated": "Detail code created.",
+    "itemUpdated": "Detail code updated.",
+    "itemDeleted": "Detail code deleted."
+  },
+  "errors": {
+    "groupCodeRequired": "Please enter a group code.",
+    "groupNameRequired": "Please enter a group name.",
+    "groupDuplicate": "This group code already exists.",
+    "groupNotFound": "Code group not found.",
+    "groupHasItems": "Cannot delete a group that contains detail codes.",
+    "itemGroupNotFound": "Code group not found.",
+    "itemCodeRequired": "Please enter a code.",
+    "itemNameRequired": "Please enter a code name.",
+    "itemDuplicate": "This code already exists in the selected group.",
+    "itemNotFound": "Common code not found."
+  }
+}
