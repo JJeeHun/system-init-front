@@ -31,7 +31,6 @@ export function MainLayout() {
         desktopSidebarOpen={navigation.desktopSidebarOpen}
         mobileSidebarOpen={navigation.sidebarOpen}
         onRootSelect={navigation.selectRootMenu}
-        onToggleDesktopSidebar={navigation.toggleDesktopSidebar}
         onOpenSidebar={navigation.openSidebar}
       />
 
@@ -39,7 +38,7 @@ export function MainLayout() {
         "grid min-h-0 min-w-0 flex-1 grid-cols-1 overflow-hidden",
         navigation.desktopSidebarOpen
           ? "lg:grid-cols-[var(--layout-sidebar-width)_minmax(0,1fr)]"
-          : "lg:grid-cols-[minmax(0,1fr)]",
+          : "lg:grid-cols-[4.5rem_minmax(0,1fr)]",
       ].join(" ")}>
         <Sidebar
           title={navigation.selectedRootMenu?.label ?? "메뉴"}
@@ -51,6 +50,7 @@ export function MainLayout() {
           desktopOpen={navigation.desktopSidebarOpen}
           onClose={navigation.closeSidebar}
           onRootSelect={navigation.selectRootMenu}
+          onToggleDesktopSidebar={navigation.toggleDesktopSidebar}
         />
 
         <main className="flex min-h-0 min-w-0 flex-col overflow-hidden">
