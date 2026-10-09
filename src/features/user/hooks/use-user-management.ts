@@ -21,8 +21,18 @@ export function useUserManagement() {
 
   const searchForm = useForm<UserFilters>({ defaultValues: EMPTY_FILTERS })
   const [filters, setFilters] = useState<UserFilters>(EMPTY_FILTERS)
-  const query = useQuery(userManagementQueries.list(filters))
-  const users = query.data ?? []
+  const [pagination, setPagination] = useState({ page: 1, pageSize: 20 })
+  const query = useQuery(userManagementQueries.list({ ...filters, ...pagination }))
+  const users = query.data?.items ?? []
+  const totalCount = query.data?.totalCount ?? 0
+
+  useEffect(() => {
+    if (!query.data || query.isFetching) return
+    const lastPage = Math.max(1, Math.ceil(totalCount / pagination.pageSize))
+    if (pagination.page > lastPage) {
+      setPagination(current => ({ ...current, page: lastPage }))
+    }
+  }, [query.data, query.isFetching, totalCount, pagination.page, pagination.pageSize])
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selected = useMemo(() => users.find(user => user.id === selectedId) ?? null, [users, selectedId])
 
@@ -33,7 +43,7 @@ export function useUserManagement() {
     if (Object.keys(form.formState.errors).length > 0) void form.trigger()
   }, [language])
 
-  const refresh = () => queryClient.invalidateQueries({ queryKey: userManagementQueryKeys.all })
+  const refresh = () => queryClient.invalidateQueries({ queryKey: userManagementQueryKeys.lists() })
 
   const createMutation = useMutation({
     ...userManagementMutations.create(),
@@ -109,12 +119,14 @@ export function useUserManagement() {
 
   const search = searchForm.handleSubmit(values => {
     setSelectedId(null)
+    setPagination(current => ({ ...current, page: 1 }))
     setFilters({ ...values, keyword: values.keyword.trim() })
   })
 
   function resetSearch() {
     searchForm.reset(EMPTY_FILTERS)
     setSelectedId(null)
+    setPagination(current => ({ ...current, page: 1 }))
     setFilters({ ...EMPTY_FILTERS })
   }
 
@@ -126,6 +138,17 @@ export function useUserManagement() {
     isFetching: query.isFetching,
     loadError: query.isError ? t("user:messages.loadError") : null,
     users,
+    totalCount,
+    page: pagination.page,
+    pageSize: pagination.pageSize,
+    changePage: (page: number) => {
+      setSelectedId(null)
+      setPagination(current => ({ ...current, page }))
+    },
+    changePageSize: (pageSize: number) => {
+      setSelectedId(null)
+      setPagination({ page: 1, pageSize })
+    },
     selected,
     selectUser: (user: { id: string }) => setSelectedId(user.id),
     startCreate,

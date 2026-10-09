@@ -17,3 +17,13 @@ export type UserFilters = {
   status: "all" | "enabled" | "disabled"
   role: "all" | UserRoleCode
 }
+
+export type UserListParams = UserFilters & {
+  page: number
+  pageSize: number
+}
+
+export type UserListResult = {
+  items: UserAccount[]
+  totalCount: number
+}

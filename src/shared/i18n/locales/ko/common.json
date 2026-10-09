@@ -49,5 +49,14 @@
   },
   "searchPanel": {
     "title": "검색 조건"
+  },
+  "pagination": {
+    "pageSize": "페이지당 표시",
+    "range": "{{start}}–{{end}} / 전체 {{total}}건",
+    "first": "첫 페이지",
+    "previous": "이전 페이지",
+    "next": "다음 페이지",
+    "last": "마지막 페이지",
+    "gotoPage": "{{page}}페이지로 이동"
   }
 }
