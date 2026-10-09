@@ -27,17 +27,21 @@ function renderNavigation() {
 }
 
 describe("navigation category selection", () => {
-  it("switches the desktop sidebar category without navigating away from the current page", async () => {
+  it("shows the four planned system pages without navigating away when the header category is selected", async () => {
     renderNavigation()
     const header = screen.getByRole("banner")
-    const master = await within(header).findByRole("button", { name: "기준정보" })
-    fireEvent.click(master)
+    const system = await within(header).findByRole("button", { name: "시스템 관리" })
+    fireEvent.click(system)
 
     expect(screen.getByRole("heading", { name: "홈" })).toBeInTheDocument()
-    expect(master).toHaveAttribute("aria-pressed", "true")
+    expect(system).toHaveAttribute("aria-pressed", "true")
+
     const sidebar = screen.getByRole("complementary", { name: "사이드 메뉴" })
-    expect(within(sidebar).getByRole("link", { name: "공통코드" })).toBeInTheDocument()
-    expect(within(sidebar).getByRole("link", { name: "품목관리" })).toBeInTheDocument()
+    expect(within(sidebar).getByRole("link", { name: "사용자 관리" })).toBeInTheDocument()
+    expect(within(sidebar).getByRole("link", { name: "역할·권한 관리" })).toBeInTheDocument()
+    expect(within(sidebar).getByRole("link", { name: "메뉴 관리" })).toBeInTheDocument()
+    expect(within(sidebar).getByRole("link", { name: "공통코드 관리" })).toBeInTheDocument()
+    expect(within(sidebar).queryByRole("link", { name: "품목관리" })).not.toBeInTheDocument()
   })
 
   it("keeps the mobile drawer open for a category and closes only after selecting a screen", async () => {
@@ -47,12 +51,12 @@ describe("navigation category selection", () => {
 
     fireEvent.click(open)
     const mobileRoots = within(sidebar).getByRole("navigation", { name: "주요 업무 메뉴" })
-    const master = await within(mobileRoots).findByRole("button", { name: "기준정보" })
+    const master = await within(mobileRoots).findByRole("button", { name: "시스템 관리" })
     fireEvent.click(master)
 
     expect(open).toHaveAttribute("aria-expanded", "true")
     expect(screen.getByRole("heading", { name: "홈" })).toBeInTheDocument()
-    const commonCode = within(sidebar).getByRole("link", { name: "공통코드" })
+    const commonCode = within(sidebar).getByRole("link", { name: "공통코드 관리" })
     fireEvent.click(commonCode)
 
     await waitFor(() => expect(screen.getByText("공통코드 화면")).toBeInTheDocument())
