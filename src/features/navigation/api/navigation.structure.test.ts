@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest"
 
 import { getNavigationMenus } from "@/features/navigation/api/navigation.api"
-import { findMenuByPath, getFirstMenuPath } from "@/features/navigation/lib/navigation-menu"
+import { findMenuByPath, getFirstMenuPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import koNavigation from "@/shared/i18n/locales/ko/navigation.json"
 import enNavigation from "@/shared/i18n/locales/en/navigation.json"
 
@@ -40,4 +40,11 @@ describe("administrator base navigation", () => {
     expect(Object.keys(koNavigation.menu).sort()).toEqual([...expected].sort())
     expect(Object.keys(enNavigation.menu).sort()).toEqual([...expected].sort())
   })
+  it("translates only explicitly keyed menu labels and falls back to original data labels", () => {
+    const local = { id: "custom", label: "Original", labelKey: "navigation:menu.unknown" }
+    expect(getMenuLabel(local, (key) => key)).toBe("Original")
+    expect(getMenuLabel(local, () => "Translated")).toBe("Translated")
+    expect(getMenuLabel({ id: "dynamic", label: "User defined" }, () => "Unexpected")).toBe("User defined")
+  })
+
 })

@@ -4,7 +4,7 @@ import { NavLink } from "react-router-dom"
 import { useAppTranslation } from "@/shared/i18n"
 
 import { MenuIcon } from "@/features/navigation/components/MenuIcon"
-import { getFirstMenuPath } from "@/features/navigation/lib/navigation-menu"
+import { getFirstMenuPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Button } from "@/shared/ui/button"
@@ -29,16 +29,13 @@ type SidebarItemsProps = {
   collapsed: boolean
 }
 
-function SidebarItems({
-  menus,
-  onNavigate,
-  depth = 0,
-  collapsed,
-}: SidebarItemsProps) {
+function SidebarItems({ menus, onNavigate, depth = 0, collapsed }: SidebarItemsProps) {
   const { t } = useAppTranslation()
+
   return (
     <>
       {menus.map((menu) => {
+        const label = getMenuLabel(menu, t)
         const children = menu.children ?? []
 
         if (children.length > 0) {
@@ -48,15 +45,10 @@ function SidebarItems({
               className={(depth === 0 ? "mt-5 first:mt-0" : "mt-3") + (collapsed ? " lg:mt-2" : "")}
             >
               <p className={"mb-2 px-3 text-xs font-bold uppercase tracking-wide text-foreground-faint" + (collapsed ? " lg:hidden" : "")}>
-                {menu.labelKey ? t(menu.labelKey) : menu.label}
+                {label}
               </p>
               <div className="grid gap-1">
-                <SidebarItems
-                  menus={children}
-                  onNavigate={onNavigate}
-                  depth={depth + 1}
-                  collapsed={collapsed}
-                />
+                <SidebarItems menus={children} onNavigate={onNavigate} depth={depth + 1} collapsed={collapsed} />
               </div>
             </section>
           )
@@ -69,8 +61,8 @@ function SidebarItems({
             key={menu.id}
             to={menu.path}
             onClick={onNavigate}
-            title={collapsed ? (menu.labelKey ? t(menu.labelKey) : menu.label) : undefined}
-            aria-label={collapsed ? (menu.labelKey ? t(menu.labelKey) : menu.label) : undefined}
+            title={collapsed ? label : undefined}
+            aria-label={collapsed ? label : undefined}
             className={({ isActive }) =>
               [
                 "flex min-h-10 items-center gap-3 rounded-sm px-3 text-sm transition-colors",
@@ -82,11 +74,78 @@ function SidebarItems({
             }
           >
             <MenuIcon name={menu.icon} />
-            <span className={collapsed ? "truncate lg:hidden" : "truncate"}>{menu.labelKey ? t(menu.labelKey) : menu.label}</span>
+            <span className={collapsed ? "truncate lg:hidden" : "truncate"}>{label}</span>
           </NavLink>
         )
       })}
     </>
+  )
+}
+
+function SidebarHeader({
+  title,
+  desktopOpen,
+  onClose,
+  onToggleDesktopSidebar,
+}: Pick<SidebarProps, "title" | "desktopOpen" | "onClose" | "onToggleDesktopSidebar">) {
+  const { t } = useAppTranslation()
+
+  return (
+    <div className={[
+      "flex min-h-16 items-center justify-between border-b border-border px-4",
+      desktopOpen ? "" : "lg:justify-center lg:px-2",
+    ].join(" ")}>
+      <strong className={desktopOpen ? "text-sm text-foreground" : "text-sm text-foreground lg:hidden"}>{title}</strong>
+      <div className="hidden lg:block">
+        <Button
+          size="sm"
+          onClick={onToggleDesktopSidebar}
+          aria-label={t(desktopOpen ? "navigation:sidebar.collapse" : "navigation:sidebar.expand")}
+          aria-expanded={desktopOpen}
+          aria-controls="app-sidebar"
+          title={t(desktopOpen ? "navigation:sidebar.collapseHint" : "navigation:sidebar.expandHint")}
+        >
+          {desktopOpen
+            ? <PanelLeftClose aria-hidden="true" className="size-4" />
+            : <PanelLeftOpen aria-hidden="true" className="size-4" />}
+        </Button>
+      </div>
+      <div className="lg:hidden">
+        <Button size="sm" onClick={onClose} id="sidebar-mobile-close" aria-label={t("navigation:sidebar.close")}>
+          <X aria-hidden="true" className="size-4" />
+        </Button>
+      </div>
+    </div>
+  )
+}
+
+function MobileRootNavigation({
+  rootMenus,
+  activeRootId,
+  onRootSelect,
+}: Pick<SidebarProps, "rootMenus" | "activeRootId" | "onRootSelect">) {
+  const { t } = useAppTranslation()
+
+  return (
+    <nav className="border-b border-border p-3 lg:hidden" aria-label={t("navigation:header.primaryMenu")}>
+      <div className="grid grid-cols-2 gap-2">
+        {rootMenus.map((menu) => {
+          if (!getFirstMenuPath(menu)) return null
+
+          const selected = menu.id === activeRootId
+          return (
+            <Button
+              key={menu.id}
+              primary={selected}
+              aria-pressed={selected}
+              onClick={() => onRootSelect(menu)}
+            >
+              {getMenuLabel(menu, t)}
+            </Button>
+          )
+        })}
+      </div>
+    </nav>
   )
 }
 
@@ -103,6 +162,7 @@ export const Sidebar = memo(function Sidebar({
   onToggleDesktopSidebar,
 }: SidebarProps) {
   const { t } = useAppTranslation()
+
   useEffect(() => {
     if (!open) return
 
@@ -134,56 +194,19 @@ export const Sidebar = memo(function Sidebar({
         aria-label={t("navigation:sidebar.label")}
         data-open={open}
         data-collapsed={!desktopOpen}
-        className={[
-          "fixed bottom-0 left-0 top-[var(--layout-header-height)] z-[var(--z-sidebar)] w-[var(--layout-sidebar-mobile-width)] -translate-x-full overflow-x-hidden overflow-y-auto border-r border-border bg-sidebar shadow-drawer transition-transform duration-200 data-[open=true]:translate-x-0 lg:sticky lg:top-[var(--layout-header-height)] lg:h-[calc(100dvh-var(--layout-header-height))] lg:w-auto lg:translate-x-0 lg:shadow-none",
-
-        ].join(" ")}
+        className="fixed bottom-0 left-0 top-[var(--layout-header-height)] z-[var(--z-sidebar)] w-[var(--layout-sidebar-mobile-width)] -translate-x-full overflow-x-hidden overflow-y-auto border-r border-border bg-sidebar shadow-drawer transition-transform duration-200 data-[open=true]:translate-x-0 lg:sticky lg:top-[var(--layout-header-height)] lg:h-[calc(100dvh-var(--layout-header-height))] lg:w-auto lg:translate-x-0 lg:shadow-none"
       >
-        <div className={[
-          "flex min-h-16 items-center justify-between border-b border-border px-4",
-          desktopOpen ? "" : "lg:justify-center lg:px-2",
-        ].join(" ")}>
-          <strong className={desktopOpen ? "text-sm text-foreground" : "text-sm text-foreground lg:hidden"}>{title}</strong>
-          <div className="hidden lg:block">
-            <Button
-              size="sm"
-              onClick={onToggleDesktopSidebar}
-              aria-label={t(desktopOpen ? "navigation:sidebar.collapse" : "navigation:sidebar.expand")}
-              aria-expanded={desktopOpen}
-              aria-controls="app-sidebar"
-              title={t(desktopOpen ? "navigation:sidebar.collapseHint" : "navigation:sidebar.expandHint")}
-            >
-              {desktopOpen
-                ? <PanelLeftClose aria-hidden="true" className="size-4" />
-                : <PanelLeftOpen aria-hidden="true" className="size-4" />}
-            </Button>
-          </div>
-          <div className="lg:hidden">
-            <Button size="sm" onClick={onClose} id="sidebar-mobile-close" aria-label="사이드 메뉴 닫기">
-              <X aria-hidden="true" className="size-4" />
-            </Button>
-          </div>
-        </div>
-
-        <nav className="border-b border-border p-3 lg:hidden" aria-label={t("navigation:header.primaryMenu")}>
-          <div className="grid grid-cols-2 gap-2">
-            {rootMenus.map((menu) => {
-              const path = getFirstMenuPath(menu)
-              if (!path) return null
-              return (
-                <Button
-                  key={menu.id}
-                  primary={menu.id === activeRootId}
-                  aria-pressed={menu.id === activeRootId}
-                  onClick={() => onRootSelect(menu)}
-                >
-                  {menu.labelKey ? t(menu.labelKey) : menu.label}
-                </Button>
-              )
-            })}
-          </div>
-        </nav>
-
+        <SidebarHeader
+          title={title}
+          desktopOpen={desktopOpen}
+          onClose={onClose}
+          onToggleDesktopSidebar={onToggleDesktopSidebar}
+        />
+        <MobileRootNavigation
+          rootMenus={rootMenus}
+          activeRootId={activeRootId}
+          onRootSelect={onRootSelect}
+        />
         <nav className={desktopOpen ? "p-3" : "p-3 lg:p-2"} aria-label={t("navigation:sidebar.subMenu", { title })}>
           {loading ? (
             <div role="status" aria-label={t("navigation:sidebar.loading")} className="grid gap-4 p-2">

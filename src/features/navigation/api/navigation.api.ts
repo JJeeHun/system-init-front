@@ -1,72 +1,54 @@
-import { queryOptions } from "@tanstack/react-query"
+import { mutationOptions, queryOptions } from "@tanstack/react-query"
 
+import { buildVisibleMenus, createMockMenu, deleteMockMenu, getMenuRecordsSnapshot, updateMockMenu } from "@/features/navigation/api/navigation.mock"
+import type { MenuInput, MenuRecord } from "@/features/navigation/types/menu-management.types"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 
-const MOCK_DELAY = 500
+const READ_DELAY = 500
+const MUTATION_DELAY = 240
 
-const mockNavigationMenus: NavigationMenuItem[] = [
-  {
-    id: "system",
-    label: "시스템 관리",
-    children: [
-      {
-        id: "user-access",
-        label: "사용자·권한",
-        children: [
-          {
-            id: "user",
-            label: "사용자 관리",
-            path: "/app/system/users",
-            icon: "users",
-          },
-          {
-            id: "role",
-            label: "역할·권한 관리",
-            path: "/app/system/roles",
-            icon: "settings",
-          },
-        ],
-      },
-      {
-        id: "system-settings",
-        label: "시스템 설정",
-        children: [
-          {
-            id: "menu-management",
-            label: "메뉴 관리",
-            path: "/app/system/menus",
-            icon: "settings",
-          },
-          {
-            id: "common-code",
-            label: "공통코드 관리",
-            path: "/app/master/common-code",
-            icon: "code",
-          },
-        ],
-      },
-    ],
-  },
-]
-
-function withTranslationKeys(menu: NavigationMenuItem): NavigationMenuItem {
-  return { ...menu, labelKey: `navigation:menu.${menu.id}`, children: menu.children?.map(withTranslationKeys) }
+function wait(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export async function getNavigationMenus(): Promise<NavigationMenuItem[]> {
-  await new Promise((resolve) => setTimeout(resolve, MOCK_DELAY))
-  return mockNavigationMenus.map(withTranslationKeys)
+  await wait(READ_DELAY)
+  return buildVisibleMenus()
+}
+
+export async function getMenuRecords(): Promise<MenuRecord[]> {
+  await wait(READ_DELAY)
+  return getMenuRecordsSnapshot()
+}
+
+export async function createMenu(input: MenuInput): Promise<MenuRecord> {
+  await wait(MUTATION_DELAY)
+  return createMockMenu(input)
+}
+
+export async function updateMenu(input: { id: string; request: MenuInput }): Promise<MenuRecord> {
+  await wait(MUTATION_DELAY)
+  return updateMockMenu(input.id, input.request)
+}
+
+export async function deleteMenu(id: string): Promise<void> {
+  await wait(MUTATION_DELAY)
+  deleteMockMenu(id)
 }
 
 export const navigationQueryKeys = {
   all: ["navigation"] as const,
   menus: () => [...navigationQueryKeys.all, "menus"] as const,
+  management: () => [...navigationQueryKeys.all, "management"] as const,
 }
 
 export const navigationQueries = {
-  menus: () =>
-    queryOptions({
-      queryKey: navigationQueryKeys.menus(),
-      queryFn: getNavigationMenus,
-    }),
+  menus: () => queryOptions({ queryKey: navigationQueryKeys.menus(), queryFn: getNavigationMenus }),
+  management: () => queryOptions({ queryKey: navigationQueryKeys.management(), queryFn: getMenuRecords }),
+}
+
+export const navigationMutations = {
+  create: () => mutationOptions({ mutationFn: createMenu, meta: { globalError: true } }),
+  update: () => mutationOptions({ mutationFn: updateMenu, meta: { globalError: true } }),
+  delete: () => mutationOptions({ mutationFn: deleteMenu, meta: { globalError: true } }),
 }

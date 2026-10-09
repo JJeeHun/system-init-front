@@ -40,12 +40,12 @@ describe("feature-based translations in the existing admin screens", () => {
     )
 
     const sidebar = await screen.findByRole("complementary", { name: "사이드 메뉴" })
-    expect(await within(sidebar).findByRole("link", { name: "공통코드" })).toBeInTheDocument()
+    expect(await within(sidebar).findByRole("link", { name: "공통코드 관리" })).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: "홈" })).toBeInTheDocument()
 
     fireEvent.click(screen.getByRole("button", { name: "영어로 변경" }))
     expect(await screen.findByRole("heading", { name: "Home" })).toBeInTheDocument()
-    const commonCodes = within(sidebar).getByRole("link", { name: "Common Codes" })
+    const commonCodes = within(sidebar).getByRole("link", { name: "Common Code Management" })
     fireEvent.click(commonCodes)
     expect(await screen.findByRole("heading", { name: "Common Code Management" })).toBeInTheDocument()
 
@@ -59,6 +59,6 @@ describe("feature-based translations in the existing admin screens", () => {
     expect(screen.getByRole("dialog", { name: "그룹 등록" })).toBeInTheDocument()
     fireEvent.click(screen.getByRole("button", { name: "취소" }))
     expect(await screen.findByRole("heading", { name: "공통코드 관리" })).toBeInTheDocument()
-    expect(within(sidebar).getByRole("link", { name: "공통코드" })).toBeInTheDocument()
+    expect(within(sidebar).getByRole("link", { name: "공통코드 관리" })).toBeInTheDocument()
   })
 })

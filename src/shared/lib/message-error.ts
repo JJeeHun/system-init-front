@@ -3,6 +3,16 @@ import { message } from "@/shared/lib/message"
 import { translate } from "@/shared/i18n"
 
 const errorTranslationKeys: Record<string, string> = {
+  MENU_INVALID_ID: "navigation:management.errors.invalidId",
+  MENU_NAME_REQUIRED: "navigation:management.errors.nameRequired",
+  MENU_INVALID_ORDER: "navigation:management.errors.invalidOrder",
+  MENU_DUPLICATE_ID: "navigation:management.errors.duplicateId",
+  MENU_INVALID_PARENT: "navigation:management.errors.invalidParent",
+  MENU_CYCLE: "navigation:management.errors.cycle",
+  MENU_INVALID_PATH: "navigation:management.errors.invalidPath",
+  MENU_DUPLICATE_PATH: "navigation:management.errors.duplicatePath",
+  MENU_HAS_CHILDREN: "navigation:management.errors.hasChildren",
+  MENU_NOT_FOUND: "navigation:management.errors.notFound",
   COMMON_CODE_GROUP_CODE_REQUIRED: "common-code:errors.groupCodeRequired",
   COMMON_CODE_GROUP_NAME_REQUIRED: "common-code:errors.groupNameRequired",
   COMMON_CODE_GROUP_DUPLICATE: "common-code:errors.groupDuplicate",
