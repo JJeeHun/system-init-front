@@ -35,7 +35,6 @@ type CommonCodeItemFormProps = {
   }
   isPending: boolean
   isDeleting: boolean
-  errorMessage: string | null
   startCreate: () => void
   startEdit: () => void
   cancel: () => void
@@ -139,12 +138,6 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
           />
         </Field>
 
-        {form.errorMessage ? (
-          <p role="alert" className="col-span-full text-sm text-destructive">
-            {form.errorMessage}
-          </p>
-        ) : null}
-
         <DefaultForm.Actions>
           <Button size="sm" disabled={form.isPending} onClick={form.cancel}>
             취소
@@ -183,7 +176,6 @@ export function CommonCodeItemPanel({
       <Panel.Header
         title="상세 코드"
         description={group ? `${group.code} · ${group.name}` : "Detail · 고정 2Depth"}
-        errorMessage={form.mode ? null : form.errorMessage}
         actions={
           <>
             <Button
