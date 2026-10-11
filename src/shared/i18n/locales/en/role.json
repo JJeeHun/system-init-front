@@ -32,13 +32,9 @@
     "delete": "Delete",
     "noAccess": "No Access",
     "empty": "No page menus available.",
-    "saveNotice": "Saving updates this Role's permissions for all assigned users. Runtime access control is not connected yet."
-  },
-  "preview": {
-    "title": "Permission Preview",
-    "allowed": "{{count}} accessible pages",
-    "denied": "No pages are accessible.",
-    "notice": "Preview only. Menu filtering, route protection and button disabling are not applied."
+    "saveNotice": "Saving updates this Role's permissions for all assigned users. Runtime access control is not connected yet.",
+    "menuTreeTitle": "Menu Hierarchy",
+    "selectedMenuNotice": "Set action permissions for the selected menu."
   },
   "confirm": {
     "discardTitle": "Discard Changes",

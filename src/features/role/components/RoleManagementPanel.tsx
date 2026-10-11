@@ -1,3 +1,5 @@
+import { useState } from "react"
+import { ChevronRightIcon } from "lucide-react"
 import { Controller } from "react-hook-form"
 
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
@@ -5,6 +7,7 @@ import type { MenuRecord } from "@/features/navigation/types/menu-management.typ
 import type { useRoleManagement } from "@/features/role/hooks/use-role-management"
 import type { RoleAction } from "@/features/role/types/role-management.types"
 import { Checkbox } from "@/shared/components/ui/checkbox"
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/shared/components/ui/collapsible"
 import { Input } from "@/shared/components/ui/input"
 import { ScrollArea } from "@/shared/components/ui/scroll-area"
 import { Textarea } from "@/shared/components/ui/textarea"
@@ -106,53 +109,93 @@ function PermissionCheckbox({ management, menu, action }: {
   )
 }
 
-function MenuPermissionItem({ management, menu }: { management: Management; menu: MenuRecord }) {
-  const { t } = useAppTranslation()
-  const hasAccess = management.isAllowed(menu.id, "view")
-  return (
-    <div className="grid gap-2 rounded-md border border-border p-3">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <span className="text-sm font-medium text-foreground">{getMenuLabel(menu, t)}</span>
-        {!hasAccess && <span className="text-xs text-foreground-soft">{t("role:permissions.noAccess")}</span>}
-      </div>
-      <div className="flex flex-wrap gap-x-5 gap-y-3">
-        {ACTIONS.map(action => <PermissionCheckbox key={action} management={management} menu={menu} action={action} />)}
-      </div>
-    </div>
-  )
-}
-
-function MenuGroup({ management, menu, depth }: { management: Management; menu: MenuRecord; depth: number }) {
-  const { t } = useAppTranslation()
-  return (
-    <section className="grid gap-2">
-      <h3 className="text-sm font-semibold text-foreground">{getMenuLabel(menu, t)}</h3>
-      <PermissionTree management={management} parentId={menu.id} depth={depth + 1} />
-    </section>
-  )
-}
-
-function PermissionTree({ management, parentId, depth = 0 }: {
+type MenuTreeProps = {
   management: Management
   parentId: string | null
-  depth?: number
+  selectedMenuId: string
+  onSelectMenu: (menuId: string) => void
+  depth: number
+}
+
+function MenuTreeNode({ management, menu, selectedMenuId, onSelectMenu, depth }: {
+  management: Management
+  menu: MenuRecord
+  selectedMenuId: string
+  onSelectMenu: (menuId: string) => void
+  depth: number
 }) {
+  const { t } = useAppTranslation()
+
+  if (menu.kind === "group") {
+    return (
+      <Collapsible defaultOpen className="group/menu grid gap-1">
+        <CollapsibleTrigger asChild>
+          <Button size="sm" title={getMenuLabel(menu, t)}>
+            <span className="flex w-full min-w-0 items-center gap-2 text-left">
+              <ChevronRightIcon aria-hidden="true" className="size-4 shrink-0 transition-transform group-data-[state=open]/menu:rotate-90" />
+              <span className="truncate font-semibold">{getMenuLabel(menu, t)}</span>
+            </span>
+          </Button>
+        </CollapsibleTrigger>
+        <CollapsibleContent>
+          <div className="ml-3 grid gap-1 border-l border-border pl-3">
+            <MenuTree management={management} parentId={menu.id} depth={depth + 1}
+              selectedMenuId={selectedMenuId} onSelectMenu={onSelectMenu} />
+          </div>
+        </CollapsibleContent>
+      </Collapsible>
+    )
+  }
+
+  return (
+    <Button size="sm" primary={menu.id === selectedMenuId}
+      aria-pressed={menu.id === selectedMenuId}
+      onClick={() => onSelectMenu(menu.id)} disabled={management.busy}>
+      <span className="flex w-full min-w-0 items-center gap-2 text-left">
+        <span className="truncate">{getMenuLabel(menu, t)}</span>
+        {!management.isAllowed(menu.id, "view") && (
+          <span className="ml-auto shrink-0 text-xs opacity-75">{t("role:permissions.noAccess")}</span>
+        )}
+      </span>
+    </Button>
+  )
+}
+
+function MenuTree({ management, parentId, selectedMenuId, onSelectMenu, depth }: MenuTreeProps) {
   const menus = management.menus.filter(menu => menu.parentId === parentId)
     .sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id))
+
   return (
-    <div className={depth > 0 ? "ml-3 border-l border-border pl-3" : "grid gap-3"}>
-      {menus.map(menu => {
-        if (menu.kind === "group") {
-          return <MenuGroup key={menu.id} management={management} menu={menu} depth={depth} />
-        }
-        return <MenuPermissionItem key={menu.id} management={management} menu={menu} />
-      })}
+    <div className={depth === 0 ? "grid gap-2" : "grid gap-1"}>
+      {menus.map(menu => (
+        <MenuTreeNode key={menu.id} management={management} menu={menu} depth={depth}
+          selectedMenuId={selectedMenuId} onSelectMenu={onSelectMenu} />
+      ))}
     </div>
+  )
+}
+
+function MenuPermissionEditor({ management, menu }: { management: Management; menu: MenuRecord }) {
+  const { t } = useAppTranslation()
+  const hasAccess = management.isAllowed(menu.id, "view")
+
+  return (
+    <section className="min-w-0 rounded-md border border-border p-3">
+      <h3 className="text-sm font-semibold text-foreground">{getMenuLabel(menu, t)}</h3>
+      <p className="mt-1 text-xs text-foreground-soft">{t("role:permissions.selectedMenuNotice")}</p>
+      {!hasAccess && (
+        <p className="mt-3 text-xs text-foreground-soft">{t("role:permissions.noAccess")}</p>
+      )}
+      <div className="mt-4 grid grid-cols-2 gap-4">
+        {ACTIONS.map(action => <PermissionCheckbox key={action} management={management} menu={menu} action={action} />)}
+      </div>
+    </section>
   )
 }
 
 function RolePermissionContent({ management }: { management: Management }) {
   const { t } = useAppTranslation()
+  const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null)
 
   if (!management.selected) {
     return <p className="text-sm text-foreground-soft">{t("role:permissions.choose")}</p>
@@ -163,28 +206,26 @@ function RolePermissionContent({ management }: { management: Management }) {
   if (management.menusLoading || management.permissionsLoading) {
     return <p role="status" className="text-sm text-foreground-soft">{t("common:states.loading")}</p>
   }
-  if (!management.menus.some(menu => menu.kind === "page")) {
+  const selectedMenu = management.menus.find(menu => menu.id === selectedMenuId && menu.kind === "page")
+    ?? management.menus.find(menu => menu.kind === "page")
+  if (!selectedMenu) {
     return <p className="text-sm text-foreground-soft">{t("role:permissions.empty")}</p>
   }
 
-  const accessibleMenus = management.menus.filter(menu =>
-    menu.kind === "page" && management.isAllowed(menu.id, "view"),
-  ).length
-
   return (
-    <div className="grid gap-4">
-      <div className="rounded-md border border-border bg-muted/40 p-3">
-        <p className="text-sm font-medium text-foreground">{t("role:preview.title")}</p>
-        <p className="mt-1 text-xs text-foreground-soft">
-          {accessibleMenus > 0 ? t("role:preview.allowed", { count: accessibleMenus }) : t("role:preview.denied")}
-        </p>
-        <p className="mt-1 text-xs text-foreground-soft">{t("role:preview.notice")}</p>
+    <div className="grid min-w-0 gap-3">
+      <div className="grid min-w-0 gap-3 2xl:grid-cols-2">
+        <nav aria-label={t("role:permissions.menuTreeTitle")} className="min-w-0 rounded-md border border-border p-3">
+          <h3 className="mb-3 text-sm font-semibold text-foreground">{t("role:permissions.menuTreeTitle")}</h3>
+          <ScrollArea type="always" className="h-72 min-w-0">
+            <div className="pr-2">
+              <MenuTree management={management} parentId={null} depth={0} selectedMenuId={selectedMenu.id}
+                onSelectMenu={setSelectedMenuId} />
+            </div>
+          </ScrollArea>
+        </nav>
+        <MenuPermissionEditor management={management} menu={selectedMenu} />
       </div>
-      <ScrollArea type="always" className="h-80 min-w-0 lg:h-[var(--layout-grid-height)]">
-        <div className="grid gap-3 pr-2">
-          <PermissionTree management={management} parentId={null} />
-        </div>
-      </ScrollArea>
       <p className="text-xs text-foreground-soft">{t("role:permissions.saveNotice")}</p>
     </div>
   )

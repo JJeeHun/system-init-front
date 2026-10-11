@@ -48,7 +48,9 @@
     "current": "실행 환경: {{mode}}"
   },
   "searchPanel": {
-    "title": "검색 조건"
+    "title": "검색 조건",
+    "collapse": "접기",
+    "expand": "펼치기"
   },
   "pagination": {
     "pageSize": "페이지당 표시",
