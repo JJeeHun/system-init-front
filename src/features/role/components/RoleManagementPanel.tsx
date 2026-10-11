@@ -35,12 +35,42 @@ function RoleSearch({ management }: { management: Management }) {
   )
 }
 
+function RoleListContent({ management }: { management: Management }) {
+  const { t } = useAppTranslation()
+
+  if (management.rolesError) {
+    return <p role="alert" className="text-sm text-destructive">{t("role:messages.rolesError")}</p>
+  }
+  if (management.rolesLoading) {
+    return <p role="status" className="text-sm text-foreground-soft">{t("common:states.loading")}</p>
+  }
+  if (management.roles.length === 0) {
+    return <p className="text-sm text-foreground-soft">{t("role:list.empty")}</p>
+  }
+
+  return (
+    <ScrollArea className="h-72 min-w-0 lg:h-[var(--layout-grid-height)]" type="always">
+      <div className="grid gap-2 pr-2">
+        {management.roles.map(role => (
+          <Button key={role.id} size="sm" primary={role.id === management.selected?.id}
+            aria-pressed={role.id === management.selected?.id}
+            onClick={() => void management.selectRole(role.id)} disabled={management.busy}>
+            <span className="flex w-full min-w-0 items-center justify-between gap-2 text-left">
+              <span className="truncate">{role.name}</span>
+              <span className="shrink-0 text-xs opacity-75">{role.id}</span>
+            </span>
+          </Button>
+        ))}
+      </div>
+    </ScrollArea>
+  )
+}
+
 function RoleList({ management }: { management: Management }) {
   const { t } = useAppTranslation()
   return (
     <Panel>
       <Panel.Header title={t("role:list.title")} description={t("role:list.description")}
-        errorMessage={management.rolesError ? t("role:messages.rolesError") : null}
         actions={
           <>
             <Button primary size="sm" disabled={management.busy} onClick={management.startCreate}>{t("role:actions.add")}</Button>
@@ -51,23 +81,7 @@ function RoleList({ management }: { management: Management }) {
           </>
         } />
       <Panel.Content>
-        {management.rolesLoading ? <p role="status" className="text-sm text-foreground-soft">{t("common:states.loading")}</p> :
-          management.roles.length === 0 ? <p className="text-sm text-foreground-soft">{t("role:list.empty")}</p> : (
-            <ScrollArea className="h-72 min-w-0 lg:h-[var(--layout-grid-height)]" type="always">
-              <div className="grid gap-2 pr-2">
-                {management.roles.map(role => (
-                  <Button key={role.id} size="sm" primary={role.id === management.selected?.id}
-                    aria-pressed={role.id === management.selected?.id}
-                    onClick={() => void management.selectRole(role.id)} disabled={management.busy}>
-                    <span className="flex w-full min-w-0 items-center justify-between gap-2 text-left">
-                      <span className="truncate">{role.name}</span>
-                      <span className="shrink-0 text-xs opacity-75">{role.id}</span>
-                    </span>
-                  </Button>
-                ))}
-              </div>
-            </ScrollArea>
-          )}
+        <RoleListContent management={management} />
         <p className="mt-3 text-xs text-foreground-soft">{t("role:list.builtinNotice")}</p>
       </Panel.Content>
     </Panel>
@@ -92,34 +106,86 @@ function PermissionCheckbox({ management, menu, action }: {
   )
 }
 
+function MenuPermissionItem({ management, menu }: { management: Management; menu: MenuRecord }) {
+  const { t } = useAppTranslation()
+  const hasAccess = management.isAllowed(menu.id, "view")
+  return (
+    <div className="grid gap-2 rounded-md border border-border p-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <span className="text-sm font-medium text-foreground">{getMenuLabel(menu, t)}</span>
+        {!hasAccess && <span className="text-xs text-foreground-soft">{t("role:permissions.noAccess")}</span>}
+      </div>
+      <div className="flex flex-wrap gap-x-5 gap-y-3">
+        {ACTIONS.map(action => <PermissionCheckbox key={action} management={management} menu={menu} action={action} />)}
+      </div>
+    </div>
+  )
+}
+
+function MenuGroup({ management, menu, depth }: { management: Management; menu: MenuRecord; depth: number }) {
+  const { t } = useAppTranslation()
+  return (
+    <section className="grid gap-2">
+      <h3 className="text-sm font-semibold text-foreground">{getMenuLabel(menu, t)}</h3>
+      <PermissionTree management={management} parentId={menu.id} depth={depth + 1} />
+    </section>
+  )
+}
+
 function PermissionTree({ management, parentId, depth = 0 }: {
   management: Management
   parentId: string | null
   depth?: number
 }) {
-  const { t } = useAppTranslation()
   const menus = management.menus.filter(menu => menu.parentId === parentId)
     .sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id))
   return (
     <div className={depth > 0 ? "ml-3 border-l border-border pl-3" : "grid gap-3"}>
-      {menus.map(menu => menu.kind === "group" ? (
-        <section key={menu.id} className="grid gap-2">
-          <h3 className="text-sm font-semibold text-foreground">{getMenuLabel(menu, t)}</h3>
-          <PermissionTree management={management} parentId={menu.id} depth={depth + 1} />
-        </section>
-      ) : (
-        <div key={menu.id} className="grid gap-2 rounded-md border border-border p-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <span className="text-sm font-medium text-foreground">{getMenuLabel(menu, t)}</span>
-            {!management.isAllowed(menu.id, "view") ? (
-              <span className="text-xs text-foreground-soft">{t("role:permissions.noAccess")}</span>
-            ) : null}
-          </div>
-          <div className="flex flex-wrap gap-x-5 gap-y-3">
-            {ACTIONS.map(action => <PermissionCheckbox key={action} management={management} menu={menu} action={action} />)}
-          </div>
+      {menus.map(menu => {
+        if (menu.kind === "group") {
+          return <MenuGroup key={menu.id} management={management} menu={menu} depth={depth} />
+        }
+        return <MenuPermissionItem key={menu.id} management={management} menu={menu} />
+      })}
+    </div>
+  )
+}
+
+function RolePermissionContent({ management }: { management: Management }) {
+  const { t } = useAppTranslation()
+
+  if (!management.selected) {
+    return <p className="text-sm text-foreground-soft">{t("role:permissions.choose")}</p>
+  }
+  if (management.menusError || management.permissionsError) {
+    return <p role="alert" className="text-sm text-destructive">{t("role:messages.permissionsError")}</p>
+  }
+  if (management.menusLoading || management.permissionsLoading) {
+    return <p role="status" className="text-sm text-foreground-soft">{t("common:states.loading")}</p>
+  }
+  if (!management.menus.some(menu => menu.kind === "page")) {
+    return <p className="text-sm text-foreground-soft">{t("role:permissions.empty")}</p>
+  }
+
+  const accessibleMenus = management.menus.filter(menu =>
+    menu.kind === "page" && management.isAllowed(menu.id, "view"),
+  ).length
+
+  return (
+    <div className="grid gap-4">
+      <div className="rounded-md border border-border bg-muted/40 p-3">
+        <p className="text-sm font-medium text-foreground">{t("role:preview.title")}</p>
+        <p className="mt-1 text-xs text-foreground-soft">
+          {accessibleMenus > 0 ? t("role:preview.allowed", { count: accessibleMenus }) : t("role:preview.denied")}
+        </p>
+        <p className="mt-1 text-xs text-foreground-soft">{t("role:preview.notice")}</p>
+      </div>
+      <ScrollArea type="always" className="h-80 min-w-0 lg:h-[var(--layout-grid-height)]">
+        <div className="grid gap-3 pr-2">
+          <PermissionTree management={management} parentId={null} />
         </div>
-      ))}
+      </ScrollArea>
+      <p className="text-xs text-foreground-soft">{t("role:permissions.saveNotice")}</p>
     </div>
   )
 }
@@ -127,13 +193,11 @@ function PermissionTree({ management, parentId, depth = 0 }: {
 function RolePermissionPanel({ management }: { management: Management }) {
   const { t } = useAppTranslation()
   const selected = management.selected
-  const accessibleMenus = management.menus.filter(menu => menu.kind === "page" && management.isAllowed(menu.id, "view")).length
   return (
     <Panel>
       <Panel.Header
         title={t("role:permissions.title")}
         description={selected ? t("role:permissions.selected", { name: selected.name }) : t("role:permissions.choose")}
-        errorMessage={management.menusError || management.permissionsError ? t("role:messages.permissionsError") : null}
         actions={selected ? (
           <>
             <Button size="sm" onClick={management.cancelPermissions} disabled={!management.permissionDirty || management.busy}>{t("common:actions.cancel")}</Button>
@@ -143,28 +207,7 @@ function RolePermissionPanel({ management }: { management: Management }) {
         ) : undefined}
       />
       <Panel.Content>
-        {!selected ? <p className="text-sm text-foreground-soft">{t("role:permissions.choose")}</p> :
-          management.menusLoading || management.permissionsLoading ? (
-            <p role="status" className="text-sm text-foreground-soft">{t("common:states.loading")}</p>
-          ) : (
-            <div className="grid gap-4">
-              <div className="rounded-md border border-border bg-muted/40 p-3">
-                <p className="text-sm font-medium text-foreground">{t("role:preview.title")}</p>
-                <p className="mt-1 text-xs text-foreground-soft">
-                  {accessibleMenus > 0 ? t("role:preview.allowed", { count: accessibleMenus }) : t("role:preview.denied")}
-                </p>
-                <p className="mt-1 text-xs text-foreground-soft">{t("role:preview.notice")}</p>
-              </div>
-              {management.menus.some(menu => menu.kind === "page") ? (
-                <ScrollArea type="always" className="h-80 min-w-0 lg:h-[var(--layout-grid-height)]">
-                  <div className="grid gap-3 pr-2">
-                    <PermissionTree management={management} parentId={null} />
-                  </div>
-                </ScrollArea>
-              ) : <p className="text-sm text-foreground-soft">{t("role:permissions.empty")}</p>}
-              <p className="text-xs text-foreground-soft">{t("role:permissions.saveNotice")}</p>
-            </div>
-          )}
+        <RolePermissionContent management={management} />
       </Panel.Content>
     </Panel>
   )
