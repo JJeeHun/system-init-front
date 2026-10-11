@@ -48,7 +48,9 @@
     "current": "Environment: {{mode}}"
   },
   "searchPanel": {
-    "title": "Search Filters"
+    "title": "Search Filters",
+    "collapse": "Collapse",
+    "expand": "Expand"
   },
   "pagination": {
     "pageSize": "Rows per page",
