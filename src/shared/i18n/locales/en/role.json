@@ -1,0 +1,70 @@
+{
+  "page": {
+    "category": "System Administration",
+    "title": "Roles & Permissions",
+    "description": "Manage menu access and actions for each role. Changes are saved to Mock data."
+  },
+  "fields": {
+    "search": "Search Roles",
+    "searchPlaceholder": "Role code / Name / Description",
+    "id": "Role Code",
+    "name": "Role Name",
+    "description": "Description"
+  },
+  "list": {
+    "title": "Roles",
+    "description": "Select a role to edit its menu and action permissions.",
+    "empty": "No matching roles.",
+    "builtinNotice": "ADMIN and STAFF are assigned to existing users and cannot be deleted."
+  },
+  "actions": {
+    "add": "Add Role",
+    "createTitle": "Add Role",
+    "editTitle": "Edit Role"
+  },
+  "permissions": {
+    "title": "Menu & Action Permissions",
+    "selected": "Permissions for {{name}}",
+    "choose": "Select a role on the left.",
+    "view": "View / Access",
+    "create": "Create",
+    "edit": "Edit",
+    "delete": "Delete",
+    "noAccess": "No Access",
+    "empty": "No page menus available.",
+    "saveNotice": "Saving updates this Role's permissions for all assigned users. Runtime access control is not connected yet."
+  },
+  "preview": {
+    "title": "Permission Preview",
+    "allowed": "{{count}} accessible pages",
+    "denied": "No pages are accessible.",
+    "notice": "Preview only. Menu filtering, route protection and button disabling are not applied."
+  },
+  "confirm": {
+    "discardTitle": "Discard Changes",
+    "discardDescription": "Discard unsaved permission changes and select a different role?",
+    "deleteTitle": "Delete Role",
+    "deleteDescription": "Delete the role “{{name}}”?"
+  },
+  "validation": {
+    "idRequired": "Enter a role code.",
+    "idFormat": "Use 2–30 uppercase letters, numbers or underscores, starting with a letter.",
+    "nameRequired": "Enter a role name."
+  },
+  "messages": {
+    "created": "Role created.",
+    "updated": "Role updated.",
+    "deleted": "Role deleted.",
+    "permissionsSaved": "Role permissions saved.",
+    "rolesError": "Could not load roles.",
+    "permissionsError": "Could not load menus or permissions."
+  },
+  "errors": {
+    "invalidId": "Invalid role code.",
+    "nameRequired": "Enter a role name.",
+    "duplicateId": "Role code already exists.",
+    "notFound": "Role not found.",
+    "inUse": "Default roles assigned to users cannot be deleted.",
+    "invalidPermission": "Invalid permission settings."
+  }
+}
