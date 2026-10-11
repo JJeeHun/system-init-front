@@ -9,6 +9,7 @@ import { HomePage } from "@/pages/HomePage"
 import { MenuPage } from "@/pages/MenuPage"
 import { MenuManagementPage } from "@/pages/MenuManagementPage"
 import { UserManagementPage } from "@/pages/UserManagementPage"
+import { RoleManagementPage } from "@/pages/RoleManagementPage"
 import { UiPlaygroundPage } from "@/pages/UiPlaygroundPage"
 
 export default function App() {
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="master/common-code" element={<CommonCodePage />} />
         <Route path="system/menus" element={<MenuManagementPage />} />
         <Route path="system/users" element={<UserManagementPage />} />
+        <Route path="system/roles" element={<RoleManagementPage />} />
         <Route path="dev/ui" element={<UiPlaygroundPage />} />
         <Route path="*" element={<MenuPage />} />
       </Route>
