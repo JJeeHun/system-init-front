@@ -6,6 +6,7 @@ import { cn } from "cn"
 import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react"
 
 import { Button } from "@/shared/components/ui/button"
+import { Spinner } from "@/shared/components/ui/spinner"
 import {
   InputGroup,
   InputGroupAddon,
@@ -22,8 +23,13 @@ function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
 function ComboboxTrigger({
   className,
   children,
+  loading = false,
+  loadingLabel,
   ...props
-}: ComboboxPrimitive.Trigger.Props) {
+}: ComboboxPrimitive.Trigger.Props & {
+  loading?: boolean
+  loadingLabel?: string
+}) {
   return (
     <ComboboxPrimitive.Trigger
       data-slot="combobox-trigger"
@@ -31,10 +37,14 @@ function ComboboxTrigger({
       {...props}
     >
       {children}
-      <ChevronDownIcon
-        data-slot="combobox-trigger-icon"
-        className="pointer-events-none size-4 text-muted-foreground"
-      />
+      {loading ? (
+        <Spinner className="text-muted-foreground" aria-label={loadingLabel} />
+      ) : (
+        <ChevronDownIcon
+          data-slot="combobox-trigger-icon"
+          className="pointer-events-none size-4 text-muted-foreground"
+        />
+      )}
     </ComboboxPrimitive.Trigger>
   )
 }
@@ -58,10 +68,14 @@ function ComboboxInput({
   disabled = false,
   showTrigger = true,
   showClear = false,
+  loading = false,
+  loadingLabel,
   ...props
 }: ComboboxPrimitive.Input.Props & {
   showTrigger?: boolean
   showClear?: boolean
+  loading?: boolean
+  loadingLabel?: string
 }) {
   return (
     <InputGroup className={cn("w-auto", className)}>
@@ -79,7 +93,7 @@ function ComboboxInput({
             className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
             disabled={disabled}
           >
-            <ComboboxTrigger />
+            <ComboboxTrigger loading={loading} loadingLabel={loadingLabel} />
           </InputGroupButton>
         )}
         {showClear && <ComboboxClear disabled={disabled} />}
