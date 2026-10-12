@@ -9,13 +9,14 @@
     "searchPlaceholder": "Role code / Name / Description",
     "id": "Role Code",
     "name": "Role Name",
-    "description": "Description"
+    "description": "Description",
+    "level": "Level"
   },
   "list": {
     "title": "Roles",
     "description": "Select a role to edit its menu and action permissions.",
     "empty": "No matching roles.",
-    "builtinNotice": "ADMIN and STAFF are assigned to existing users and cannot be deleted."
+    "builtinNotice": "SYSTEM, ADMIN, MANAGER and STAFF are protected base roles."
   },
   "actions": {
     "add": "Add Role",
@@ -32,9 +33,9 @@
     "delete": "Delete",
     "noAccess": "No Access",
     "empty": "No page menus available.",
-    "saveNotice": "Saving updates this Role's permissions for all assigned users. Runtime access control is not connected yet.",
+    "saveNotice": "Role permission settings. The Mock checks management levels and delegation; runtime login access control is not yet connected.",
     "menuTreeTitle": "Menu Hierarchy",
-    "selectedMenuNotice": "Set action permissions for the selected menu."
+    "selectedMenuNotice": "Set the selected menu actions within your delegated scope."
   },
   "confirm": {
     "discardTitle": "Discard Changes",
@@ -61,6 +62,8 @@
     "duplicateId": "Role code already exists.",
     "notFound": "Role not found.",
     "inUse": "Default roles assigned to users cannot be deleted.",
-    "invalidPermission": "Invalid permission settings."
+    "invalidPermission": "Invalid permission settings.",
+    "managementForbidden": "You cannot manage this role.",
+    "delegationForbidden": "This menu/action is outside your delegation scope."
   }
 }

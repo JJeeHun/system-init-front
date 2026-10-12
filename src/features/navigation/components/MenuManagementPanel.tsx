@@ -119,6 +119,7 @@ function MenuDetails({ management }: { management: MenuManagement }) {
               [t("navigation:management.fields.icon"), selected.icon || "—"],
               [t("navigation:management.fields.sortOrder"), String(selected.sortOrder)],
               [t("navigation:management.fields.enabled"), t(selected.enabled ? "common:labels.enabled" : "common:labels.disabled")],
+              [t("navigation:management.fields.scope"), t(`navigation:management.scopes.${selected.scope}`)],
             ] as const).map(([label, value]) => (
               <div key={label} className="min-w-0">
                 <dt className="mb-1 text-xs text-foreground-soft">{label}</dt>
@@ -220,6 +221,17 @@ function MenuFormDialog({ management }: { management: MenuManagement }) {
             min: { value: 0, message: t("navigation:management.validation.orderInvalid") },
             validate: value => Number.isInteger(value) || t("navigation:management.validation.orderInvalid"),
           })} aria-invalid={!!form.formState.errors.sortOrder} />
+        </Field>
+        <Field label={t("navigation:management.fields.scope")} htmlFor="menu-editor-scope">
+          <Controller control={form.control} name="scope" render={({ field }) => (
+            <Select value={field.value} onValueChange={field.onChange}>
+              <SelectTrigger id="menu-editor-scope" className="w-full"><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="SYSTEM">{t("navigation:management.scopes.SYSTEM")}</SelectItem>
+                <SelectItem value="GENERAL">{t("navigation:management.scopes.GENERAL")}</SelectItem>
+              </SelectContent>
+            </Select>
+          )} />
         </Field>
         <Field label={t("navigation:management.fields.enabled")} htmlFor="menu-editor-enabled" orientation="horizontal">
           <Controller control={form.control} name="enabled" render={({ field }) => (

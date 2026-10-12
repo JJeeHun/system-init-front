@@ -21,6 +21,7 @@ const EMPTY_MENU: MenuInput = {
   icon: "settings",
   sortOrder: 10,
   enabled: true,
+  scope: "GENERAL",
 }
 
 export function useMenuManagement() {

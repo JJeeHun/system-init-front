@@ -70,7 +70,8 @@
       "path": "화면 경로",
       "icon": "아이콘",
       "sortOrder": "정렬순서",
-      "enabled": "사용 여부"
+      "enabled": "사용 여부",
+      "scope": "관리 영역"
     },
     "kinds": {
       "group": "그룹",
@@ -100,7 +101,12 @@
       "invalidPath": "화면 경로를 확인해주세요.",
       "duplicatePath": "이미 등록된 화면 경로입니다.",
       "hasChildren": "하위 메뉴가 있는 그룹은 삭제하거나 화면 메뉴로 변경할 수 없습니다.",
-      "notFound": "메뉴를 찾을 수 없습니다."
+      "notFound": "메뉴를 찾을 수 없습니다.",
+      "invalidScope": "메뉴 관리 영역을 확인해주세요."
+    },
+    "scopes": {
+      "SYSTEM": "시스템 전용",
+      "GENERAL": "일반 업무"
     }
   }
 }

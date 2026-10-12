@@ -22,7 +22,7 @@ function sample(overrides: Partial<MenuInput> = {}): MenuInput {
     icon: "settings",
     sortOrder: 30,
     enabled: true,
-    permissionCode: "menu.custom.read",
+    scope: "GENERAL",
     ...overrides,
   }
 }
@@ -33,7 +33,7 @@ describe("menu management mock contract", () => {
     const creation = createMenu(sample())
     await vi.advanceTimersByTimeAsync(devSettings.mockDelayMs)
     const created = await creation
-    expect(created.permissionCode).toBe("menu.custom.read")
+    expect(created.scope).toBe("GENERAL")
 
     const firstRead = getNavigationMenus()
     await vi.advanceTimersByTimeAsync(devSettings.mockDelayMs)
