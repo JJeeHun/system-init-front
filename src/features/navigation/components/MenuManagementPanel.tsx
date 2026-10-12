@@ -16,8 +16,7 @@ import { Button } from "@/shared/ui/button"
 import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
 import { Panel } from "@/shared/ui/panel"
-import { SearchField } from "@/shared/ui/search-field"
-import { TreeView } from "@/shared/ui/tree"
+import { TreeControls, TreeView } from "@/shared/ui/tree"
 import type { TreeViewNode } from "@/shared/ui/tree"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Skeleton } from "@/shared/components/ui/skeleton"
@@ -74,14 +73,15 @@ function MenuList({ management }: { management: MenuManagement }) {
       />
       <Panel.Content>
         <div className="mb-3">
-          <Field label={t("navigation:management.searchLabel")} htmlFor="menu-tree-search">
-            <SearchField
-              id="menu-tree-search"
-              value={management.tree.keyword}
-              onValueChange={management.tree.setKeyword}
-              placeholder={t("navigation:management.searchPlaceholder")}
-            />
-          </Field>
+          <TreeControls
+            keyword={management.tree.keyword}
+            onKeywordChange={management.tree.setKeyword}
+            searchLabel={t("navigation:management.searchLabel")}
+            searchPlaceholder={t("navigation:management.searchPlaceholder")}
+            expandAll={management.tree.expandAll}
+            collapseAll={management.tree.collapseAll}
+            disabled={management.saving || management.deleting}
+          />
         </div>
         {management.loadError ? <p role="alert" className="text-sm text-destructive">{management.loadError}</p> : null}
         {management.isLoading ? (

@@ -70,6 +70,14 @@ export function useTree<T extends TreeItem>({
     )
   }, [])
 
+  const expandAll = useCallback(() => {
+    if (!forceExpanded) setCollapsedIds([])
+  }, [forceExpanded])
+
+  const collapseAll = useCallback(() => {
+    if (!forceExpanded) setCollapsedIds(items.filter(isBranch).map(item => item.id))
+  }, [forceExpanded, items, isBranch])
+
   const selectNode = useCallback((id: string | null) => {
     setSelectedId(id)
   }, [])
@@ -82,6 +90,8 @@ export function useTree<T extends TreeItem>({
     selectNode,
     collapsedIds,
     toggleNode,
+    expandAll,
+    collapseAll,
     forceExpanded,
   }
 }

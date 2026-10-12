@@ -19,7 +19,7 @@ import { Field } from "@/shared/ui/field"
 import { Panel } from "@/shared/ui/panel"
 import { SearchField } from "@/shared/ui/search-field"
 import { SearchPanel } from "@/shared/ui/search-panel"
-import { TreeView } from "@/shared/ui/tree"
+import { TreeControls, TreeView } from "@/shared/ui/tree"
 import type { TreeViewNode } from "@/shared/ui/tree"
 
 type Management = ReturnType<typeof useRoleManagement>
@@ -187,11 +187,26 @@ function RolePermissionContent({ management }: { management: Management }) {
       <div className="grid min-w-0 gap-3 2xl:grid-cols-2">
         <nav aria-label={t("role:permissions.menuTreeTitle")} className="min-w-0 rounded-md border border-border p-3">
           <h3 className="mb-3 text-sm font-semibold text-foreground">{t("role:permissions.menuTreeTitle")}</h3>
-          <ScrollArea type="always" className="h-72 min-w-0">
-            <div className="pr-2">
-              <MenuTree management={management} selectedMenuId={selectedMenu.id} />
-            </div>
-          </ScrollArea>
+          <div className="mb-3">
+            <TreeControls
+              keyword={management.menuTree.keyword}
+              onKeywordChange={management.menuTree.setKeyword}
+              searchLabel={t("role:permissions.menuSearchLabel")}
+              searchPlaceholder={t("role:permissions.menuSearchPlaceholder")}
+              expandAll={management.menuTree.expandAll}
+              collapseAll={management.menuTree.collapseAll}
+              disabled={management.busy}
+            />
+          </div>
+          {management.menuTree.filteredItems.length === 0 ? (
+            <p role="status" className="text-sm text-foreground-soft">{t("role:permissions.noSearchResults")}</p>
+          ) : (
+            <ScrollArea type="always" className="h-72 min-w-0">
+              <div className="pr-2">
+                <MenuTree management={management} selectedMenuId={selectedMenu.id} />
+              </div>
+            </ScrollArea>
+          )}
         </nav>
         <MenuPermissionEditor management={management} menu={selectedMenu} />
       </div>

@@ -34,6 +34,9 @@
     "noAccess": "No Access",
     "empty": "No page menus available.",
     "saveNotice": "Role permission settings. The Mock checks management levels and delegation; runtime login access control is not yet connected.",
+    "menuSearchLabel": "Search Menus",
+    "menuSearchPlaceholder": "Menu name / ID / page path",
+    "noSearchResults": "No matching menus.",
     "menuTreeTitle": "Menu Hierarchy",
     "selectedMenuNotice": "Set the selected menu actions within your delegated scope."
   },

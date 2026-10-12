@@ -47,6 +47,11 @@
     "production": "운영",
     "current": "실행 환경: {{mode}}"
   },
+  "tree": {
+    "options": "트리 메뉴 옵션",
+    "expandAll": "전체 펼치기",
+    "collapseAll": "전체 접기"
+  },
   "searchPanel": {
     "title": "검색 조건",
     "collapse": "접기",
