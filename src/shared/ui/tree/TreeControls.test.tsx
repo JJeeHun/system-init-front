@@ -44,9 +44,7 @@ function Example() {
 }
 
 function openActions() {
-  fireEvent.pointerDown(screen.getByRole("button", { name: "트리 메뉴 옵션" }), {
-    button: 0, pointerType: "mouse", ctrlKey: false,
-  })
+  fireEvent.keyDown(screen.getByRole("button", { name: "트리 메뉴 옵션" }), { key: "Enter" })
 }
 
 describe("TreeControls", () => {
