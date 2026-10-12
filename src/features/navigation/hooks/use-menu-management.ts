@@ -30,7 +30,6 @@ export function useMenuManagement() {
   const runMutation = useMutationLock()
   const query = useQuery(navigationQueries.management())
   const menus = query.data ?? []
-  const [selectedId, setSelectedId] = useState<string | null>(null)
   const [mode, setMode] = useState<FormMode>(null)
   const [treeKeyword, setTreeKeyword] = useState("")
   const [collapsedGroups, setCollapsedGroups] = useState<string[]>([])
