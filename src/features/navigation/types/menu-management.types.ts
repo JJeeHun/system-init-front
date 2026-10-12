@@ -10,7 +10,6 @@ export type MenuRecord = {
   icon?: NavigationIconKey
   sortOrder: number
   enabled: boolean
-  permissionCode: string
 }
 
 export type MenuInput = Omit<MenuRecord, "labelKey">

@@ -62,7 +62,6 @@
     "loadError": "Failed to load menus.",
     "root": "Root",
     "noIcon": "No icon",
-    "permissionNotice": "Permission codes are stored for future role management; they do not enforce access yet.",
     "fields": {
       "id": "Menu ID",
       "name": "Menu Name",
@@ -71,8 +70,7 @@
       "path": "Page Path",
       "icon": "Icon",
       "sortOrder": "Sort Order",
-      "enabled": "Enabled",
-      "permissionCode": "Permission Code"
+      "enabled": "Enabled"
     },
     "kinds": {
       "group": "Group",

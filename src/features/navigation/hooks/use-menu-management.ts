@@ -21,7 +21,6 @@ const EMPTY_MENU: MenuInput = {
   icon: "settings",
   sortOrder: 10,
   enabled: true,
-  permissionCode: "",
 }
 
 export function useMenuManagement() {
@@ -115,7 +114,6 @@ export function useMenuManagement() {
       label: values.label.trim(),
       parentId: values.parentId || null,
       path: values.kind === "group" ? "" : values.path.trim(),
-      permissionCode: values.permissionCode.trim(),
       icon: values.kind === "page" ? values.icon : undefined,
     }
 

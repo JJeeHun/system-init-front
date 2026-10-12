@@ -119,7 +119,6 @@ function MenuDetails({ management }: { management: MenuManagement }) {
               [t("navigation:management.fields.icon"), selected.icon || "—"],
               [t("navigation:management.fields.sortOrder"), String(selected.sortOrder)],
               [t("navigation:management.fields.enabled"), t(selected.enabled ? "common:labels.enabled" : "common:labels.disabled")],
-              [t("navigation:management.fields.permissionCode"), selected.permissionCode || "—"],
             ] as const).map(([label, value]) => (
               <div key={label} className="min-w-0">
                 <dt className="mb-1 text-xs text-foreground-soft">{label}</dt>
@@ -128,7 +127,6 @@ function MenuDetails({ management }: { management: MenuManagement }) {
             ))}
           </dl>
         )}
-        <p className="mt-5 text-xs text-foreground-soft">{t("navigation:management.permissionNotice")}</p>
       </Panel.Content>
     </Panel>
   )
@@ -222,9 +220,6 @@ function MenuFormDialog({ management }: { management: MenuManagement }) {
             min: { value: 0, message: t("navigation:management.validation.orderInvalid") },
             validate: value => Number.isInteger(value) || t("navigation:management.validation.orderInvalid"),
           })} aria-invalid={!!form.formState.errors.sortOrder} />
-        </Field>
-        <Field label={t("navigation:management.fields.permissionCode")} htmlFor="menu-editor-permission" description={t("navigation:management.permissionNotice")}>
-          <Input id="menu-editor-permission" {...form.register("permissionCode")} />
         </Field>
         <Field label={t("navigation:management.fields.enabled")} htmlFor="menu-editor-enabled" orientation="horizontal">
           <Controller control={form.control} name="enabled" render={({ field }) => (

@@ -62,7 +62,6 @@
     "loadError": "메뉴 목록을 불러오지 못했습니다.",
     "root": "최상위",
     "noIcon": "아이콘 없음",
-    "permissionNotice": "권한 코드는 향후 역할·권한 기능과 연결할 예정이며 현재 접근 제한에는 사용하지 않습니다.",
     "fields": {
       "id": "메뉴 ID",
       "name": "메뉴명",
@@ -71,8 +70,7 @@
       "path": "화면 경로",
       "icon": "아이콘",
       "sortOrder": "정렬순서",
-      "enabled": "사용 여부",
-      "permissionCode": "권한 코드"
+      "enabled": "사용 여부"
     },
     "kinds": {
       "group": "그룹",
