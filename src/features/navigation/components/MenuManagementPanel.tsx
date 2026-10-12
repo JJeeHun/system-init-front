@@ -29,7 +29,7 @@ function sortByOrder(a: MenuRecord, b: MenuRecord) {
   return a.sortOrder - b.sortOrder || a.id.localeCompare(b.id)
 }
 
-function buildMenuTree(menus: MenuRecord[], parentId: string | null, t: AppTranslate): TreeViewNode[] {
+function buildMenuTree(menus: readonly MenuRecord[], parentId: string | null, t: AppTranslate): TreeViewNode[] {
   return menus.filter(menu => menu.parentId === parentId).sort(sortByOrder).map(menu => {
     const label = getMenuLabel(menu, t)
     return {
