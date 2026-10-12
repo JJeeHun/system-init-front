@@ -1,3 +1,4 @@
+import { ChevronRightIcon, FolderIcon } from "lucide-react"
 import { Controller, useWatch } from "react-hook-form"
 import { useAppTranslation } from "@/shared/i18n"
 
@@ -14,6 +15,7 @@ import { Button } from "@/shared/ui/button"
 import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
 import { Panel } from "@/shared/ui/panel"
+import { SearchField } from "@/shared/ui/search-field"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 
@@ -24,37 +26,61 @@ function sortByOrder(a: MenuRecord, b: MenuRecord) {
   return a.sortOrder - b.sortOrder || a.id.localeCompare(b.id)
 }
 
-function MenuTree({ menus, parentId, depth, selectedId, onSelect }: {
+function MenuTree({ menus, parentId, management }: {
   menus: MenuRecord[]
   parentId: string | null
-  depth: number
-  selectedId: string | null
-  onSelect: (menu: MenuRecord) => void
+  management: MenuManagement
 }) {
   const { t } = useAppTranslation()
   return (
-    <>
-      {menus.filter((menu) => menu.parentId === parentId).sort(sortByOrder).map((menu) => (
-        <div key={menu.id} className="grid gap-1">
-          <Button
-            size="sm"
-            primary={menu.id === selectedId}
-            aria-pressed={menu.id === selectedId}
-            onClick={() => onSelect(menu)}
-            title={menu.path || getMenuLabel(menu, t)}
-          >
-            <span className={["flex min-w-0 w-full items-center gap-2 text-left", ["", "pl-3", "pl-6", "pl-9", "pl-12"][Math.min(depth, 4)]].join(" ")}>
-              <MenuIcon name={menu.icon} />
-              <span className="min-w-0 flex-1 truncate">{getMenuLabel(menu, t)}</span>
-              {!menu.enabled ? <span className="shrink-0 text-xs opacity-70">{t("common:labels.disabled")}</span> : null}
-            </span>
-          </Button>
-          {menu.kind === "group" ? (
-            <MenuTree menus={menus} parentId={menu.id} depth={depth + 1} selectedId={selectedId} onSelect={onSelect} />
-          ) : null}
-        </div>
-      ))}
-    </>
+    <div className="grid min-w-0 gap-1">
+      {menus.filter(menu => menu.parentId === parentId).sort(sortByOrder).map(menu => {
+        const label = getMenuLabel(menu, t)
+        const group = menu.kind === "group"
+        const expanded = !!management.treeKeyword.trim() || !management.collapsedGroups.includes(menu.id)
+        return (
+          <div key={menu.id} className="grid min-w-0 gap-1">
+            <div className="flex min-w-0 items-center gap-1">
+              {group ? (
+                <Button
+                  size="sm"
+                  aria-label={t(expanded ? "navigation:management.collapseGroup" : "navigation:management.expandGroup", { name: label })}
+                  aria-expanded={expanded}
+                  onClick={() => management.toggleGroup(menu.id)}
+                  disabled={!!management.treeKeyword.trim()}
+                >
+                  <ChevronRightIcon aria-hidden="true" className={`size-4 shrink-0 transition-transform ${expanded ? "rotate-90" : ""}`} />
+                </Button>
+              ) : (
+                <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center">
+                  <span className="size-1.5 rounded-full bg-border" />
+                </span>
+              )}
+              <div className="min-w-0 flex-1">
+                <Button
+                  size="sm"
+                  primary={menu.id === management.selected?.id}
+                  aria-pressed={menu.id === management.selected?.id}
+                  onClick={() => management.selectMenu(menu)}
+                  title={menu.path || label}
+                >
+                  <span className="flex w-full min-w-0 items-center gap-2 text-left">
+                    {group ? <FolderIcon aria-hidden="true" className="size-4 shrink-0" /> : <MenuIcon name={menu.icon} />}
+                    <span className={`min-w-0 flex-1 truncate ${group ? "font-semibold" : ""}`}>{label}</span>
+                    {!menu.enabled ? <span className="shrink-0 text-xs opacity-70">{t("common:labels.disabled")}</span> : null}
+                  </span>
+                </Button>
+              </div>
+            </div>
+            {group && expanded ? (
+              <div className="ml-4 min-w-0 border-l border-border pl-3">
+                <MenuTree menus={menus} parentId={menu.id} management={management} />
+              </div>
+            ) : null}
+          </div>
+        )
+      })}
+    </div>
   )
 }
 
@@ -68,6 +94,16 @@ function MenuList({ management }: { management: MenuManagement }) {
         actions={<Button primary size="sm" onClick={() => management.startCreate()}>{t("navigation:management.addRoot")}</Button>}
       />
       <Panel.Content>
+        <div className="mb-3">
+          <Field label={t("navigation:management.searchLabel")} htmlFor="menu-tree-search">
+            <SearchField
+              id="menu-tree-search"
+              value={management.treeKeyword}
+              onValueChange={management.setTreeKeyword}
+              placeholder={t("navigation:management.searchPlaceholder")}
+            />
+          </Field>
+        </div>
         {management.loadError ? <p role="alert" className="text-sm text-destructive">{management.loadError}</p> : null}
         {management.isLoading ? (
           <div role="status" aria-label={t("navigation:management.loading")} className="grid gap-2">
@@ -75,10 +111,12 @@ function MenuList({ management }: { management: MenuManagement }) {
           </div>
         ) : management.menus.length === 0 ? (
           <p className="text-sm text-foreground-soft">{t("navigation:management.empty")}</p>
+        ) : management.filteredMenus.length === 0 ? (
+          <p role="status" className="text-sm text-foreground-soft">{t("navigation:management.noSearchResults")}</p>
         ) : (
           <ScrollArea type="always" className="h-80 min-w-0 sm:h-[var(--layout-grid-height)]">
-            <div className="grid min-w-0 gap-1 pr-2 [&>div>button]:w-full">
-              <MenuTree menus={management.menus} parentId={null} depth={0} selectedId={management.selected?.id ?? null} onSelect={management.selectMenu} />
+            <div className="min-w-0 pr-2">
+              <MenuTree menus={management.filteredMenus} parentId={null} management={management} />
             </div>
           </ScrollArea>
         )}
@@ -96,7 +134,7 @@ function MenuDetails({ management }: { management: MenuManagement }) {
     <Panel>
       <Panel.Header
         title={t("navigation:management.detailsTitle")}
-        description={selected ? getMenuLabel(selected, t) : t("navigation:management.choose")}
+        description={selected ? management.selectedPath : t("navigation:management.choose")}
         actions={selected ? (
           <>
             <Button size="sm" disabled={selected.kind !== "group" || management.saving} onClick={() => management.startCreate(selected.id)}>{t("navigation:management.addChild")}</Button>

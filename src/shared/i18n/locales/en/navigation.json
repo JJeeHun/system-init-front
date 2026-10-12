@@ -107,6 +107,11 @@
     "scopes": {
       "SYSTEM": "System Only",
       "GENERAL": "General"
-    }
+    },
+    "searchLabel": "Search Menus",
+    "searchPlaceholder": "Menu name / ID / page path",
+    "noSearchResults": "No matching menus.",
+    "collapseGroup": "Collapse {{name}}",
+    "expandGroup": "Expand {{name}}"
   }
 }

@@ -30,9 +30,59 @@ export function useMenuManagement() {
   const runMutation = useMutationLock()
   const query = useQuery(navigationQueries.management())
   const menus = query.data ?? []
-  const [selectedId, setSelectedId] = useState<string | null>(null)
   const [mode, setMode] = useState<FormMode>(null)
+  const [treeKeyword, setTreeKeyword] = useState("")
+  const [collapsedGroups, setCollapsedGroups] = useState<string[]>([])
+  const filteredMenus = useMemo(() => {
+    const keyword = treeKeyword.trim().toLocaleLowerCase()
+    if (!keyword) return menus
+
+    const byId = new Map(menus.map(menu => [menu.id, menu]))
+    const visible = new Set<string>()
+    const childrenByParent = new Map<string, MenuRecord[]>()
+    for (const menu of menus) {
+      if (!menu.parentId) continue
+      const siblings = childrenByParent.get(menu.parentId) ?? []
+      siblings.push(menu)
+      childrenByParent.set(menu.parentId, siblings)
+    }
+    for (const menu of menus) {
+      if (![getMenuLabel(menu, t), menu.label, menu.id, menu.path].some(value =>
+        value.toLocaleLowerCase().includes(keyword))) continue
+
+      let current: MenuRecord | undefined = menu
+      while (current) {
+        visible.add(current.id)
+        current = current.parentId ? byId.get(current.parentId) : undefined
+      }
+      if (menu.kind === "group") {
+        const stack = [menu.id]
+        while (stack.length) {
+          for (const child of childrenByParent.get(stack.pop()!) ?? []) {
+            visible.add(child.id)
+            if (child.kind === "group") stack.push(child.id)
+          }
+        }
+      }
+    }
+    return menus.filter(menu => visible.has(menu.id))
+  }, [menus, treeKeyword, language, t])
+  const [selectedId, setSelectedId] = useState<string | null>(null)
   const selected = useMemo(() => menus.find((menu) => menu.id === selectedId) ?? null, [menus, selectedId])
+  const selectedPath = useMemo(() => {
+    const segments: string[] = []
+    let cursor = selected
+    while (cursor) {
+      segments.unshift(getMenuLabel(cursor, t))
+      cursor = menus.find(menu => menu.id === cursor?.parentId) ?? null
+    }
+    return segments.join(" / ")
+  }, [selected, menus, language, t])
+
+  function toggleGroup(id: string) {
+    setCollapsedGroups(current => current.includes(id) ?
+      current.filter(groupId => groupId !== id) : [...current, id])
+  }
   const form = useForm<MenuInput>({ defaultValues: EMPTY_MENU })
 
   useEffect(() => {
@@ -142,6 +192,12 @@ export function useMenuManagement() {
 
   return {
     menus,
+    filteredMenus,
+    treeKeyword,
+    setTreeKeyword,
+    collapsedGroups,
+    toggleGroup,
+    selectedPath,
     selected,
     selectMenu,
     isLoading: query.isLoading,
