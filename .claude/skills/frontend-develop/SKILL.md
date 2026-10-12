@@ -51,6 +51,15 @@ $ARGUMENTS
 - `div`, `span`, `section`, `form` 등 구조와 semantic 표현을 위한 기본 HTML 태그는 허용한다.
 - shared 컴포넌트의 공개 API를 우회하기 위해 Feature/Page에서 내부 스타일을 임의로 덮어쓰지 않는다.
 
+## Import 구성 및 의존성 경계 (필수)
+
+- import는 코드 길이를 줄이기보다 **모듈의 소유 계층과 올바른 공통 UI 사용 여부를 쉽게 검토할 수 있도록** 구성한다.
+- 기본 import 그룹 순서는 **외부 패키지(React 포함) → Feature(`@/features/*`) → 프로젝트 공통 UI(`@/shared/ui/*`) → 공통 기능·Layout(`@/shared/i18n`, `@/shared/layout/*`, `@/shared/hooks/*`, `@/shared/lib/*` 등) → UI Primitive(`@/shared/components/ui/*`)** 로 한다. 같은 계층에서는 Feature별로 묶고 경로를 기준으로 정렬한다.
+- 그룹 사이에는 빈 줄 하나를 두며, 그룹 구분용 번호나 설명 주석은 추가하지 않는다. 동일 경로의 값·타입 import는 읽기 쉬운 경우 `type` 키워드로 합칠 수 있다.
+- 공통 UI는 `@/shared/ui/button`, `@/shared/ui/tree`처럼 **컴포넌트별 공개 경로**에서 가져온다. `@/shared/ui` 루트 통합 Barrel Import를 새로 만들거나 사용하지 않는다.
+- Feature/Page는 동일 목적의 프로젝트 공통 UI가 있다면 해당 공개 API를 우선 사용한다. `@/shared/components/ui/*`에서 직접 가져오는 코드는 대응하는 공통 UI가 없는지, Primitive 직접 사용이 실제로 필요한지 확인한다. 전체 Primitive import를 일률적으로 금지하지 않는다.
+- import 정리는 **현재 요청으로 작성·수정하는 파일의 필요한 범위에만** 적용한다. import 정렬만을 위해 관련 없는 파일을 수정하거나 컴포넌트·공개 API·Lint 설정을 임의로 추가하지 않는다.
+
 ## JSX 가독성 및 컴포넌트 구성
 
 - 부모 컴포넌트의 JSX에서는 패널, 모달, 목록 등 화면의 큰 구성을 한눈에 읽을 수 있도록 한다.

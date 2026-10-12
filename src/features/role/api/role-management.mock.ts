@@ -50,6 +50,15 @@ export function listMockRoles(): RoleRecord[] {
   return roles.map(role => ({ ...role }))
 }
 
+export function listAssignableMockRoles(actorRoleId: string): RoleRecord[] {
+  const actor = findRole(actorRoleId)
+  const canEditUsers = (permissions[actorRoleId] ?? []).some(
+    grant => grant.menuId === "user" && grant.actions.some(action => action === "create" || action === "edit"),
+  )
+  if (!canEditUsers) return []
+  return roles.filter(role => role.level < actor.level).map(role => ({ ...role }))
+}
+
 export function createMockRole(input: RoleInput, actorRoleId = "SYSTEM"): RoleRecord {
   const actor = findRole(actorRoleId)
   if (!canCreateRole(actor, permissions[actorRoleId] ?? [])) {
