@@ -7,7 +7,8 @@ import type { CurrentUser } from "@/features/user/types/user.types"
 const mockCurrentUser: CurrentUser = {
   id: "admin",
   name: "관리자",
-  roleName: "운영 담당",
+  roleId: "SYSTEM",
+  roleName: "시스템 관리자",
   centerName: "서울물류센터",
 }
 

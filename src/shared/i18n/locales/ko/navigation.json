@@ -62,7 +62,6 @@
     "loadError": "메뉴 목록을 불러오지 못했습니다.",
     "root": "최상위",
     "noIcon": "아이콘 없음",
-    "permissionNotice": "권한 코드는 향후 역할·권한 기능과 연결할 예정이며 현재 접근 제한에는 사용하지 않습니다.",
     "fields": {
       "id": "메뉴 ID",
       "name": "메뉴명",
@@ -72,7 +71,7 @@
       "icon": "아이콘",
       "sortOrder": "정렬순서",
       "enabled": "사용 여부",
-      "permissionCode": "권한 코드"
+      "scope": "관리 영역"
     },
     "kinds": {
       "group": "그룹",
@@ -102,7 +101,12 @@
       "invalidPath": "화면 경로를 확인해주세요.",
       "duplicatePath": "이미 등록된 화면 경로입니다.",
       "hasChildren": "하위 메뉴가 있는 그룹은 삭제하거나 화면 메뉴로 변경할 수 없습니다.",
-      "notFound": "메뉴를 찾을 수 없습니다."
+      "notFound": "메뉴를 찾을 수 없습니다.",
+      "invalidScope": "메뉴 관리 영역을 확인해주세요."
+    },
+    "scopes": {
+      "SYSTEM": "시스템 전용",
+      "GENERAL": "일반 업무"
     }
   }
 }

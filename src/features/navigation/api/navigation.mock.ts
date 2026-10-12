@@ -3,13 +3,13 @@ import type { MenuInput, MenuRecord } from "@/features/navigation/types/menu-man
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 
 const initialMenus: MenuRecord[] = [
-  { id: "system", parentId: null, label: "시스템 관리", labelKey: "navigation:menu.system", kind: "group", path: "", sortOrder: 10, enabled: true, permissionCode: "" },
-  { id: "user-access", parentId: "system", label: "사용자·권한", labelKey: "navigation:menu.user-access", kind: "group", path: "", sortOrder: 10, enabled: true, permissionCode: "" },
-  { id: "user", parentId: "user-access", label: "사용자 관리", labelKey: "navigation:menu.user", kind: "page", path: "/app/system/users", icon: "users", sortOrder: 10, enabled: true, permissionCode: "" },
-  { id: "role", parentId: "user-access", label: "역할·권한 관리", labelKey: "navigation:menu.role", kind: "page", path: "/app/system/roles", icon: "settings", sortOrder: 20, enabled: true, permissionCode: "" },
-  { id: "system-settings", parentId: "system", label: "시스템 설정", labelKey: "navigation:menu.system-settings", kind: "group", path: "", sortOrder: 20, enabled: true, permissionCode: "" },
-  { id: "menu-management", parentId: "system-settings", label: "메뉴 관리", labelKey: "navigation:menu.menu-management", kind: "page", path: "/app/system/menus", icon: "settings", sortOrder: 10, enabled: true, permissionCode: "" },
-  { id: "common-code", parentId: "system-settings", label: "공통코드 관리", labelKey: "navigation:menu.common-code", kind: "page", path: "/app/master/common-code", icon: "code", sortOrder: 20, enabled: true, permissionCode: "" },
+  { id: "system", parentId: null, label: "시스템 관리", labelKey: "navigation:menu.system", kind: "group", path: "", sortOrder: 10, enabled: true, scope: "GENERAL" },
+  { id: "user-access", parentId: "system", label: "사용자·권한", labelKey: "navigation:menu.user-access", kind: "group", path: "", sortOrder: 10, enabled: true, scope: "GENERAL" },
+  { id: "user", parentId: "user-access", label: "사용자 관리", labelKey: "navigation:menu.user", kind: "page", path: "/app/system/users", icon: "users", sortOrder: 10, enabled: true, scope: "GENERAL" },
+  { id: "role", parentId: "user-access", label: "역할·권한 관리", labelKey: "navigation:menu.role", kind: "page", path: "/app/system/roles", icon: "settings", sortOrder: 20, enabled: true, scope: "GENERAL" },
+  { id: "system-settings", parentId: "system", label: "시스템 설정", labelKey: "navigation:menu.system-settings", kind: "group", path: "", sortOrder: 20, enabled: true, scope: "GENERAL" },
+  { id: "menu-management", parentId: "system-settings", label: "메뉴 관리", labelKey: "navigation:menu.menu-management", kind: "page", path: "/app/system/menus", icon: "settings", sortOrder: 10, enabled: true, scope: "SYSTEM" },
+  { id: "common-code", parentId: "system-settings", label: "공통코드 관리", labelKey: "navigation:menu.common-code", kind: "page", path: "/app/master/common-code", icon: "code", sortOrder: 20, enabled: true, scope: "GENERAL" },
 ]
 
 let records = initialMenus.map((menu) => ({ ...menu }))
@@ -43,7 +43,7 @@ function validateMenu(input: MenuInput, editingId?: string) {
   const id = input.id.trim()
   const label = input.label.trim()
   const path = input.path.trim()
-  const permissionCode = input.permissionCode.trim()
+  if (input.scope !== "SYSTEM" && input.scope !== "GENERAL") throw new AppError("MENU_INVALID_SCOPE", "Invalid menu management scope")
   const parent = input.parentId ? records.find((menu) => menu.id === input.parentId) : null
 
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)) throw new AppError("MENU_INVALID_ID", "Invalid menu ID")
@@ -66,7 +66,7 @@ function validateMenu(input: MenuInput, editingId?: string) {
   if (editingId && input.kind === "page" && records.some((menu) => menu.parentId === editingId)) {
     throw new AppError("MENU_HAS_CHILDREN", "Group has child menus")
   }
-  return { ...input, id, label, path, permissionCode, parentId: input.parentId || null }
+  return { ...input, id, label, path, parentId: input.parentId || null }
 }
 
 export function createMockMenu(input: MenuInput): MenuRecord {

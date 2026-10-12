@@ -62,7 +62,6 @@
     "loadError": "Failed to load menus.",
     "root": "Root",
     "noIcon": "No icon",
-    "permissionNotice": "Permission codes are stored for future role management; they do not enforce access yet.",
     "fields": {
       "id": "Menu ID",
       "name": "Menu Name",
@@ -72,7 +71,7 @@
       "icon": "Icon",
       "sortOrder": "Sort Order",
       "enabled": "Enabled",
-      "permissionCode": "Permission Code"
+      "scope": "Management Scope"
     },
     "kinds": {
       "group": "Group",
@@ -102,7 +101,12 @@
       "invalidPath": "Check the page path.",
       "duplicatePath": "Page path already exists.",
       "hasChildren": "Cannot delete or convert a group with child menus.",
-      "notFound": "Menu not found."
+      "notFound": "Menu not found.",
+      "invalidScope": "Check the menu scope."
+    },
+    "scopes": {
+      "SYSTEM": "System Only",
+      "GENERAL": "General"
     }
   }
 }

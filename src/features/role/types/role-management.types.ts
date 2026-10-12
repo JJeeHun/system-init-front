@@ -4,9 +4,10 @@ export type RoleRecord = {
   id: string
   name: string
   description: string
+  level: number
 }
 
-export type RoleInput = RoleRecord
+export type RoleInput = Omit<RoleRecord, "level">
 
 export type RoleMenuGrant = {
   menuId: string

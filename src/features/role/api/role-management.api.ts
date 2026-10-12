@@ -14,24 +14,26 @@ export async function getRolePermissions(roleId: string) {
   return getMockRolePermissions(roleId)
 }
 
-export async function createRole(input: RoleInput) {
+export async function createRole(input: RoleInput & { actorRoleId?: string }) {
   await waitForMockDelay()
-  return createMockRole(input)
+  const { actorRoleId, ...role } = input
+  return createMockRole(role, actorRoleId)
 }
 
-export async function updateRole({ id, request }: { id: string; request: RoleInput }) {
+export async function updateRole({ id, request, actorRoleId }: { id: string; request: RoleInput; actorRoleId?: string }) {
   await waitForMockDelay()
-  return updateMockRole(id, request)
+  return updateMockRole(id, request, actorRoleId)
 }
 
-export async function deleteRole(id: string) {
+export async function deleteRole({ id, actorRoleId }: { id: string; actorRoleId?: string }) {
   await waitForMockDelay()
-  deleteMockRole(id)
+  deleteMockRole(id, actorRoleId)
 }
 
-export async function saveRolePermissions(request: RolePermissions) {
+export async function saveRolePermissions(request: RolePermissions & { actorRoleId?: string }) {
   await waitForMockDelay()
-  return saveMockRolePermissions(request)
+  const { actorRoleId, ...permissions } = request
+  return saveMockRolePermissions(permissions, actorRoleId)
 }
 
 export const roleQueryKeys = {

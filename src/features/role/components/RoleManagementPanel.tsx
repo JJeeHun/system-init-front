@@ -60,7 +60,7 @@ function RoleListContent({ management }: { management: Management }) {
             onClick={() => void management.selectRole(role.id)} disabled={management.busy}>
             <span className="flex w-full min-w-0 items-center justify-between gap-2 text-left">
               <span className="truncate">{role.name}</span>
-              <span className="shrink-0 text-xs opacity-75">{role.id}</span>
+              <span className="shrink-0 text-xs opacity-75">{role.id} · {t("role:fields.level")} {role.level}</span>
             </span>
           </Button>
         ))}
@@ -76,7 +76,7 @@ function RoleList({ management }: { management: Management }) {
       <Panel.Header title={t("role:list.title")} description={t("role:list.description")}
         actions={
           <>
-            <Button primary size="sm" disabled={management.busy} onClick={management.startCreate}>{t("role:actions.add")}</Button>
+            <Button primary size="sm" disabled={!management.canCreate || management.busy} onClick={management.startCreate}>{t("role:actions.add")}</Button>
             <Button size="sm" disabled={!management.selected || management.busy} onClick={management.startEdit}>{t("common:actions.edit")}</Button>
             <Button size="sm" error disabled={!management.canDelete || management.busy} onClick={() => void management.deleteSelected()}>
               {t("common:actions.delete")}
@@ -98,7 +98,10 @@ function PermissionCheckbox({ management, menu, action }: {
 }) {
   const { t } = useAppTranslation()
   const id = "role-permission-" + menu.id + "-" + action
+  const otherProtectedActions = action === "view" && (["create", "edit", "delete"] as RoleAction[]).some(item =>
+    management.isAllowed(menu.id, item) && !management.canGrant(menu.id, item))
   const disabled = management.busy || management.permissionsLoading || management.menusLoading ||
+    !management.canGrant(menu.id, action) || otherProtectedActions ||
     (action !== "view" && !management.isAllowed(menu.id, "view"))
   return (
     <label htmlFor={id} className="flex items-center gap-2 text-xs text-foreground">
