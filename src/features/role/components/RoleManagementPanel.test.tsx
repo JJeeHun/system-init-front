@@ -44,6 +44,7 @@ describe("role management page", () => {
   it("creates a custom role through the form and lists it", async () => {
     renderPage()
     expect(await screen.findByRole("heading", { level: 1, name: "역할·권한 관리" }, waitOptions)).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByRole("button", { name: "역할 등록" })).toBeEnabled(), waitOptions)
     fireEvent.click(screen.getByRole("button", { name: "역할 등록" }))
     const editor = screen.getByRole("dialog", { name: "역할 등록" })
     fireEvent.change(within(editor).getByRole("textbox", { name: /역할 코드/ }), { target: { value: "REVIEWER" } })
