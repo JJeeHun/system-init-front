@@ -47,6 +47,11 @@
     "production": "PRODUCTION",
     "current": "Environment: {{mode}}"
   },
+  "tree": {
+    "options": "Tree options",
+    "expandAll": "Expand all",
+    "collapseAll": "Collapse all"
+  },
   "searchPanel": {
     "title": "Search Filters",
     "collapse": "Collapse",

@@ -34,6 +34,9 @@
     "noAccess": "접근 권한 없음",
     "empty": "설정할 화면 메뉴가 없습니다.",
     "saveNotice": "Role별 권한 설정입니다. Mock에서는 관리 계층·위임 범위를 검증하지만 실제 로그인 접근 제어는 아직 연결되지 않았습니다.",
+    "menuSearchLabel": "메뉴 검색",
+    "menuSearchPlaceholder": "메뉴명 / 메뉴 ID / 화면 경로",
+    "noSearchResults": "검색된 메뉴가 없습니다.",
     "menuTreeTitle": "메뉴 계층",
     "selectedMenuNotice": "허용된 관리 범위 내에서 선택한 메뉴의 기능 권한을 설정합니다."
   },

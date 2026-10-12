@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useForm, useWatch } from "react-hook-form"
 
 import { navigationQueries } from "@/features/navigation/api/navigation.api"
+import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import type { MenuRecord } from "@/features/navigation/types/menu-management.types"
 import { canCreateRole, canDelegateAction, canManageRole } from "@/features/role/lib/role-delegation"
 import { useCurrentUser } from "@/features/user/hooks/use-current-user"
@@ -18,7 +19,6 @@ type Mode = "create" | "edit" | null
 type PermissionForm = { grants: RoleMenuGrant[] }
 const EMPTY_ROLE: RoleInput = { id: "", name: "", description: "" }
 
-const getMenuSearchText = (menu: MenuRecord) => [menu.id, menu.label, menu.path].join(" ")
 const isMenuGroup = (menu: MenuRecord) => menu.kind === "group"
 
 export function useRoleManagement() {
@@ -46,6 +46,8 @@ export function useRoleManagement() {
     }
   }
   const menus = allMenus.filter(menu => visibleIds.has(menu.id))
+  const getMenuSearchText = useCallback((menu: MenuRecord) =>
+    [getMenuLabel(menu, t), menu.label, menu.id, menu.path].join(" "), [language, t])
   const menuTree = useTree({ items: menus, getSearchText: getMenuSearchText, isBranch: isMenuGroup })
 
   const [selectedId, setSelectedId] = useState<string | null>(null)
