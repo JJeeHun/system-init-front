@@ -65,5 +65,9 @@
     "next": "Next page",
     "last": "Last page",
     "gotoPage": "Go to page {{page}}"
+  },
+  "inputs": {
+    "showPassword": "Show",
+    "hidePassword": "Hide"
   }
 }
