@@ -1,7 +1,9 @@
+import { AlertCircle } from "lucide-react"
 import { useLocation } from "react-router-dom"
 
 import { LoginForm } from "@/features/auth/components/LoginForm"
 import { useLoginForm } from "@/features/auth/hooks/use-login-form"
+
 import { useAppTranslation } from "@/shared/i18n"
 
 export function LoginPage() {
@@ -11,11 +13,12 @@ export function LoginPage() {
   const reason = (location.state as { reason?: string } | null)?.reason
 
   return (
-    <div className="grid w-full max-w-md gap-3">
+    <div className="grid w-full gap-4">
       {reason === "expired" || reason === "unauthorized" ? (
-        <p role="alert" className="rounded-md border border-border bg-card p-3 text-sm text-foreground">
-          {t("auth:session.expired")}
-        </p>
+        <div role="alert" className="flex items-start gap-3 rounded-xl border border-border bg-card p-4 text-sm text-foreground">
+          <AlertCircle aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-primary" />
+          <p>{t("auth:session.expired")}</p>
+        </div>
       ) : null}
       <LoginForm
         register={loginForm.register}

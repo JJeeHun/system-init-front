@@ -65,5 +65,9 @@
     "next": "다음 페이지",
     "last": "마지막 페이지",
     "gotoPage": "{{page}}페이지로 이동"
+  },
+  "inputs": {
+    "showPassword": "보기",
+    "hidePassword": "숨기기"
   }
 }
