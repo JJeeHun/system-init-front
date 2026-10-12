@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useForm, useWatch } from "react-hook-form"
 
 import { navigationQueries } from "@/features/navigation/api/navigation.api"
+import type { MenuRecord } from "@/features/navigation/types/menu-management.types"
 import { canCreateRole, canDelegateAction, canManageRole } from "@/features/role/lib/role-delegation"
 import { useCurrentUser } from "@/features/user/hooks/use-current-user"
 import { roleMutations, roleQueries, roleQueryKeys } from "@/features/role/api/role-management.api"
@@ -11,10 +12,14 @@ import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useAppTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
 import { message } from "@/shared/lib/message"
+import { useTree } from "@/shared/ui/tree"
 
 type Mode = "create" | "edit" | null
 type PermissionForm = { grants: RoleMenuGrant[] }
 const EMPTY_ROLE: RoleInput = { id: "", name: "", description: "" }
+
+const getMenuSearchText = (menu: MenuRecord) => [menu.id, menu.label, menu.path].join(" ")
+const isMenuGroup = (menu: MenuRecord) => menu.kind === "group"
 
 export function useRoleManagement() {
   const { t, language } = useAppTranslation()
@@ -41,6 +46,7 @@ export function useRoleManagement() {
     }
   }
   const menus = allMenus.filter(menu => visibleIds.has(menu.id))
+  const menuTree = useTree({ items: menus, getSearchText: getMenuSearchText, isBranch: isMenuGroup })
 
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selected = manageableRoles.find(role => role.id === selectedId) ?? null
@@ -202,7 +208,7 @@ export function useRoleManagement() {
     search: searchForm.handleSubmit(values => setKeyword(values.keyword.trim())),
     resetSearch: () => { searchForm.reset({ keyword: "" }); setKeyword("") },
     rolesLoading: rolesQuery.isLoading, rolesError: rolesQuery.isError,
-    menus, menusLoading: menuQuery.isLoading, menusError: menuQuery.isError,
+    menus, menuTree, menusLoading: menuQuery.isLoading, menusError: menuQuery.isError,
     permissionsLoading: permissionsQuery.isLoading, permissionsError: permissionsQuery.isError,
     startCreate, startEdit, deleteSelected, mode, roleForm, submit, cancel, savingRole, busy,
     canDelete: selected !== null && !["SYSTEM", "ADMIN", "MANAGER", "STAFF"].includes(selected.id),
