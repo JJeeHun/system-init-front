@@ -1,6 +1,7 @@
-import { ChevronRightIcon, FolderIcon } from "lucide-react"
+import { FolderIcon } from "lucide-react"
 import { Controller, useWatch } from "react-hook-form"
 import { useAppTranslation } from "@/shared/i18n"
+import type { AppTranslate } from "@/shared/i18n"
 
 import { MenuIcon } from "@/features/navigation/components/MenuIcon"
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
@@ -16,6 +17,8 @@ import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
 import { Panel } from "@/shared/ui/panel"
 import { SearchField } from "@/shared/ui/search-field"
+import { TreeView } from "@/shared/ui/tree"
+import type { TreeViewNode } from "@/shared/ui/tree"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 
@@ -26,61 +29,37 @@ function sortByOrder(a: MenuRecord, b: MenuRecord) {
   return a.sortOrder - b.sortOrder || a.id.localeCompare(b.id)
 }
 
-function MenuTree({ menus, parentId, management }: {
-  menus: MenuRecord[]
-  parentId: string | null
-  management: MenuManagement
-}) {
+function buildMenuTree(menus: MenuRecord[], parentId: string | null, t: AppTranslate): TreeViewNode[] {
+  return menus.filter(menu => menu.parentId === parentId).sort(sortByOrder).map(menu => {
+    const label = getMenuLabel(menu, t)
+    return {
+      id: menu.id,
+      label,
+      title: menu.path || label,
+      icon: menu.kind === "group" ? <FolderIcon className="size-4" /> : <MenuIcon name={menu.icon} />,
+      trailingText: menu.enabled ? undefined : t("common:labels.disabled"),
+      children: menu.kind === "group" ? buildMenuTree(menus, menu.id, t) : undefined,
+    }
+  })
+}
+
+function MenuTree({ management }: { management: MenuManagement }) {
   const { t } = useAppTranslation()
   return (
-    <div className="grid min-w-0 gap-1">
-      {menus.filter(menu => menu.parentId === parentId).sort(sortByOrder).map(menu => {
-        const label = getMenuLabel(menu, t)
-        const group = menu.kind === "group"
-        const expanded = !!management.treeKeyword.trim() || !management.collapsedGroups.includes(menu.id)
-        return (
-          <div key={menu.id} className="grid min-w-0 gap-1">
-            <div className="flex min-w-0 items-center gap-1">
-              {group ? (
-                <Button
-                  size="sm"
-                  aria-label={t(expanded ? "navigation:management.collapseGroup" : "navigation:management.expandGroup", { name: label })}
-                  aria-expanded={expanded}
-                  onClick={() => management.toggleGroup(menu.id)}
-                  disabled={!!management.treeKeyword.trim()}
-                >
-                  <ChevronRightIcon aria-hidden="true" className={`size-4 shrink-0 transition-transform ${expanded ? "rotate-90" : ""}`} />
-                </Button>
-              ) : (
-                <span aria-hidden="true" className="flex size-8 shrink-0 items-center justify-center">
-                  <span className="size-1.5 rounded-full bg-border" />
-                </span>
-              )}
-              <div className="min-w-0 flex-1">
-                <Button
-                  size="sm"
-                  primary={menu.id === management.selected?.id}
-                  aria-pressed={menu.id === management.selected?.id}
-                  onClick={() => management.selectMenu(menu)}
-                  title={menu.path || label}
-                >
-                  <span className="flex w-full min-w-0 items-center gap-2 text-left">
-                    {group ? <FolderIcon aria-hidden="true" className="size-4 shrink-0" /> : <MenuIcon name={menu.icon} />}
-                    <span className={`min-w-0 flex-1 truncate ${group ? "font-semibold" : ""}`}>{label}</span>
-                    {!menu.enabled ? <span className="shrink-0 text-xs opacity-70">{t("common:labels.disabled")}</span> : null}
-                  </span>
-                </Button>
-              </div>
-            </div>
-            {group && expanded ? (
-              <div className="ml-4 min-w-0 border-l border-border pl-3">
-                <MenuTree menus={menus} parentId={menu.id} management={management} />
-              </div>
-            ) : null}
-          </div>
-        )
-      })}
-    </div>
+    <TreeView
+      nodes={buildMenuTree(management.filteredMenus, null, t)}
+      selectedId={management.selected?.id ?? null}
+      collapsedIds={management.collapsedGroups}
+      forceExpanded={!!management.treeKeyword.trim()}
+      disabled={management.saving || management.deleting}
+      onSelect={id => {
+        const menu = management.menus.find(item => item.id === id)
+        if (menu) management.selectMenu(menu)
+      }}
+      onToggle={management.toggleGroup}
+      expandLabel={label => t("navigation:management.expandGroup", { name: label })}
+      collapseLabel={label => t("navigation:management.collapseGroup", { name: label })}
+    />
   )
 }
 
@@ -116,7 +95,7 @@ function MenuList({ management }: { management: MenuManagement }) {
         ) : (
           <ScrollArea type="always" className="h-80 min-w-0 sm:h-[var(--layout-grid-height)]">
             <div className="min-w-0 pr-2">
-              <MenuTree menus={management.filteredMenus} parentId={null} management={management} />
+              <MenuTree management={management} />
             </div>
           </ScrollArea>
         )}
