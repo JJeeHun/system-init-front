@@ -6,7 +6,7 @@ import type { ReactNode } from "react"
 import { describe, expect, it } from "vitest"
 
 import { commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
-import { CommonCodeSelect } from "@/features/common-code/components/CommonCodeSelect"
+import { CommonCodeCombobox } from "@/features/common-code/components/CommonCodeCombobox"
 import { CommonCodeGroupCode } from "@/features/common-code/constants/common-code-group"
 import { useCommonCodeOptions } from "@/features/common-code/hooks/use-common-code-options"
 
@@ -30,7 +30,7 @@ function createWrapper(client: QueryClient) {
   }
 }
 
-describe("CommonCodeSelect", () => {
+describe("CommonCodeCombobox", () => {
   it("loads the specified master key and exposes enabled detail codes in order", () => {
     const client = createClient()
     const { result } = renderHook(
@@ -50,7 +50,7 @@ describe("CommonCodeSelect", () => {
     const client = createClient()
     render(
       <QueryClientProvider client={client}>
-        <CommonCodeSelect groupCode={CommonCodeGroupCode.YES_NO} value="Y" aria-label="사용 여부 선택" />
+        <CommonCodeCombobox groupCode={CommonCodeGroupCode.YES_NO} value="Y" aria-label="사용 여부 선택" />
       </QueryClientProvider>,
     )
 

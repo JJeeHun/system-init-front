@@ -1,7 +1,7 @@
 import { Controller } from "react-hook-form"
 import { useAppTranslation } from "@/shared/i18n"
 
-import { RoleSelect } from "@/features/role/components/RoleSelect"
+import { RoleCombobox } from "@/features/role/components/RoleCombobox"
 import type { useUserManagement } from "@/features/user/hooks/use-user-management"
 import type { UserAccount } from "@/features/user/types/user-management.types"
 import { Input } from "@/shared/components/ui/input"
@@ -45,7 +45,7 @@ function UserFilters({ management }: { management: Management }) {
       <div className="min-w-0 w-full sm:w-40">
         <Field label={t("user:fields.role")} htmlFor="user-search-role">
           <Controller control={searchForm.control} name="role" render={({ field }) => (
-            <RoleSelect id="user-search-role" value={field.value} onValueChange={field.onChange}
+            <RoleCombobox id="user-search-role" value={field.value} onValueChange={field.onChange}
               allOption={{ value: "all", label: t("user:filters.all") }} />
           )} />
         </Field>
@@ -87,7 +87,7 @@ function UserEditor({ management }: { management: Management }) {
         </Field>
         <Field label={t("user:fields.role")} htmlFor="user-editor-role">
           <Controller control={form.control} name="role" render={({ field }) => (
-            <RoleSelect id="user-editor-role" value={field.value} onValueChange={field.onChange} />
+            <RoleCombobox id="user-editor-role" value={field.value} onValueChange={field.onChange} />
           )} />
         </Field>
         <Field label={t("user:fields.status")} htmlFor="user-editor-enabled" orientation="horizontal">

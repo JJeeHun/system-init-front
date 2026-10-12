@@ -11,7 +11,7 @@ import {
   ComboboxList,
 } from "@/shared/components/ui/combobox"
 
-export type CommonCodeSelectProps = {
+export type CommonCodeComboboxProps = {
   groupCode: CommonCodeGroupCode
   value?: string
   onValueChange?: (value: string) => void
@@ -22,7 +22,7 @@ export type CommonCodeSelectProps = {
   "aria-describedby"?: string
 }
 
-export function CommonCodeSelect({
+export function CommonCodeCombobox({
   groupCode,
   value,
   onValueChange,
@@ -31,7 +31,7 @@ export function CommonCodeSelect({
   id,
   "aria-label": ariaLabel,
   "aria-describedby": ariaDescribedBy,
-}: CommonCodeSelectProps) {
+}: CommonCodeComboboxProps) {
   const { t } = useAppTranslation()
   const { options, isLoading, isError, isGroupUnavailable } = useCommonCodeOptions(groupCode)
   const unavailable = isError || isGroupUnavailable

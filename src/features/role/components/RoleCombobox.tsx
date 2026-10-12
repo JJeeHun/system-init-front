@@ -16,7 +16,7 @@ type RoleOption = {
   label: string
 }
 
-export type RoleSelectProps = {
+export type RoleComboboxProps = {
   value?: string
   onValueChange?: (value: string) => void
   allOption?: RoleOption
@@ -27,7 +27,7 @@ export type RoleSelectProps = {
   "aria-describedby"?: string
 }
 
-export function RoleSelect({
+export function RoleCombobox({
   value,
   onValueChange,
   allOption,
@@ -36,7 +36,7 @@ export function RoleSelect({
   id,
   "aria-label": ariaLabel,
   "aria-describedby": ariaDescribedBy,
-}: RoleSelectProps) {
+}: RoleComboboxProps) {
   const { t } = useAppTranslation()
   const { options: roles, isLoading, isError } = useRoleOptions()
   const options = allOption ? [allOption, ...roles] : roles
