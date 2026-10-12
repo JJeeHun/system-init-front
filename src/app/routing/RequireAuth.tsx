@@ -1,7 +1,8 @@
 import type { ReactNode } from "react"
 import { Navigate, useLocation } from "react-router-dom"
 
-import { getAuthSession } from "@/features/auth/storage/auth-session"
+import { useAuthSessionToken } from "@/features/auth/hooks/use-auth-session"
+import { getSessionEndReason } from "@/features/auth/storage/auth-session"
 
 type RequireAuthProps = {
   children: ReactNode
@@ -9,9 +10,10 @@ type RequireAuthProps = {
 
 export function RequireAuth({ children }: RequireAuthProps) {
   const location = useLocation()
+  const token = useAuthSessionToken()
 
-  if (!getAuthSession()) {
-    return <Navigate to="/login" replace state={{ from: location.pathname }} />
+  if (!token) {
+    return <Navigate to="/login" replace state={{ from: location.pathname, reason: getSessionEndReason() }} />
   }
 
   return children

@@ -1,4 +1,4 @@
-import { Boxes, MapPin, Menu } from "lucide-react"
+import { Boxes, LogOut, MapPin, Menu } from "lucide-react"
 import { Link } from "react-router-dom"
 import { config } from "@/shared/config/config"
 
@@ -20,6 +20,7 @@ type AppHeaderProps = {
   mobileSidebarOpen: boolean
   onRootSelect: (menu: NavigationMenuItem) => void
   onOpenSidebar: () => void
+  onLogout: () => void
 }
 
 function Brand({ expanded }: { expanded: boolean }) {
@@ -83,7 +84,8 @@ function HeaderActions({
   userError,
   mobileSidebarOpen,
   onOpenSidebar,
-}: Pick<AppHeaderProps, "user" | "userLoading" | "userError" | "mobileSidebarOpen" | "onOpenSidebar">) {
+  onLogout,
+}: Pick<AppHeaderProps, "user" | "userLoading" | "userError" | "mobileSidebarOpen" | "onOpenSidebar" | "onLogout">) {
   const { t, language, changeLanguage } = useAppTranslation()
 
   return (
@@ -104,6 +106,10 @@ function HeaderActions({
         aria-label={t(language === "en" ? "common:language.switchToKorean" : "common:language.switchToEnglish")}
       >
         {language === "en" ? "EN" : "KO"}
+      </Button>
+      <Button header size="sm" onClick={onLogout} aria-label={t("auth:logout.label")}>
+        <LogOut aria-hidden="true" className="size-4" />
+        <span className="hidden sm:inline">{t("auth:logout.label")}</span>
       </Button>
       <div className="lg:hidden">
         <Button
@@ -133,6 +139,7 @@ export function AppHeader({
   mobileSidebarOpen,
   onRootSelect,
   onOpenSidebar,
+  onLogout,
 }: AppHeaderProps) {
   return (
     <header className={[
@@ -149,6 +156,7 @@ export function AppHeader({
         userError={userError}
         mobileSidebarOpen={mobileSidebarOpen}
         onOpenSidebar={onOpenSidebar}
+        onLogout={onLogout}
       />
     </header>
   )

@@ -2,6 +2,7 @@ import { Outlet } from "react-router-dom"
 import { useAppTranslation } from "@/shared/i18n"
 
 import { AppHeader } from "@/app/layouts/AppHeader"
+import { useLogout } from "@/features/auth/hooks/use-logout"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { useMainNavigation } from "@/features/navigation/hooks/use-main-navigation"
@@ -17,6 +18,7 @@ export function MainLayout() {
   const { t } = useAppTranslation()
   const navigation = useMainNavigation()
   const currentUser = useCurrentUser()
+  const logout = useLogout()
 
   const context: MainLayoutContext = {
     navigation,
@@ -35,6 +37,7 @@ export function MainLayout() {
         mobileSidebarOpen={navigation.sidebarOpen}
         onRootSelect={navigation.selectRootMenu}
         onOpenSidebar={navigation.openSidebar}
+        onLogout={logout}
       />
 
       <div className={[
