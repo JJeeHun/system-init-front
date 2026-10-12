@@ -1,0 +1,5 @@
+export enum CommonCodeGroupCode {
+  YES_NO = "USE_YN",
+  INBOUND_STATUS = "INBOUND_STATUS",
+  INVENTORY_STATUS = "INVENTORY_STATUS",
+}
