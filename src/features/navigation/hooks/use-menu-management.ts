@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
@@ -9,6 +9,7 @@ import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useAppTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
 import { message } from "@/shared/lib/message"
+import { useTree } from "@/shared/ui/tree"
 
 type FormMode = "create" | "edit" | null
 
@@ -24,6 +25,8 @@ const EMPTY_MENU: MenuInput = {
   scope: "GENERAL",
 }
 
+const isMenuGroup = (menu: MenuRecord) => menu.kind === "group"
+
 export function useMenuManagement() {
   const { t, language } = useAppTranslation()
   const queryClient = useQueryClient()
@@ -31,44 +34,15 @@ export function useMenuManagement() {
   const query = useQuery(navigationQueries.management())
   const menus = query.data ?? []
   const [mode, setMode] = useState<FormMode>(null)
-  const [treeKeyword, setTreeKeyword] = useState("")
-  const [collapsedGroups, setCollapsedGroups] = useState<string[]>([])
-  const filteredMenus = useMemo(() => {
-    const keyword = treeKeyword.trim().toLocaleLowerCase()
-    if (!keyword) return menus
-
-    const byId = new Map(menus.map(menu => [menu.id, menu]))
-    const visible = new Set<string>()
-    const childrenByParent = new Map<string, MenuRecord[]>()
-    for (const menu of menus) {
-      if (!menu.parentId) continue
-      const siblings = childrenByParent.get(menu.parentId) ?? []
-      siblings.push(menu)
-      childrenByParent.set(menu.parentId, siblings)
-    }
-    for (const menu of menus) {
-      if (![getMenuLabel(menu, t), menu.label, menu.id, menu.path].some(value =>
-        value.toLocaleLowerCase().includes(keyword))) continue
-
-      let current: MenuRecord | undefined = menu
-      while (current) {
-        visible.add(current.id)
-        current = current.parentId ? byId.get(current.parentId) : undefined
-      }
-      if (menu.kind === "group") {
-        const stack = [menu.id]
-        while (stack.length) {
-          for (const child of childrenByParent.get(stack.pop()!) ?? []) {
-            visible.add(child.id)
-            if (child.kind === "group") stack.push(child.id)
-          }
-        }
-      }
-    }
-    return menus.filter(menu => visible.has(menu.id))
-  }, [menus, treeKeyword, language, t])
-  const [selectedId, setSelectedId] = useState<string | null>(null)
-  const selected = useMemo(() => menus.find((menu) => menu.id === selectedId) ?? null, [menus, selectedId])
+  const getSearchText = useCallback((menu: MenuRecord) =>
+    [getMenuLabel(menu, t), menu.label, menu.id, menu.path].join(" "), [language, t])
+  const tree = useTree({
+    items: menus,
+    getSearchText,
+    isBranch: isMenuGroup,
+  })
+  const selected = useMemo(() => menus.find((menu) => menu.id === tree.selectedId) ?? null,
+    [menus, tree.selectedId])
   const selectedPath = useMemo(() => {
     const segments: string[] = []
     let cursor = selected
@@ -79,10 +53,6 @@ export function useMenuManagement() {
     return segments.join(" / ")
   }, [selected, menus, language, t])
 
-  function toggleGroup(id: string) {
-    setCollapsedGroups(current => current.includes(id) ?
-      current.filter(groupId => groupId !== id) : [...current, id])
-  }
   const form = useForm<MenuInput>({ defaultValues: EMPTY_MENU })
 
   useEffect(() => {
@@ -99,7 +69,7 @@ export function useMenuManagement() {
   const createMutation = useMutation({
     ...navigationMutations.create(),
     onSuccess: (created) => {
-      setSelectedId(created.id)
+      tree.selectNode(created.id)
       setMode(null)
       void refresh()
       message.success(t("navigation:management.messages.created"))
@@ -116,7 +86,7 @@ export function useMenuManagement() {
   const deleteMutation = useMutation({
     ...navigationMutations.delete(),
     onSuccess: () => {
-      setSelectedId(null)
+      tree.selectNode(null)
       setMode(null)
       void refresh()
       message.success(t("navigation:management.messages.deleted"))
@@ -133,7 +103,7 @@ export function useMenuManagement() {
 
   function selectMenu(menu: MenuRecord) {
     if (saving || deleteMutation.isPending) return
-    setSelectedId(menu.id)
+    tree.selectNode(menu.id)
     setMode(null)
   }
 
@@ -192,11 +162,7 @@ export function useMenuManagement() {
 
   return {
     menus,
-    filteredMenus,
-    treeKeyword,
-    setTreeKeyword,
-    collapsedGroups,
-    toggleGroup,
+    tree,
     selectedPath,
     selected,
     selectMenu,

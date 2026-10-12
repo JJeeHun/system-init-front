@@ -47,16 +47,16 @@ function MenuTree({ management }: { management: MenuManagement }) {
   const { t } = useAppTranslation()
   return (
     <TreeView
-      nodes={buildMenuTree(management.filteredMenus, null, t)}
-      selectedId={management.selected?.id ?? null}
-      collapsedIds={management.collapsedGroups}
-      forceExpanded={!!management.treeKeyword.trim()}
+      nodes={buildMenuTree(management.tree.filteredItems, null, t)}
+      selectedId={management.tree.selectedId}
+      collapsedIds={management.tree.collapsedIds}
+      forceExpanded={management.tree.forceExpanded}
       disabled={management.saving || management.deleting}
       onSelect={id => {
         const menu = management.menus.find(item => item.id === id)
         if (menu) management.selectMenu(menu)
       }}
-      onToggle={management.toggleGroup}
+      onToggle={management.tree.toggleNode}
       expandLabel={label => t("navigation:management.expandGroup", { name: label })}
       collapseLabel={label => t("navigation:management.collapseGroup", { name: label })}
     />
@@ -77,8 +77,8 @@ function MenuList({ management }: { management: MenuManagement }) {
           <Field label={t("navigation:management.searchLabel")} htmlFor="menu-tree-search">
             <SearchField
               id="menu-tree-search"
-              value={management.treeKeyword}
-              onValueChange={management.setTreeKeyword}
+              value={management.tree.keyword}
+              onValueChange={management.tree.setKeyword}
               placeholder={t("navigation:management.searchPlaceholder")}
             />
           </Field>
@@ -90,7 +90,7 @@ function MenuList({ management }: { management: MenuManagement }) {
           </div>
         ) : management.menus.length === 0 ? (
           <p className="text-sm text-foreground-soft">{t("navigation:management.empty")}</p>
-        ) : management.filteredMenus.length === 0 ? (
+        ) : management.tree.filteredItems.length === 0 ? (
           <p role="status" className="text-sm text-foreground-soft">{t("navigation:management.noSearchResults")}</p>
         ) : (
           <ScrollArea type="always" className="h-80 min-w-0 sm:h-[var(--layout-grid-height)]">
