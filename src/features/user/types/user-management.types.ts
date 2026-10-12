@@ -1,4 +1,4 @@
-export type UserRoleCode = "ADMIN" | "STAFF"
+export type UserRoleCode = string
 export type UserCenterCode = "SEOUL" | "BUSAN"
 
 export type UserAccount = {

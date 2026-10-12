@@ -1,8 +1,9 @@
 import { Controller } from "react-hook-form"
 import { useAppTranslation } from "@/shared/i18n"
 
+import { RoleSelect } from "@/features/role/components/RoleSelect"
 import type { useUserManagement } from "@/features/user/hooks/use-user-management"
-import type { UserAccount, UserRoleCode } from "@/features/user/types/user-management.types"
+import type { UserAccount } from "@/features/user/types/user-management.types"
 import { Input } from "@/shared/components/ui/input"
 import { Switch } from "@/shared/components/ui/switch"
 import { DefaultForm } from "@/shared/layout/default-form"
@@ -44,11 +45,8 @@ function UserFilters({ management }: { management: Management }) {
       <div className="min-w-0 w-full sm:w-40">
         <Field label={t("user:fields.role")} htmlFor="user-search-role">
           <Controller control={searchForm.control} name="role" render={({ field }) => (
-            <Select id="user-search-role" value={field.value} onValueChange={field.onChange} options={[
-              { value: "all", label: t("user:filters.all") },
-              { value: "ADMIN", label: t("user:roles.ADMIN") },
-              { value: "STAFF", label: t("user:roles.STAFF") },
-            ]} />
+            <RoleSelect id="user-search-role" value={field.value} onValueChange={field.onChange}
+              allOption={{ value: "all", label: t("user:filters.all") }} />
           )} />
         </Field>
       </div>
@@ -89,10 +87,7 @@ function UserEditor({ management }: { management: Management }) {
         </Field>
         <Field label={t("user:fields.role")} htmlFor="user-editor-role">
           <Controller control={form.control} name="role" render={({ field }) => (
-            <Select id="user-editor-role" value={field.value} onValueChange={field.onChange} options={[
-              { value: "ADMIN", label: t("user:roles.ADMIN") },
-              { value: "STAFF", label: t("user:roles.STAFF") },
-            ]} />
+            <RoleSelect id="user-editor-role" value={field.value} onValueChange={field.onChange} />
           )} />
         </Field>
         <Field label={t("user:fields.status")} htmlFor="user-editor-enabled" orientation="horizontal">
@@ -119,7 +114,7 @@ function UserList({ management }: { management: Management }) {
     { key: "center", header: t("user:fields.center"), size: "lg",
       format: (value: unknown) => t(`user:centers.${value}`) },
     { key: "role", header: t("user:fields.role"), size: "md",
-      format: (value: unknown) => t(`user:roles.${value as UserRoleCode}`) },
+      format: (value: unknown) => t(`user:roles.${value}`, { defaultValue: String(value ?? "") }) },
     { key: "enabled", header: t("user:fields.status"), size: "sm", align: "center",
       format: (value: unknown) => t(value === true ? "common:labels.enabled" : "common:labels.disabled") },
   ] satisfies DataGridColumn<UserAccount>[]
