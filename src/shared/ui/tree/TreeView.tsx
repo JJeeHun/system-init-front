@@ -16,6 +16,7 @@ export type TreeViewProps = {
   selectedId: string | null
   collapsedIds: string[]
   forceExpanded?: boolean
+  groupToggleOnly?: boolean
   disabled?: boolean
   onSelect: (id: string) => void
   onToggle: (id: string) => void
@@ -33,6 +34,22 @@ function TreeItems({ nodes, ...props }: TreeViewProps) {
 
         return (
           <li key={node.id} className="min-w-0">
+            {isGroup && props.groupToggleOnly ? (
+              <button
+                type="button"
+                aria-label={node.label}
+                aria-expanded={expanded}
+                title={node.title ?? node.label}
+                disabled={props.disabled || props.forceExpanded}
+                onClick={() => props.onToggle(node.id)}
+                className="flex min-h-8 w-full min-w-0 items-center gap-2 rounded-md px-2 py-1 text-left text-sm font-semibold text-foreground outline-none transition-colors hover:bg-surface-soft focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:opacity-60"
+              >
+                <ChevronRightIcon aria-hidden="true" className={`size-4 shrink-0 text-foreground-soft transition-transform ${expanded ? "rotate-90" : ""}`} />
+                {node.icon ? <span aria-hidden="true" className="flex size-4 shrink-0 items-center justify-center text-foreground-soft">{node.icon}</span> : null}
+                <span className="min-w-0 flex-1 truncate">{node.label}</span>
+                {node.trailingText ? <span className="shrink-0 text-xs font-normal text-foreground-soft">{node.trailingText}</span> : null}
+              </button>
+            ) : (
             <div className={[
               "group/tree-item flex min-w-0 items-center rounded-md transition-colors",
               selected ? "bg-primary/10 text-foreground" : "text-foreground hover:bg-surface-soft",
@@ -69,6 +86,7 @@ function TreeItems({ nodes, ...props }: TreeViewProps) {
                 {node.trailingText ? <span className="shrink-0 text-xs font-normal text-foreground-soft">{node.trailingText}</span> : null}
               </button>
             </div>
+            )}
             {isGroup && expanded && node.children?.length ? (
               <div className="ml-4 min-w-0 border-l border-border pl-3 pt-0.5">
                 <TreeItems nodes={node.children} {...props} />

@@ -1,17 +1,17 @@
-import { useState } from "react"
-import { ChevronRightIcon } from "lucide-react"
+import { FolderIcon } from "lucide-react"
 import { Controller } from "react-hook-form"
 
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
+import { MenuIcon } from "@/features/navigation/components/MenuIcon"
 import type { MenuRecord } from "@/features/navigation/types/menu-management.types"
 import type { useRoleManagement } from "@/features/role/hooks/use-role-management"
 import type { RoleAction } from "@/features/role/types/role-management.types"
 import { Checkbox } from "@/shared/components/ui/checkbox"
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/shared/components/ui/collapsible"
 import { Input } from "@/shared/components/ui/input"
 import { ScrollArea } from "@/shared/components/ui/scroll-area"
 import { Textarea } from "@/shared/components/ui/textarea"
 import { useAppTranslation } from "@/shared/i18n"
+import type { AppTranslate } from "@/shared/i18n"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
 import { Dialog } from "@/shared/ui/dialog"
@@ -19,6 +19,8 @@ import { Field } from "@/shared/ui/field"
 import { Panel } from "@/shared/ui/panel"
 import { SearchField } from "@/shared/ui/search-field"
 import { SearchPanel } from "@/shared/ui/search-panel"
+import { TreeView } from "@/shared/ui/tree"
+import type { TreeViewNode } from "@/shared/ui/tree"
 
 type Management = ReturnType<typeof useRoleManagement>
 const ACTIONS: RoleAction[] = ["view", "create", "edit", "delete"]
@@ -112,69 +114,35 @@ function PermissionCheckbox({ management, menu, action }: {
   )
 }
 
-type MenuTreeProps = {
-  management: Management
-  parentId: string | null
-  selectedMenuId: string
-  onSelectMenu: (menuId: string) => void
-  depth: number
-}
-
-function MenuTreeNode({ management, menu, selectedMenuId, onSelectMenu, depth }: {
-  management: Management
-  menu: MenuRecord
-  selectedMenuId: string
-  onSelectMenu: (menuId: string) => void
-  depth: number
-}) {
-  const { t } = useAppTranslation()
-
-  if (menu.kind === "group") {
-    return (
-      <Collapsible defaultOpen className="group/menu grid gap-1">
-        <CollapsibleTrigger asChild>
-          <Button size="sm" title={getMenuLabel(menu, t)}>
-            <span className="flex w-full min-w-0 items-center gap-2 text-left">
-              <ChevronRightIcon aria-hidden="true" className="size-4 shrink-0 transition-transform group-data-[state=open]/menu:rotate-90" />
-              <span className="truncate font-semibold">{getMenuLabel(menu, t)}</span>
-            </span>
-          </Button>
-        </CollapsibleTrigger>
-        <CollapsibleContent>
-          <div className="ml-3 grid gap-1 border-l border-border pl-3">
-            <MenuTree management={management} parentId={menu.id} depth={depth + 1}
-              selectedMenuId={selectedMenuId} onSelectMenu={onSelectMenu} />
-          </div>
-        </CollapsibleContent>
-      </Collapsible>
-    )
-  }
-
-  return (
-    <Button size="sm" primary={menu.id === selectedMenuId}
-      aria-pressed={menu.id === selectedMenuId}
-      onClick={() => onSelectMenu(menu.id)} disabled={management.busy}>
-      <span className="flex w-full min-w-0 items-center gap-2 text-left">
-        <span className="truncate">{getMenuLabel(menu, t)}</span>
-        {!management.isAllowed(menu.id, "view") && (
-          <span className="ml-auto shrink-0 text-xs opacity-75">{t("role:permissions.noAccess")}</span>
-        )}
-      </span>
-    </Button>
-  )
-}
-
-function MenuTree({ management, parentId, selectedMenuId, onSelectMenu, depth }: MenuTreeProps) {
-  const menus = management.menus.filter(menu => menu.parentId === parentId)
+function buildMenuTree(menus: readonly MenuRecord[], parentId: string | null, t: AppTranslate,
+  management: Management): TreeViewNode[] {
+  return menus.filter(menu => menu.parentId === parentId)
     .sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id))
+    .map(menu => ({
+      id: menu.id,
+      label: getMenuLabel(menu, t),
+      icon: menu.kind === "group" ? <FolderIcon className="size-4" /> : <MenuIcon name={menu.icon} />,
+      trailingText: menu.kind === "page" && !management.isAllowed(menu.id, "view")
+        ? t("role:permissions.noAccess") : undefined,
+      children: menu.kind === "group" ? buildMenuTree(menus, menu.id, t, management) : undefined,
+    }))
+}
 
+function MenuTree({ management, selectedMenuId }: { management: Management; selectedMenuId: string }) {
+  const { t } = useAppTranslation()
   return (
-    <div className={depth === 0 ? "grid gap-2" : "grid gap-1"}>
-      {menus.map(menu => (
-        <MenuTreeNode key={menu.id} management={management} menu={menu} depth={depth}
-          selectedMenuId={selectedMenuId} onSelectMenu={onSelectMenu} />
-      ))}
-    </div>
+    <TreeView
+      nodes={buildMenuTree(management.menuTree.filteredItems, null, t, management)}
+      selectedId={selectedMenuId}
+      collapsedIds={management.menuTree.collapsedIds}
+      forceExpanded={management.menuTree.forceExpanded}
+      groupToggleOnly
+      disabled={management.busy}
+      onSelect={management.menuTree.selectNode}
+      onToggle={management.menuTree.toggleNode}
+      expandLabel={label => t("navigation:management.expandGroup", { name: label })}
+      collapseLabel={label => t("navigation:management.collapseGroup", { name: label })}
+    />
   )
 }
 
@@ -198,7 +166,6 @@ function MenuPermissionEditor({ management, menu }: { management: Management; me
 
 function RolePermissionContent({ management }: { management: Management }) {
   const { t } = useAppTranslation()
-  const [selectedMenuId, setSelectedMenuId] = useState<string | null>(null)
 
   if (!management.selected) {
     return <p className="text-sm text-foreground-soft">{t("role:permissions.choose")}</p>
@@ -209,7 +176,7 @@ function RolePermissionContent({ management }: { management: Management }) {
   if (management.menusLoading || management.permissionsLoading) {
     return <p role="status" className="text-sm text-foreground-soft">{t("common:states.loading")}</p>
   }
-  const selectedMenu = management.menus.find(menu => menu.id === selectedMenuId && menu.kind === "page")
+  const selectedMenu = management.menus.find(menu => menu.id === management.menuTree.selectedId && menu.kind === "page")
     ?? management.menus.find(menu => menu.kind === "page")
   if (!selectedMenu) {
     return <p className="text-sm text-foreground-soft">{t("role:permissions.empty")}</p>
@@ -222,8 +189,7 @@ function RolePermissionContent({ management }: { management: Management }) {
           <h3 className="mb-3 text-sm font-semibold text-foreground">{t("role:permissions.menuTreeTitle")}</h3>
           <ScrollArea type="always" className="h-72 min-w-0">
             <div className="pr-2">
-              <MenuTree management={management} parentId={null} depth={0} selectedMenuId={selectedMenu.id}
-                onSelectMenu={setSelectedMenuId} />
+              <MenuTree management={management} selectedMenuId={selectedMenu.id} />
             </div>
           </ScrollArea>
         </nav>
