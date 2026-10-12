@@ -50,7 +50,9 @@ export function CommonCodeCombobox({
           id={id}
           aria-label={ariaLabel ?? t("common-code:item.title")}
           aria-describedby={ariaDescribedBy}
-          placeholder={isLoading ? t("common:states.loading") : placeholder ?? t("common:states.searchPlaceholder")}
+          placeholder={placeholder ?? t("common:states.searchPlaceholder")}
+          loading={isLoading}
+          loadingLabel={t("common:states.loading")}
           disabled={disabled || isLoading || unavailable}
           className="w-full"
         />
@@ -65,15 +67,11 @@ export function CommonCodeCombobox({
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-      {isLoading ? (
-        <p role="status" className="mt-1 text-xs text-muted-foreground">
-          {t("common:states.loading")}
-        </p>
-      ) : unavailable ? (
+      {unavailable && !isLoading && (
         <p role="alert" className="mt-1 text-xs text-destructive">
           {t(isGroupUnavailable ? "common-code:errors.groupNotFound" : "common:messages.requestFailure")}
         </p>
-      ) : null}
+      )}
     </div>
   )
 }

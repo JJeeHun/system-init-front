@@ -56,7 +56,9 @@ export function RoleCombobox({
           id={id}
           aria-label={ariaLabel ?? t("role:fields.name")}
           aria-describedby={ariaDescribedBy}
-          placeholder={isLoading ? t("common:states.loading") : placeholder ?? t("common:states.searchPlaceholder")}
+          placeholder={placeholder ?? t("common:states.searchPlaceholder")}
+          loading={isLoading}
+          loadingLabel={t("common:states.loading")}
           disabled={disabled || isLoading || isError}
           className="w-full"
         />
@@ -71,15 +73,11 @@ export function RoleCombobox({
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-      {isLoading ? (
-        <p role="status" className="mt-1 text-xs text-muted-foreground">
-          {t("common:states.loading")}
-        </p>
-      ) : isError ? (
+      {isError && !isLoading && (
         <p role="alert" className="mt-1 text-xs text-destructive">
           {t("role:messages.rolesError")}
         </p>
-      ) : null}
+      )}
     </div>
   )
 }
