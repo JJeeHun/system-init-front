@@ -107,6 +107,11 @@
     "scopes": {
       "SYSTEM": "시스템 전용",
       "GENERAL": "일반 업무"
-    }
+    },
+    "searchLabel": "메뉴 검색",
+    "searchPlaceholder": "메뉴명 / 메뉴 ID / 화면 경로",
+    "noSearchResults": "검색된 메뉴가 없습니다.",
+    "collapseGroup": "{{name}} 접기",
+    "expandGroup": "{{name}} 펼치기"
   }
 }
