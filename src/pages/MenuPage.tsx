@@ -1,19 +1,13 @@
-import { useOutletContext } from "react-router-dom"
-
-import { useTabPage } from "@/app/routing/TabPageContext"
+import { useNavigationStore } from "@/app/navigation/use-navigation-store"
+import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { useAppTranslation } from "@/shared/i18n"
-
-import type { MainLayoutContext } from "@/app/layouts/MainLayout"
-import { findMenuByPath, findRootMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { PageLayout } from "@/shared/layout/page"
 import { PageHeader } from "@/shared/ui/page-header"
 
-export function MenuPage() {
-  const { navigation } = useOutletContext<MainLayoutContext>()
+export function MenuPage({ path }: { path: string }) {
   const { t } = useAppTranslation()
-  const { path } = useTabPage()
-  const currentMenu = findMenuByPath(navigation.menus, path)
-  const rootMenu = findRootMenuByPath(navigation.menus, path)
+  const currentMenu = useNavigationStore((state) => state.findMenu(path))
+  const rootMenu = useNavigationStore((state) => state.findRootMenu(path))
 
   if (!currentMenu) {
     return (

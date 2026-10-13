@@ -1,10 +1,10 @@
 import { memo, useLayoutEffect, useState } from "react"
-import { useLocation, useNavigate, useOutletContext } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 
-import type { MainLayoutContext } from "@/app/layouts/MainLayout"
+import { navigationSettings } from "@/app/navigation/navigation-settings"
+import { useNavigationStore } from "@/app/navigation/use-navigation-store"
 import { resolveRoute, routePath } from "@/app/routing/route-config"
-import { TabPageProvider } from "@/app/routing/TabPageContext"
-import { findMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
+import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { useAppTranslation } from "@/shared/i18n"
 import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
 
@@ -18,12 +18,9 @@ const MountedTabPage = memo(function MountedTabPage({ path, active }: MountedTab
   if (!match) return null
 
   const Page = match.route.Component
-
   return (
     <div hidden={!active}>
-      <TabPageProvider value={{ path, params: match.params, isActive: active }}>
-        <Page />
-      </TabPageProvider>
+      <Page path={path} />
     </div>
   )
 })
@@ -31,49 +28,62 @@ const MountedTabPage = memo(function MountedTabPage({ path, active }: MountedTab
 function StandalonePage({ path }: { path: string }) {
   const match = resolveRoute(path)
   if (!match) return null
-
   const Page = match.route.Component
-
-  return (
-    <TabPageProvider value={{ path, params: match.params, isActive: true }}>
-      <Page />
-    </TabPageProvider>
-  )
+  return <Page path={path} />
 }
 
 export function TabWorkspace() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const { navigation } = useOutletContext<MainLayoutContext>()
+  const menuIndex = useNavigationStore((state) => state.menuIndex)
+  const hasLoadedMenus = useNavigationStore((state) => state.hasLoadedMenus)
+  const findMenu = useNavigationStore((state) => state.findMenu)
+  const canAccess = useNavigationStore((state) => state.canAccess)
   const { t } = useAppTranslation()
   const current = resolveRoute(pathname)
-  const activePath = current?.route.mode === "tab" ? pathname : null
-
+  const activePath = navigationSettings.tabsEnabled && current?.route.mode === "tab" ? pathname : null
   const [openPaths, setOpenPaths] = useState<string[]>(() => activePath ? [activePath] : [])
 
   useLayoutEffect(() => {
-    if (!activePath) return
-    setOpenPaths(previous =>
-      previous.includes(activePath) ? previous : [...previous, activePath],
-    )
-  }, [activePath])
+    if (!activePath || !canAccess(activePath)) return
+    setOpenPaths((previous) => previous.includes(activePath) ? previous : [...previous, activePath])
+  }, [activePath, canAccess, menuIndex])
+
+  useLayoutEffect(() => {
+    if (!hasLoadedMenus) return
+    setOpenPaths((previous) => {
+      const allowed = previous.filter(canAccess)
+      return allowed.length === previous.length ? previous : allowed
+    })
+    if (!canAccess(pathname)) navigate(routePath("forbidden"), { replace: true })
+  }, [hasLoadedMenus, menuIndex, pathname, canAccess, navigate])
 
   const closeTab = (path: string) => {
-    const remaining = openPaths.filter(openPath => openPath !== path)
-    if (path === activePath) {
-      navigate(remaining[remaining.length - 1] ?? routePath("home"), { replace: true })
-    }
+    const remaining = openPaths.filter((openPath) => openPath !== path)
+    if (path === activePath) navigate(remaining[remaining.length - 1] ?? routePath("home"), { replace: true })
     setOpenPaths(remaining)
   }
 
-  const tabs = openPaths.map(path => {
-    const menu = findMenuByPath(navigation.menus, path)
+  const tabs = openPaths.map((path) => {
+    const menu = findMenu(path)
     const match = resolveRoute(path)
     return {
       path,
       label: menu ? getMenuLabel(menu, t) : match ? t(match.route.titleKey) : path,
     }
   })
+
+  if (!hasLoadedMenus || !canAccess(pathname)) return null
+
+  if (!navigationSettings.tabsEnabled) {
+    return (
+      <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+        <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
+          <StandalonePage key={pathname} path={pathname} />
+        </div>
+      </div>
+    )
+  }
 
   const isTab = current?.route.mode === "tab"
 
@@ -82,7 +92,7 @@ export function TabWorkspace() {
       <div className={isTab ? "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden" : "hidden"}>
         <OpenPageTabs tabs={tabs} activePath={activePath} onClose={closeTab} />
         <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
-          {openPaths.map(path => (
+          {openPaths.map((path) => (
             <MountedTabPage key={path} path={path} active={path === activePath} />
           ))}
         </div>
