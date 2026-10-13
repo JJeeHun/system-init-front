@@ -1,9 +1,11 @@
-import { useCallback, useEffect, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
 import { navigationMutations, navigationQueries, navigationQueryKeys } from "@/features/navigation/api/navigation.api"
-import type { MenuInput, MenuRecord } from "@/features/navigation/types/menu-management.types"
+import { menuSchema, type MenuFormValues } from "@/features/navigation/schemas/menu.schema"
+import type { MenuRecord } from "@/features/navigation/types/menu-management.types"
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useAppTranslation } from "@/shared/i18n"
@@ -13,7 +15,7 @@ import { useTree } from "@/shared/ui/tree"
 
 type FormMode = "create" | "edit" | null
 
-const EMPTY_MENU: MenuInput = {
+const EMPTY_MENU: MenuFormValues = {
   id: "",
   parentId: null,
   label: "",
@@ -53,11 +55,8 @@ export function useMenuManagement() {
     return segments.join(" / ")
   }, [selected, menus, language, t])
 
-  const form = useForm<MenuInput>({ defaultValues: EMPTY_MENU })
+  const form = useForm<MenuFormValues>({ resolver: zodResolver(menuSchema), defaultValues: EMPTY_MENU })
 
-  useEffect(() => {
-    if (Object.keys(form.formState.errors).length > 0) void form.trigger()
-  }, [language])
 
   const refresh = async () => {
     await Promise.all([

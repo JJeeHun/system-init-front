@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useForm, useWatch } from "react-hook-form"
 
@@ -8,7 +9,10 @@ import type { MenuRecord } from "@/features/navigation/types/menu-management.typ
 import { canCreateRole, canDelegateAction, canManageRole } from "@/features/role/lib/role-delegation"
 import { useCurrentUser } from "@/features/user/hooks/use-current-user"
 import { roleMutations, roleQueries, roleQueryKeys } from "@/features/role/api/role-management.api"
-import type { RoleAction, RoleInput, RoleMenuGrant } from "@/features/role/types/role-management.types"
+import { roleSchema, type RoleFormValues } from "@/features/role/schemas/role.schema"
+import { roleSearchSchema, type RoleSearchFormValues } from "@/features/role/schemas/role-search.schema"
+import { rolePermissionSchema, type RolePermissionFormValues } from "@/features/role/schemas/role-permission.schema"
+import type { RoleAction } from "@/features/role/types/role-management.types"
 import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useAppTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
@@ -16,8 +20,7 @@ import { message } from "@/shared/lib/message"
 import { useTree } from "@/shared/ui/tree"
 
 type Mode = "create" | "edit" | null
-type PermissionForm = { grants: RoleMenuGrant[] }
-const EMPTY_ROLE: RoleInput = { id: "", name: "", description: "" }
+const EMPTY_ROLE: RoleFormValues = { id: "", name: "", description: "" }
 
 const isMenuGroup = (menu: MenuRecord) => menu.kind === "group"
 
@@ -53,15 +56,15 @@ export function useRoleManagement() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selected = manageableRoles.find(role => role.id === selectedId) ?? null
   const [mode, setMode] = useState<Mode>(null)
-  const roleForm = useForm<RoleInput>({ defaultValues: EMPTY_ROLE })
-  const searchForm = useForm<{ keyword: string }>({ defaultValues: { keyword: "" } })
+  const roleForm = useForm<RoleFormValues>({ resolver: zodResolver(roleSchema), defaultValues: EMPTY_ROLE })
+  const searchForm = useForm<RoleSearchFormValues>({ resolver: zodResolver(roleSearchSchema), defaultValues: { keyword: "" } })
   const [keyword, setKeyword] = useState("")
   const filteredRoles = useMemo(() => manageableRoles.filter(role =>
     [role.id, role.name, role.description].some(value => value.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())),
   ), [roles, keyword, actorRoleId, actorGrants])
 
   const permissionsQuery = useQuery(roleQueries.permissions(selectedId))
-  const permissionForm = useForm<PermissionForm>({ defaultValues: { grants: [] } })
+  const permissionForm = useForm<RolePermissionFormValues>({ resolver: zodResolver(rolePermissionSchema), defaultValues: { grants: [] } })
   const { reset: resetPermissions, setValue: setPermissionValue, getValues: getPermissions } = permissionForm
   const grants = useWatch({ control: permissionForm.control, name: "grants" }) ?? []
   const permissionDirty = permissionForm.formState.isDirty
@@ -75,9 +78,6 @@ export function useRoleManagement() {
       resetPermissions({ grants: permissionsQuery.data.grants })
     }
   }, [selectedId, permissionsQuery.data, resetPermissions])
-  useEffect(() => {
-    if (Object.keys(roleForm.formState.errors).length > 0) void roleForm.trigger()
-  }, [language])
 
   const refreshRoles = () => queryClient.invalidateQueries({ queryKey: roleQueryKeys.list() })
   const createMutation = useMutation({
@@ -193,16 +193,16 @@ export function useRoleManagement() {
     resetPermissions({ grants: permissionsQuery.data?.grants ?? [] })
   }
 
-  function savePermissions() {
+  const savePermissions = permissionForm.handleSubmit(({ grants }) => {
     if (!selected || busy || !permissionDirty || !actorRoleId) return
     const validMenus = new Set(allMenus.filter(menu => menu.kind === "page").map(menu => menu.id))
     const request = {
       roleId: selected.id,
       actorRoleId,
-      grants: getPermissions("grants").filter(grant => validMenus.has(grant.menuId)),
+      grants: grants.filter(grant => validMenus.has(grant.menuId)),
     }
     runMutation(() => permissionMutation.mutateAsync(request))
-  }
+  })
 
   return {
     roles: filteredRoles, selected, selectRole, searchForm,

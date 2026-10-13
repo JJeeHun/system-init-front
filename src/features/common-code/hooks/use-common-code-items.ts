@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
@@ -7,7 +8,8 @@ import { useAppTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
 
 import { commonCodeMutations, commonCodeQueries, commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
-import type { CommonCodeItem, CommonCodeItemFormValues } from "@/features/common-code/types/common-code.types"
+import { commonCodeItemSchema, type CommonCodeItemFormValues } from "@/features/common-code/schemas/common-code-item.schema"
+import type { CommonCodeItem } from "@/features/common-code/types/common-code.types"
 
 type FormMode = "create" | "edit" | null
 
@@ -31,7 +33,7 @@ function sortItems(items: CommonCodeItem[]) {
 }
 
 export function useCommonCodeItems(groupId: string | null) {
-  const { t, language } = useAppTranslation()
+  const { t } = useAppTranslation()
   const queryClient = useQueryClient()
   const runMutation = useMutationLock()
   const itemQuery = useQuery(commonCodeQueries.items(groupId))
@@ -40,12 +42,9 @@ export function useCommonCodeItems(groupId: string | null) {
   const previousGroupId = useRef(groupId)
 
   const itemForm = useForm<CommonCodeItemFormValues>({
+    resolver: zodResolver(commonCodeItemSchema),
     defaultValues: EMPTY_ITEM_FORM,
   })
-
-  useEffect(() => {
-    if (Object.keys(itemForm.formState.errors).length > 0) void itemForm.trigger()
-  }, [language])
 
   const itemEnabledField = useController({
     control: itemForm.control,
@@ -208,30 +207,19 @@ export function useCommonCodeItems(groupId: string | null) {
     form: {
       mode: itemFormMode,
       fields: {
-        code: itemForm.register("code", {
-          required: t("common-code:validation.itemCodeRequired"),
-        }),
-        name: itemForm.register("name", {
-          required: t("common-code:validation.itemNameRequired"),
-        }),
+        code: itemForm.register("code"),
+        name: itemForm.register("name"),
         description: itemForm.register("description"),
         enabled: {
           checked: itemEnabledField.value,
           onCheckedChange: itemEnabledField.onChange,
         },
-        sortOrder: itemForm.register("sortOrder", {
-          required: t("common-code:validation.sortOrderRequired"),
-          valueAsNumber: true,
-          min: {
-            value: 0,
-            message: t("common-code:validation.sortOrderMin"),
-          },
-        }),
+        sortOrder: itemForm.register("sortOrder", { valueAsNumber: true }),
       },
       errors: {
-        code: itemForm.formState.errors.code?.message ?? null,
-        name: itemForm.formState.errors.name?.message ?? null,
-        sortOrder: itemForm.formState.errors.sortOrder?.message ?? null,
+        code: t(itemForm.formState.errors.code?.message),
+        name: t(itemForm.formState.errors.name?.message),
+        sortOrder: t(itemForm.formState.errors.sortOrder?.message),
       },
       isPending: createItemMutation.isPending || updateItemMutation.isPending,
       isDeleting: deleteItemMutation.isPending,
