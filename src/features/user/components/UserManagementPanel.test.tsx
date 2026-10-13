@@ -6,7 +6,6 @@ import { MemoryRouter, Route, Routes } from "react-router-dom"
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 
 import { MainLayout } from "@/app/layouts/MainLayout"
-import { UserManagementPage } from "@/pages/UserManagementPage"
 import { resetMockUsersForTest } from "@/features/user/api/user-management.mock"
 import { changeLanguage } from "@/shared/i18n"
 import { devSettings } from "@/shared/dev-tools/settings"
@@ -31,9 +30,7 @@ describe("user management page", () => {
       <QueryClientProvider client={client}>
         <MemoryRouter initialEntries={["/app/system/users"]}>
           <Routes>
-            <Route path="/app" element={<MainLayout />}>
-              <Route path="system/users" element={<UserManagementPage />} />
-            </Route>
+            <Route path="/app/*" element={<MainLayout />} />
           </Routes>
         </MemoryRouter>
       </QueryClientProvider>,
@@ -42,6 +39,8 @@ describe("user management page", () => {
     expect(await screen.findByRole("heading", { level: 1, name: "사용자 관리" }, time)).toBeInTheDocument()
     expect(screen.getByRole("heading", { name: "검색 조건" })).toBeInTheDocument()
 
+    expect(await screen.findByText("조회 결과 67건", undefined, time)).toBeInTheDocument()
+
     fireEvent.click(screen.getByRole("button", { name: "사용자 등록" }))
     const editor = screen.getByRole("dialog", { name: "사용자 등록" })
     fireEvent.change(within(editor).getByRole("textbox", { name: /로그인 아이디/ }), { target: { value: "newuser" } })
@@ -49,7 +48,7 @@ describe("user management page", () => {
     fireEvent.change(within(editor).getByRole("textbox", { name: /이메일/ }), { target: { value: "newuser@example.com" } })
     fireEvent.click(within(editor).getByRole("button", { name: "저장" }))
 
-    expect(await screen.findByText("조회 결과 6건", undefined, { timeout: devSettings.mockDelayMs * 3 + 1500 })).toBeInTheDocument()
+    expect(await screen.findByText("조회 결과 68건", undefined, time)).toBeInTheDocument()
     expect(screen.queryByRole("dialog", { name: "사용자 등록" })).not.toBeInTheDocument()
   }, devSettings.mockDelayMs * 7 + 2000)
 })

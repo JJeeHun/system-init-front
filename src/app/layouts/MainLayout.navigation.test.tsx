@@ -3,11 +3,17 @@ import "@testing-library/jest-dom/vitest"
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 import { devSettings } from "@/shared/dev-tools/settings"
 
 import { MainLayout } from "@/app/layouts/MainLayout"
-import { HomePage } from "@/pages/HomePage"
+vi.mock("@/pages/CommonCodePage", () => ({
+  CommonCodePage: () => <p>공통코드 화면</p>,
+}))
+
+vi.mock("@/pages/UserManagementPage", () => ({
+  UserManagementPage: () => <p>사용자 관리 화면</p>,
+}))
 
 const mockUiWait = { timeout: devSettings.mockDelayMs * 2 + 1000 }
 
@@ -19,11 +25,7 @@ function renderNavigation() {
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={["/app"]}>
         <Routes>
-          <Route path="/app" element={<MainLayout />}>
-            <Route index element={<HomePage />} />
-            <Route path="master/common-code" element={<p>공통코드 화면</p>} />
-            <Route path="system/users" element={<p>사용자 관리 화면</p>} />
-          </Route>
+          <Route path="/app/*" element={<MainLayout />} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
@@ -42,7 +44,7 @@ describe("main navigation shell", () => {
     expect(within(sidebar).getByRole("navigation", { name: "시스템 관리 하위 메뉴" })).toBeInTheDocument()
     expect(within(screen.getAllByRole("banner")[0]).queryByRole("button", { name: "PC 사이드바 접기" })).not.toBeInTheDocument()
     expect(within(sidebar).queryByRole("link", { name: "홈" })).not.toBeInTheDocument()
-    expect(screen.getByRole("link", { name: "홈으로 이동" })).toHaveAttribute("href", "/app")
+    expect(within(screen.getByRole("banner")).getByRole("link", { name: "홈으로 이동" })).toHaveAttribute("href", "/app")
 
     fireEvent.click(collapse)
     const expand = within(sidebar).getByRole("button", { name: "PC 사이드바 펼치기" })
@@ -115,7 +117,7 @@ describe("main navigation shell", () => {
     await waitFor(() => expect(screen.getByText("공통코드 화면")).toBeInTheDocument())
     expect(menuButton).toHaveAttribute("aria-expanded", "false")
 
-    fireEvent.click(screen.getByRole("link", { name: "홈으로 이동" }))
+    fireEvent.click(within(screen.getByRole("banner")).getByRole("link", { name: "홈으로 이동" }))
     expect(await screen.findByRole("heading", { name: "홈" }, mockUiWait)).toBeInTheDocument()
   })
 })

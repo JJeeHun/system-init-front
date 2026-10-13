@@ -3,10 +3,12 @@ import "@testing-library/jest-dom/vitest"
 import { fireEvent, render, screen, waitFor, within } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
-import { describe, expect, it } from "vitest"
+import { describe, expect, it, vi } from "vitest"
 
 import { MainLayout } from "@/app/layouts/MainLayout"
-import { HomePage } from "@/pages/HomePage"
+vi.mock("@/pages/CommonCodePage", () => ({
+  CommonCodePage: () => <p>공통코드 화면</p>,
+}))
 
 function renderNavigation() {
   const client = new QueryClient({
@@ -16,10 +18,7 @@ function renderNavigation() {
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={["/app"]}>
         <Routes>
-          <Route path="/app" element={<MainLayout />}>
-            <Route index element={<HomePage />} />
-            <Route path="master/common-code" element={<p>공통코드 화면</p>} />
-          </Route>
+          <Route path="/app/*" element={<MainLayout />} />
         </Routes>
       </MemoryRouter>
     </QueryClientProvider>,
