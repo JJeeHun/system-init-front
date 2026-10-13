@@ -62,6 +62,17 @@ return type === "COMPANY" ? <CompanyFields /> : <PersonalFields />
 `Controller` / `useController`는 해당 UI가 controlled value/onChange를 요구할 때만 사용한다.
 기본 input에 습관적으로 Controller를 사용하지 않는다.
 
+## React Hook Form + Zod Validation
+
+- 업무 폼은 `useForm({ resolver: zodResolver(schema) })`로 연결한다. `register`는 필드 바인딩을 담당하고 업무 Validation은 Feature 소유 Zod Schema에만 정의한다.
+- Schema는 기본적으로 정적 `z.object()`를 export한다. 오류 메시지는 번역된 문자열 대신 `TranslationKey`로 검증된 i18n Key를 사용하며, 정적 Key에는 `satisfies TranslationKey`를 적용한다.
+- 폼 타입은 `z.infer<typeof schema>`를 우선 사용하되, Schema의 입력과 변환 후 출력이 다른 경우 `z.input<typeof schema>`, `z.output<typeof schema>` 및 `useForm` 제네릭을 구분해 맞춘다.
+- 필수 문자열은 공백만 입력해도 통과하지 않게 검증한다. 조건부 검증은 `refine`/`superRefine` 등을 이용한다.
+- `register()`의 `required`, `min`, `max`, `pattern`, `validate`와 Zod 검증을 혼용하지 않는다. `valueAsNumber`처럼 값을 변환하는 옵션은 허용하되 Schema 입력 타입과 일치해야 한다.
+- 폼 검증 오류는 `formState.errors`에서 읽고, 오류 Key는 표시 경계에서 `t()`로 번역한다. `t(null | undefined)`는 `""`을 반환한다. Field의 `required` 속성은 UI 필수 표시일 뿐 Validation을 대체하지 않는다.
+- 기존 오류 상태에서 언어를 바꿔도 번역된 메시지가 즉시 갱신되도록 표시 시점에 번역한다. API/서버 오류는 별도 공통 오류 처리 정책을 따른다.
+- 검증 시 필수 누락·공백만 입력·형식·범위·조건부 규칙, 제출 차단과 정상 저장, 한국어·영어 오류 메시지, Key 오타의 정적 검출을 확인한다.
+
 ## useRef
 
 리렌더가 필요 없는 값을 유지할 때 사용한다.

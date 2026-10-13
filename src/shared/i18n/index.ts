@@ -2,11 +2,21 @@ import { useTranslation as useI18nextTranslation } from "react-i18next"
 
 import { translationEngine } from "@/shared/i18n/engine"
 import type { AppLanguage } from "@/shared/i18n/engine"
+import type { TranslationKey } from "@/shared/i18n/keys"
 
 export type { AppLanguage } from "@/shared/i18n/engine"
 
 export type TranslationValues = Record<string, string | number | boolean | undefined>
-export type AppTranslate = (key: string, values?: TranslationValues) => string
+type CheckedKey<K extends string> = string extends K
+  ? K
+  : K extends TranslationKey
+    ? K
+    : never
+
+export type AppTranslate = <K extends string>(
+  key: CheckedKey<K> | null | undefined,
+  values?: TranslationValues,
+) => string
 
 function normalizeLanguage(language: string | undefined): AppLanguage {
   return language === "en" ? "en" : "ko"
@@ -16,8 +26,11 @@ export function getLanguage(): AppLanguage {
   return normalizeLanguage(translationEngine.resolvedLanguage)
 }
 
-export function translate(key: string, values?: TranslationValues): string {
-  return translationEngine.t(key, values)
+export function translate<K extends string>(
+  key: CheckedKey<K> | null | undefined,
+  values?: TranslationValues,
+): string {
+  return key ? translationEngine.t(key, values) : ""
 }
 
 export async function changeLanguage(language: AppLanguage): Promise<void> {
@@ -26,7 +39,8 @@ export async function changeLanguage(language: AppLanguage): Promise<void> {
 
 export function useAppTranslation() {
   const { t, i18n } = useI18nextTranslation()
-  const appTranslate: AppTranslate = (key, values) => t(key, values)
+  const appTranslate: AppTranslate = (key, values) =>
+    key ? t(key, values) : ""
 
   return {
     t: appTranslate,
