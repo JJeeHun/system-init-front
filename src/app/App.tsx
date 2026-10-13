@@ -4,7 +4,6 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom"
 import { AuthLayout } from "@/app/layouts/AuthLayout"
 import { MainLayout } from "@/app/layouts/MainLayout"
 import { routePath } from "@/app/routing/route-config"
-import { TabWorkspace } from "@/app/routing/TabWorkspace"
 import { RequireAuth } from "@/app/routing/RequireAuth"
 import { getForbiddenGeneration, subscribeForbiddenNavigation } from "@/features/auth/api/auth-response"
 import { UiPlaygroundPage } from "@/pages/UiPlaygroundPage"
@@ -35,15 +34,13 @@ export default function App() {
         </Route>
 
         <Route
-          path="/app"
+          path="/app/*"
           element={
             <RequireAuth>
               <MainLayout />
             </RequireAuth>
           }
-        >
-          <Route path="*" element={<TabWorkspace />} />
-        </Route>
+        />
 
         <Route path="/" element={<Navigate to={routePath("home")} replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />

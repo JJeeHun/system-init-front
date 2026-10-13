@@ -2,6 +2,7 @@ import { House, X } from "lucide-react"
 import { Link } from "react-router-dom"
 
 import { useAppTranslation } from "@/shared/i18n"
+
 import { Button } from "@/shared/components/ui/button"
 
 type OpenPageTabsProps = {
@@ -18,7 +19,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
   return (
     <section
       aria-label={t("navigation:tabs.label")}
-      className="flex h-[var(--layout-open-tabs-height)] min-w-0 shrink-0 items-center overflow-hidden border-b border-border bg-card px-2"
+      className="flex h-[var(--layout-open-tabs-height)] min-w-0 shrink-0 items-center border-b border-border-strong bg-card px-2"
     >
       <Link
         to={homePath}
@@ -26,26 +27,29 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
         aria-label={t("navigation:header.homeLink")}
         title={t("navigation:header.homeLink")}
         className={
-          "flex h-full w-9 shrink-0 items-center justify-center border-b-[3px] transition-colors focus-visible:outline-2 focus-visible:outline-primary " +
+          "relative flex h-full w-9 shrink-0 items-center justify-center text-foreground-soft transition-colors after:pointer-events-none after:absolute after:inset-x-1 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] focus-visible:outline-2 focus-visible:outline-primary " +
           (homeActive
-            ? "border-primary bg-surface-soft text-foreground"
-            : "border-transparent text-foreground-soft hover:bg-surface-soft hover:text-foreground")
+            ? "bg-primary-soft text-primary after:bg-primary"
+            : "hover:bg-primary-soft hover:text-primary hover:after:bg-primary/60")
         }
       >
         <House aria-hidden="true" className="size-4" />
       </Link>
-      <span aria-hidden="true" className="mx-1.5 h-5 w-px shrink-0 bg-border-strong" />
-      <nav aria-label={t("navigation:tabs.label")} className="flex h-full min-w-0 flex-1 items-stretch gap-0 overflow-x-auto overflow-y-hidden">
+      <span aria-hidden="true" className="mx-1 h-5 w-px shrink-0 bg-border-strong" />
+      <nav
+        aria-label={t("navigation:tabs.label")}
+        className="flex h-full min-w-0 flex-1 items-stretch gap-0 overflow-x-auto overflow-y-hidden"
+      >
         {tabs.map((tab) => {
           const active = tab.path === activePath
           return (
             <div
               key={tab.path}
               className={
-                "group inline-flex h-full min-w-0 max-w-52 shrink-0 items-center border-b-[3px] transition-colors " +
+                "group relative flex h-full max-w-52 shrink-0 items-center transition-colors after:pointer-events-none after:absolute after:inset-x-1 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] " +
                 (active
-                  ? "border-primary bg-surface-soft text-foreground"
-                  : "border-transparent text-foreground-soft hover:bg-surface-soft hover:text-foreground")
+                  ? "bg-primary-soft text-primary after:bg-primary"
+                  : "text-foreground-soft hover:bg-primary-soft hover:text-primary hover:after:bg-primary/60")
               }
             >
               <Link
@@ -53,22 +57,22 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
                 aria-current={active ? "page" : undefined}
                 title={tab.label}
                 className={
-                  "min-w-0 flex-1 truncate px-2 py-2 text-xs focus-visible:outline-2 focus-visible:outline-primary " +
+                  "flex h-full min-w-0 items-center truncate pl-2.5 pr-7 text-xs focus-visible:outline-2 focus-visible:outline-primary " +
                   (active ? "font-semibold" : "font-medium")
                 }
               >
-                {tab.label}
+                <span className="truncate">{tab.label}</span>
               </Link>
               <Button
+                type="button"
                 variant="ghost"
                 size="icon-xs"
-                type="button"
                 aria-label={t("navigation:tabs.close", { title: tab.label })}
                 title={t("navigation:tabs.close", { title: tab.label })}
                 onClick={() => onClose(tab.path)}
-                className="mr-0.5 size-6 shrink-0 rounded-sm text-foreground-soft hover:bg-card hover:text-foreground"
+                className="absolute right-0.5 top-1/2 z-10 size-6 -translate-y-1/2 rounded-sm text-foreground-soft opacity-100 transition-opacity hover:bg-card hover:text-foreground focus-visible:opacity-100 md:pointer-events-none md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:opacity-100 md:group-focus-within:pointer-events-auto md:group-focus-within:opacity-100"
               >
-                <X aria-hidden="true" className="size-3" />
+                <X aria-hidden="true" className="size-3.5" />
               </Button>
             </div>
           )

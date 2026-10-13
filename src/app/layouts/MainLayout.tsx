@@ -1,8 +1,7 @@
-import { Outlet } from "react-router-dom"
-
 import { AppHeader } from "@/app/layouts/AppHeader"
 import { NavigationBridge } from "@/app/navigation/NavigationBridge"
 import { useNavigationStore } from "@/app/navigation/use-navigation-store"
+import { TabWorkspace } from "@/app/routing/TabWorkspace"
 import { useLogout } from "@/features/auth/hooks/use-logout"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
@@ -80,7 +79,7 @@ export function MainLayout() {
                 {t("navigation:layout.loadFailed")}
               </div>
             ) : (
-              <Outlet />
+              <TabWorkspace />
             )}
           </div>
         </main>
