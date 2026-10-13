@@ -2,6 +2,8 @@ import type { ReactNode } from "react"
 
 import { ChevronRightIcon } from "lucide-react"
 
+import { selectedItemClassName } from "@/shared/ui/selection/selected-item"
+
 export type TreeViewNode = {
   id: string
   label: string
@@ -52,7 +54,7 @@ function TreeItems({ nodes, ...props }: TreeViewProps) {
             ) : (
             <div className={[
               "group/tree-item flex min-w-0 items-center rounded-md transition-colors",
-              selected ? "bg-primary/10 text-foreground" : "text-foreground hover:bg-surface-soft",
+              selected ? selectedItemClassName : "text-foreground hover:bg-surface-soft",
             ].join(" ")}>
               {isGroup ? (
                 <button

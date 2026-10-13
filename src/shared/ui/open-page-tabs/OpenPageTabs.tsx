@@ -1,18 +1,82 @@
+import { House, X } from "lucide-react"
+import { Link } from "react-router-dom"
+
 import { useAppTranslation } from "@/shared/i18n"
 
-export function OpenPageTabs() {
+import { Button } from "@/shared/components/ui/button"
+
+type OpenPageTabsProps = {
+  tabs: { path: string; label: string }[]
+  activePath: string | null
+  homePath: string
+  homeActive: boolean
+  onClose: (path: string) => void
+}
+
+export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }: OpenPageTabsProps) {
   const { t } = useAppTranslation()
+
   return (
     <section
       aria-label={t("navigation:tabs.label")}
-      className="flex h-[var(--layout-open-tabs-height)] min-w-0 shrink-0 items-center gap-3 overflow-hidden border-b border-border bg-card px-page-x"
+      className="flex h-[var(--layout-open-tabs-height)] min-w-0 shrink-0 items-center border-b border-border-strong bg-card"
     >
-      <span className="shrink-0 text-xs font-medium text-foreground-soft">
-        {t("navigation:tabs.title")}
-      </span>
-      <span className="inline-flex min-w-0 items-center rounded-md border border-border-strong bg-surface-soft px-3 py-1 text-xs text-foreground">
-        <span className="truncate">{t("navigation:tabs.preview")}</span>
-      </span>
+      <Link
+        to={homePath}
+        aria-current={homeActive ? "page" : undefined}
+        aria-label={t("navigation:header.homeLink")}
+        title={t("navigation:header.homeLink")}
+        className={
+          "relative flex h-full w-9 shrink-0 items-center justify-center text-foreground-soft transition-colors before:pointer-events-none before:absolute before:right-0 before:top-1/2 before:h-5 before:w-px before:-translate-y-1/2 before:bg-border-strong before:content-[''] after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] focus-visible:outline-2 focus-visible:outline-primary " +
+          (homeActive
+            ? "bg-[var(--tabs-active-bg)] text-[var(--tabs-active-text)] after:bg-[var(--tabs-indicator)]"
+            : "hover:bg-[var(--tabs-hover-bg)] hover:text-[var(--tabs-active-text)] hover:after:bg-[var(--tabs-indicator)]")
+        }
+      >
+        <House aria-hidden="true" className="size-4" />
+      </Link>
+      <nav
+        aria-label={t("navigation:tabs.label")}
+        className="flex h-full min-w-0 flex-1 items-stretch gap-0 overflow-x-auto overflow-y-hidden"
+      >
+        {tabs.map((tab) => {
+          const active = tab.path === activePath
+          return (
+            <div
+              key={tab.path}
+              className={
+                "group relative flex h-full max-w-52 shrink-0 items-center transition-colors before:pointer-events-none before:absolute before:right-0 before:top-1/2 before:h-5 before:w-px before:-translate-y-1/2 before:bg-border-strong before:content-[''] after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] " +
+                (active
+                  ? "bg-[var(--tabs-active-bg)] text-[var(--tabs-active-text)] after:bg-[var(--tabs-indicator)]"
+                  : "text-foreground-soft hover:bg-[var(--tabs-hover-bg)] hover:text-[var(--tabs-active-text)] hover:after:bg-[var(--tabs-indicator)]")
+              }
+            >
+              <Link
+                to={tab.path}
+                aria-current={active ? "page" : undefined}
+                title={tab.label}
+                className={
+                  "flex h-full min-w-0 items-center truncate pl-2.5 pr-0 text-xs focus-visible:outline-2 focus-visible:outline-primary " +
+                  (active ? "font-semibold" : "font-medium")
+                }
+              >
+                <span className="truncate">{tab.label}</span>
+              </Link>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-xs"
+                aria-label={t("navigation:tabs.close", { title: tab.label })}
+                title={t("navigation:tabs.close", { title: tab.label })}
+                onClick={() => onClose(tab.path)}
+                className="mx-1 size-5 shrink-0 rounded-sm text-[var(--tabs-active-text)] hover:bg-[var(--tabs-hover-bg)]"
+              >
+                <X aria-hidden="true" className="size-3.5" />
+              </Button>
+            </div>
+          )
+        })}
+      </nav>
     </section>
   )
 }
