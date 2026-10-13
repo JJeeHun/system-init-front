@@ -67,11 +67,14 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
       title={t(form.mode === "create" ? "common-code:item.create" : "common-code:item.edit")}
     >
       <DefaultForm onSubmit={form.submit}>
-        <Field required label={t("common-code:item.fields.code")} htmlFor="common-code-item-code" error={form.errors.code}>
+        <Field required={form.mode === "create"} readOnly={form.mode === "edit"}
+          description={form.mode === "edit" ? t("common:labels.immutableAfterCreate") : undefined}
+          label={t("common-code:item.fields.code")} htmlFor="common-code-item-code" error={form.errors.code}>
           <Input
             id="common-code-item-code"
             {...form.fields.code}
             readOnly={form.mode === "edit"}
+            aria-describedby={form.mode === "edit" ? "common-code-item-code-description" : undefined}
             aria-invalid={Boolean(form.errors.code)}
           />
         </Field>

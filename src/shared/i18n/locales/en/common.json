@@ -16,6 +16,7 @@
   },
   "labels": {
     "required": "Required",
+    "immutableAfterCreate": "This value cannot be changed after creation.",
     "enabled": "Enabled",
     "disabled": "Disabled"
   },

@@ -65,8 +65,10 @@ function UserEditor({ management }: { management: Management }) {
       onOpenChange={open => { if (!open && !saving) management.cancel() }}
     >
       <DefaultForm onSubmit={management.submit}>
-        <Field required label={t("user:fields.id")} htmlFor="user-editor-id" error={t(form.formState.errors.id?.message)}>
-          <Input id="user-editor-id" readOnly={mode === "edit"} aria-invalid={!!form.formState.errors.id}
+        <Field required={mode === "create"} readOnly={mode === "edit"}
+          description={mode === "edit" ? t("common:labels.immutableAfterCreate") : undefined}
+          label={t("user:fields.id")} htmlFor="user-editor-id" error={t(form.formState.errors.id?.message)}>
+          <Input id="user-editor-id" readOnly={mode === "edit"} aria-describedby={mode === "edit" ? "user-editor-id-description" : undefined} aria-invalid={!!form.formState.errors.id}
             {...form.register("id")} />
         </Field>
         <Field required label={t("user:fields.name")} htmlFor="user-editor-name" error={t(form.formState.errors.name?.message)}>
