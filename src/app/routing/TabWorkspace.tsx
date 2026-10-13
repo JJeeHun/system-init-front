@@ -91,13 +91,19 @@ export function TabWorkspace() {
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-      <div className={isTab ? "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden" : "hidden"}>
-        <OpenPageTabs tabs={tabs} activePath={activePath} homePath={routePath("home")} onClose={closeTab} />
-        <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
-          {openPaths.map((path) => (
-            <MountedTabPage key={path} path={path} active={path === activePath} />
-          ))}
-        </div>
+      {(isTab || current?.key === "home") ? (
+        <OpenPageTabs
+          tabs={tabs}
+          activePath={activePath}
+          homePath={routePath("home")}
+          homeActive={current?.key === "home"}
+          onClose={closeTab}
+        />
+      ) : null}
+      <div className={isTab ? "min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto" : "hidden"}>
+        {openPaths.map((path) => (
+          <MountedTabPage key={path} path={path} active={path === activePath} />
+        ))}
       </div>
       {current?.route.mode === "page" ? (
         <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
