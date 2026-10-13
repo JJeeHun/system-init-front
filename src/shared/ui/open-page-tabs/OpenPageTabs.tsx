@@ -45,7 +45,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
             <div
               key={tab.path}
               className={
-                "group relative flex h-full max-w-52 shrink-0 items-center transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] " +
+                "group relative flex h-full max-w-52 shrink-0 items-center transition-colors before:pointer-events-none before:absolute before:right-0 before:top-1/2 before:h-5 before:w-px before:-translate-y-1/2 before:bg-border-strong before:content-[''] after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] " +
                 (active
                   ? "bg-[var(--tabs-active-bg)] text-[var(--tabs-active-text)] after:bg-[var(--tabs-indicator)]"
                   : "text-foreground-soft hover:bg-[var(--tabs-hover-bg)] hover:text-[var(--tabs-active-text)] hover:after:bg-[var(--tabs-indicator)]")
