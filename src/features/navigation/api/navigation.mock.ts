@@ -1,3 +1,5 @@
+import type { RoleAction, RoleMenuGrant } from "@/features/role/types/role-management.types"
+
 import { AppError } from "@/shared/lib/app-error"
 import type { MenuInput, MenuRecord } from "@/features/navigation/types/menu-management.types"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
@@ -22,20 +24,37 @@ function byOrder(a: MenuRecord, b: MenuRecord) {
   return a.sortOrder - b.sortOrder || a.id.localeCompare(b.id)
 }
 
-export function buildVisibleMenus(): NavigationMenuItem[] {
+const ALL_ACTIONS: RoleAction[] = ["view", "create", "edit", "delete"]
+
+export function buildVisibleMenus(grants: readonly RoleMenuGrant[], isSystem = false): NavigationMenuItem[] {
+  const actionsByMenu = new Map(grants.map(grant => [grant.menuId, grant.actions]))
+
   function nested(parentId: string | null): NavigationMenuItem[] {
     return records
-      .filter((menu) => menu.parentId === parentId && menu.enabled)
+      .filter(menu => menu.parentId === parentId && menu.enabled)
       .sort(byOrder)
-      .map((menu) => ({
-        id: menu.id,
-        label: menu.label,
-        labelKey: menu.labelKey,
-        path: menu.kind === "page" ? menu.path : undefined,
-        icon: menu.icon,
-        children: menu.kind === "group" ? nested(menu.id) : undefined,
-      }))
+      .flatMap(menu => {
+        if (menu.kind === "group") {
+          const children = nested(menu.id)
+          return children.length ? [{
+            id: menu.id, label: menu.label, labelKey: menu.labelKey, icon: menu.icon, children,
+          }] : []
+        }
+
+        const permissions = actionsByMenu.get(menu.id) ?? (isSystem ? ALL_ACTIONS : [])
+        if (!permissions.includes("view")) return []
+
+        return [{
+          id: menu.id,
+          label: menu.label,
+          labelKey: menu.labelKey,
+          path: menu.path,
+          icon: menu.icon,
+          permissions: [...permissions],
+        }]
+      })
   }
+
   return nested(null)
 }
 
