@@ -30,6 +30,7 @@ const appGridTheme = themeQuartz.withParams({
   headerBackgroundColor: "var(--table-header)",
   headerTextColor: "var(--foreground)",
   rowHoverColor: "var(--table-row-hover)",
+  selectedRowBackgroundColor: "var(--table-row-selected)",
 })
 
 const columnSizeConfig = {

@@ -247,6 +247,11 @@
   --table-row-selected: var(--primary-soft);
   --table-border: #edf0f4;
 
+  --tabs-active-bg: #e1e7ef;
+  --tabs-active-text: #254161;
+  --tabs-hover-bg: #edf1f6;
+  --tabs-indicator: #325f91;
+
   --progress-track: #edf1f5;
 
   --chart-1: var(--primary);

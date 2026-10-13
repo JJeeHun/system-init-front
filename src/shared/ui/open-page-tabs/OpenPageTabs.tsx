@@ -29,8 +29,8 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
         className={
           "relative flex h-full w-9 shrink-0 items-center justify-center text-foreground-soft transition-colors after:pointer-events-none after:absolute after:inset-x-1 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] focus-visible:outline-2 focus-visible:outline-primary " +
           (homeActive
-            ? "bg-primary-soft text-primary after:bg-primary"
-            : "hover:bg-primary-soft hover:text-primary hover:after:bg-primary/60")
+            ? "bg-[var(--tabs-active-bg)] text-[var(--tabs-active-text)] after:bg-[var(--tabs-indicator)]"
+            : "hover:bg-[var(--tabs-hover-bg)] hover:text-[var(--tabs-active-text)] hover:after:bg-[var(--tabs-indicator)]")
         }
       >
         <House aria-hidden="true" className="size-4" />
@@ -48,8 +48,8 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
               className={
                 "group relative flex h-full max-w-52 shrink-0 items-center transition-colors after:pointer-events-none after:absolute after:inset-x-1 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] " +
                 (active
-                  ? "bg-primary-soft text-primary after:bg-primary"
-                  : "text-foreground-soft hover:bg-primary-soft hover:text-primary hover:after:bg-primary/60")
+                  ? "bg-[var(--tabs-active-bg)] text-[var(--tabs-active-text)] after:bg-[var(--tabs-indicator)]"
+                  : "text-foreground-soft hover:bg-[var(--tabs-hover-bg)] hover:text-[var(--tabs-active-text)] hover:after:bg-[var(--tabs-indicator)]")
               }
             >
               <Link
@@ -57,7 +57,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
                 aria-current={active ? "page" : undefined}
                 title={tab.label}
                 className={
-                  "flex h-full min-w-0 items-center truncate pl-2.5 pr-7 text-xs focus-visible:outline-2 focus-visible:outline-primary " +
+                  "flex h-full min-w-0 items-center truncate px-2.5 text-xs focus-visible:outline-2 focus-visible:outline-primary " +
                   (active ? "font-semibold" : "font-medium")
                 }
               >
@@ -70,7 +70,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
                 aria-label={t("navigation:tabs.close", { title: tab.label })}
                 title={t("navigation:tabs.close", { title: tab.label })}
                 onClick={() => onClose(tab.path)}
-                className="absolute right-0.5 top-1/2 z-10 size-6 -translate-y-1/2 rounded-sm text-foreground-soft opacity-100 transition-opacity hover:bg-card hover:text-foreground focus-visible:opacity-100 md:pointer-events-none md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:opacity-100 md:group-focus-within:pointer-events-auto md:group-focus-within:opacity-100"
+                className="absolute right-1 top-1/2 z-10 size-6 -translate-y-1/2 rounded-sm bg-[var(--tabs-hover-bg)] text-[var(--tabs-active-text)] opacity-100 transition-[opacity,transform] duration-150 hover:bg-card focus-visible:opacity-100 md:pointer-events-none md:translate-x-2 md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:translate-x-0 md:group-hover:opacity-100 md:group-focus-within:pointer-events-auto md:group-focus-within:translate-x-0 md:group-focus-within:opacity-100"
               >
                 <X aria-hidden="true" className="size-3.5" />
               </Button>
