@@ -1,12 +1,12 @@
-import { memo, useLayoutEffect, useState } from "react"
+import { Activity, memo, useLayoutEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
 import { navigationSettings } from "@/app/navigation/navigation-settings"
 import { useNavigationStore } from "@/app/navigation/use-navigation-store"
 import { resolveRoute, routePath } from "@/app/routing/route-config"
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
-import { useAppTranslation } from "@/shared/i18n"
 import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
+import { useAppTranslation } from "@/shared/i18n"
 
 type MountedTabPageProps = {
   path: string
@@ -19,9 +19,11 @@ const MountedTabPage = memo(function MountedTabPage({ path, active }: MountedTab
 
   const Page = match.route.Component
   return (
-    <div hidden={!active}>
-      <Page path={path} />
-    </div>
+    <Activity mode={active ? "visible" : "hidden"}>
+      <div>
+        <Page path={path} />
+      </div>
+    </Activity>
   )
 })
 
@@ -90,7 +92,7 @@ export function TabWorkspace() {
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       <div className={isTab ? "flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden" : "hidden"}>
-        <OpenPageTabs tabs={tabs} activePath={activePath} onClose={closeTab} />
+        <OpenPageTabs tabs={tabs} activePath={activePath} homePath={routePath("home")} onClose={closeTab} />
         <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
           {openPaths.map((path) => (
             <MountedTabPage key={path} path={path} active={path === activePath} />
