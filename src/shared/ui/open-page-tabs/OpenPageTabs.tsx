@@ -19,7 +19,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
   return (
     <section
       aria-label={t("navigation:tabs.label")}
-      className="flex h-[var(--layout-open-tabs-height)] min-w-0 shrink-0 items-center border-b border-border-strong bg-card px-2"
+      className="flex h-[var(--layout-open-tabs-height)] min-w-0 shrink-0 items-center border-b border-border-strong bg-card"
     >
       <Link
         to={homePath}
@@ -27,7 +27,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
         aria-label={t("navigation:header.homeLink")}
         title={t("navigation:header.homeLink")}
         className={
-          "relative flex h-full w-9 shrink-0 items-center justify-center text-foreground-soft transition-colors after:pointer-events-none after:absolute after:inset-x-1 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] focus-visible:outline-2 focus-visible:outline-primary " +
+          "relative flex h-full w-9 shrink-0 items-center justify-center text-foreground-soft transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] focus-visible:outline-2 focus-visible:outline-primary " +
           (homeActive
             ? "bg-[var(--tabs-active-bg)] text-[var(--tabs-active-text)] after:bg-[var(--tabs-indicator)]"
             : "hover:bg-[var(--tabs-hover-bg)] hover:text-[var(--tabs-active-text)] hover:after:bg-[var(--tabs-indicator)]")
@@ -46,7 +46,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
             <div
               key={tab.path}
               className={
-                "group relative flex h-full max-w-52 shrink-0 items-center transition-colors after:pointer-events-none after:absolute after:inset-x-1 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] " +
+                "group relative flex h-full max-w-52 shrink-0 items-center transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] " +
                 (active
                   ? "bg-[var(--tabs-active-bg)] text-[var(--tabs-active-text)] after:bg-[var(--tabs-indicator)]"
                   : "text-foreground-soft hover:bg-[var(--tabs-hover-bg)] hover:text-[var(--tabs-active-text)] hover:after:bg-[var(--tabs-indicator)]")
