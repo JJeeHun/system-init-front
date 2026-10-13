@@ -1,3 +1,5 @@
+import type { RoleAction } from "@/features/role/types/role-management.types"
+
 export type NavigationIconKey =
   | "activity"
   | "boxes"
@@ -18,5 +20,6 @@ export type NavigationMenuItem = {
   labelKey?: string
   path?: string
   icon?: NavigationIconKey
+  permissions?: RoleAction[]
   children?: NavigationMenuItem[]
 }
