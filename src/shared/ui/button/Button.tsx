@@ -2,9 +2,10 @@ import type { ButtonHTMLAttributes } from "react"
 
 import { Button as ShadcnButton } from "@/shared/components/ui/button"
 import { Spinner } from "@/shared/components/ui/spinner"
+import { selectedItemClassName } from "@/shared/ui/selection/selected-item"
 import type { ExclusiveBooleanProps } from "@/shared/types/exclusive-boolean-props"
 
-type ButtonTone = "primary" | "success" | "warning" | "error" | "info" | "header"
+type ButtonTone = "primary" | "success" | "warning" | "error" | "info" | "header" | "selected"
 
 export type ButtonSize = "sm" | "md" | "lg"
 
@@ -27,6 +28,7 @@ function resolveTone({
   error,
   info,
   header,
+  selected,
 }: Pick<ButtonProps, ButtonTone>) {
   if (primary) return "primary"
   if (success) return "success"
@@ -34,6 +36,7 @@ function resolveTone({
   if (error) return "error"
   if (info) return "info"
   if (header) return "header"
+  if (selected) return "neutral"
 
   return "neutral"
 }
@@ -45,6 +48,7 @@ export function Button({
   error,
   info,
   header,
+  selected,
   size = "md",
   type = "button",
   loading = false,
@@ -55,6 +59,7 @@ export function Button({
   return (
     <ShadcnButton
       {...props}
+      className={selected ? selectedItemClassName : undefined}
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
@@ -65,6 +70,7 @@ export function Button({
         error,
         info,
         header,
+        selected,
       })}
       size={shadcnSizeBySize[size]}
     >

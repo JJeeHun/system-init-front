@@ -57,7 +57,7 @@ function RoleListContent({ management }: { management: Management }) {
     <ScrollArea className="h-72 min-w-0 lg:h-[var(--layout-grid-height)]" type="always">
       <div className="grid gap-2 pr-2">
         {management.roles.map(role => (
-          <Button key={role.id} size="sm" primary={role.id === management.selected?.id}
+          <Button key={role.id} size="sm" selected={role.id === management.selected?.id}
             aria-pressed={role.id === management.selected?.id}
             onClick={() => void management.selectRole(role.id)} disabled={management.busy}>
             <span className="flex w-full min-w-0 items-center justify-between gap-2 text-left">

@@ -57,7 +57,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
                 aria-current={active ? "page" : undefined}
                 title={tab.label}
                 className={
-                  "flex h-full min-w-0 items-center truncate px-2.5 text-xs focus-visible:outline-2 focus-visible:outline-primary " +
+                  "flex h-full min-w-0 items-center truncate pl-2.5 pr-0 text-xs focus-visible:outline-2 focus-visible:outline-primary " +
                   (active ? "font-semibold" : "font-medium")
                 }
               >
@@ -70,7 +70,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
                 aria-label={t("navigation:tabs.close", { title: tab.label })}
                 title={t("navigation:tabs.close", { title: tab.label })}
                 onClick={() => onClose(tab.path)}
-                className="absolute right-1 top-1/2 z-10 size-6 -translate-y-1/2 rounded-sm bg-[var(--tabs-hover-bg)] text-[var(--tabs-active-text)] opacity-100 transition-[opacity,transform] duration-150 hover:bg-card focus-visible:opacity-100 md:pointer-events-none md:translate-x-2 md:opacity-0 md:group-hover:pointer-events-auto md:group-hover:translate-x-0 md:group-hover:opacity-100 md:group-focus-within:pointer-events-auto md:group-focus-within:translate-x-0 md:group-focus-within:opacity-100"
+                className="mx-1 size-5 shrink-0 rounded-sm text-[var(--tabs-active-text)] hover:bg-[var(--tabs-hover-bg)]"
               >
                 <X aria-hidden="true" className="size-3.5" />
               </Button>
