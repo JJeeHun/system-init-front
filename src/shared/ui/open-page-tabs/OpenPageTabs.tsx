@@ -27,7 +27,7 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
         aria-label={t("navigation:header.homeLink")}
         title={t("navigation:header.homeLink")}
         className={
-          "relative flex h-full w-9 shrink-0 items-center justify-center text-foreground-soft transition-colors after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] focus-visible:outline-2 focus-visible:outline-primary " +
+          "relative flex h-full w-9 shrink-0 items-center justify-center text-foreground-soft transition-colors before:pointer-events-none before:absolute before:right-0 before:top-1/2 before:h-5 before:w-px before:-translate-y-1/2 before:bg-border-strong before:content-[''] after:pointer-events-none after:absolute after:inset-x-0 after:bottom-0 after:h-[3px] after:rounded-t-sm after:content-[''] focus-visible:outline-2 focus-visible:outline-primary " +
           (homeActive
             ? "bg-[var(--tabs-active-bg)] text-[var(--tabs-active-text)] after:bg-[var(--tabs-indicator)]"
             : "hover:bg-[var(--tabs-hover-bg)] hover:text-[var(--tabs-active-text)] hover:after:bg-[var(--tabs-indicator)]")
