@@ -16,7 +16,8 @@ export function CommonCodeGroupOption({
   const { t } = useAppTranslation()
   return (
     <Button
-      primary={selected}
+      selected={selected}
+      aria-pressed={selected}
       size="sm"
       onClick={() => onSelect(group)}
       title={group.description || undefined}

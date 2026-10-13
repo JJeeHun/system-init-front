@@ -202,8 +202,8 @@
 
   --primary: #1769e0;
   --primary-foreground: #ffffff;
-  --primary-soft: #eaf2ff;
-  --primary-border: #b9d3f9;
+  --primary-soft: #c9dfff;
+  --primary-border: #86b4f5;
 
   --success: #178455;
   --success-foreground: #3b6755;
@@ -247,6 +247,11 @@
   --table-row-selected: var(--primary-soft);
   --table-border: #edf0f4;
 
+  --tabs-active-bg: #e1e7ef;
+  --tabs-active-text: #254161;
+  --tabs-hover-bg: #edf1f6;
+  --tabs-indicator: #325f91;
+
   --progress-track: #edf1f5;
 
   --chart-1: var(--primary);
@@ -255,7 +260,7 @@
   --chart-4: #d5982d;
   --chart-5: var(--destructive);
 
-  --focus-ring: rgb(23 105 224 / 28%);
+  --focus-ring: rgb(23 105 224 / 70%);
   --backdrop: rgb(12 19 32 / 38%);
 
   --elevation-panel: 0 0.65rem 1.8rem rgb(29 43 72 / 7%);

@@ -1,79 +1,85 @@
-import { Outlet } from "react-router-dom"
-import { useAppTranslation } from "@/shared/i18n"
-
 import { AppHeader } from "@/app/layouts/AppHeader"
+import { NavigationBridge } from "@/app/navigation/NavigationBridge"
+import { useNavigationStore } from "@/app/navigation/use-navigation-store"
+import { TabWorkspace } from "@/app/routing/TabWorkspace"
 import { useLogout } from "@/features/auth/hooks/use-logout"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
-import { useMainNavigation } from "@/features/navigation/hooks/use-main-navigation"
 import { useCurrentUser } from "@/features/user/hooks/use-current-user"
-import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
+import { useAppTranslation } from "@/shared/i18n"
 import { Skeleton } from "@/shared/components/ui/skeleton"
-
-export type MainLayoutContext = {
-  navigation: ReturnType<typeof useMainNavigation>
-}
 
 export function MainLayout() {
   const { t } = useAppTranslation()
-  const navigation = useMainNavigation()
+  const menus = useNavigationStore((state) => state.menus)
+  const hasLoadedMenus = useNavigationStore((state) => state.hasLoadedMenus)
+  const isLoading = useNavigationStore((state) => state.isLoading)
+  const isError = useNavigationStore((state) => state.isError)
+  const selectedRootId = useNavigationStore((state) => state.selectedRootId)
+  const routeRootMenu = useNavigationStore((state) => state.findRootMenu(state.currentPath))
+  const mobileSidebarOpen = useNavigationStore((state) => state.isMobileSidebarOpen)
+  const desktopSidebarExpanded = useNavigationStore((state) => state.isDesktopSidebarExpanded)
+  const selectRootMenu = useNavigationStore((state) => state.selectRootMenu)
+  const openMobileSidebar = useNavigationStore((state) => state.openMobileSidebar)
+  const closeMobileSidebar = useNavigationStore((state) => state.closeMobileSidebar)
+  const toggleDesktopSidebar = useNavigationStore((state) => state.toggleDesktopSidebar)
   const currentUser = useCurrentUser()
   const logout = useLogout()
 
-  const context: MainLayoutContext = {
-    navigation,
-  }
+  const selectedRootMenu = menus.find((menu) => menu.id === selectedRootId) ?? routeRootMenu ?? menus[0] ?? null
+  const sidebarMenus = selectedRootMenu?.children ?? []
+  const onSelectRoot = (menu: (typeof menus)[number]) => selectRootMenu(menu.id)
 
   return (
     <div className="flex h-dvh w-full min-w-0 flex-col overflow-hidden bg-background">
+      <NavigationBridge />
       <AppHeader
-        menus={navigation.menus}
-        menuLoading={navigation.isLoading}
+        menus={menus}
+        menuLoading={isLoading}
         user={currentUser.data ?? null}
         userLoading={currentUser.isLoading}
         userError={currentUser.isError}
-        activeRootId={navigation.selectedRootMenu?.id}
-        desktopSidebarOpen={navigation.desktopSidebarOpen}
-        mobileSidebarOpen={navigation.sidebarOpen}
-        onRootSelect={navigation.selectRootMenu}
-        onOpenSidebar={navigation.openSidebar}
+        activeRootId={selectedRootMenu?.id}
+        desktopSidebarOpen={desktopSidebarExpanded}
+        mobileSidebarOpen={mobileSidebarOpen}
+        onRootSelect={onSelectRoot}
+        onOpenSidebar={openMobileSidebar}
         onLogout={logout}
       />
 
       <div className={[
         "grid min-h-0 min-w-0 flex-1 grid-cols-1 overflow-hidden",
-        navigation.desktopSidebarOpen
+        desktopSidebarExpanded
           ? "lg:grid-cols-[var(--layout-sidebar-width)_minmax(0,1fr)]"
           : "lg:grid-cols-[4.5rem_minmax(0,1fr)]",
       ].join(" ")}>
         <Sidebar
-          title={navigation.selectedRootMenu ? getMenuLabel(navigation.selectedRootMenu, t) : t("navigation:sidebar.fallbackTitle")}
-          rootMenus={navigation.menus}
-          activeRootId={navigation.selectedRootMenu?.id}
-          menus={navigation.sidebarMenus}
-          loading={navigation.isLoading}
-          open={navigation.sidebarOpen}
-          desktopOpen={navigation.desktopSidebarOpen}
-          onClose={navigation.closeSidebar}
-          onRootSelect={navigation.selectRootMenu}
-          onToggleDesktopSidebar={navigation.toggleDesktopSidebar}
+          title={selectedRootMenu ? getMenuLabel(selectedRootMenu, t) : t("navigation:sidebar.fallbackTitle")}
+          rootMenus={menus}
+          activeRootId={selectedRootMenu?.id}
+          menus={sidebarMenus}
+          loading={isLoading}
+          open={mobileSidebarOpen}
+          desktopOpen={desktopSidebarExpanded}
+          onClose={closeMobileSidebar}
+          onRootSelect={onSelectRoot}
+          onToggleDesktopSidebar={toggleDesktopSidebar}
         />
 
         <main className="flex min-h-0 min-w-0 flex-col overflow-hidden">
-          <OpenPageTabs />
-          <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
-            {navigation.isLoading ? (
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            {!hasLoadedMenus && isLoading ? (
               <div role="status" aria-label={t("navigation:layout.loading")} className="grid gap-4 px-page-x py-page-y">
                 <span className="sr-only">{t("navigation:layout.loadingDescription")}</span>
                 <Skeleton className="h-7 w-1/3" />
                 <Skeleton className="h-32 w-full" />
               </div>
-            ) : navigation.isError ? (
+            ) : !hasLoadedMenus && isError ? (
               <div role="alert" className="px-page-x py-page-y text-sm text-destructive">
                 {t("navigation:layout.loadFailed")}
               </div>
             ) : (
-              <Outlet context={context} />
+              <TabWorkspace />
             )}
           </div>
         </main>

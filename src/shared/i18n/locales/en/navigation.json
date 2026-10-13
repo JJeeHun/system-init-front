@@ -35,7 +35,9 @@
   "tabs": {
     "label": "Open page tabs",
     "title": "Open pages",
-    "preview": "Page tab preview"
+    "preview": "Page tab preview",
+    "close": "Close {{title}} tab",
+    "uiPlayground": "UI Components"
   },
   "page": {
     "notFound": "Menu not found",
