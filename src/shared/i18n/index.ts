@@ -7,13 +7,23 @@ import type { TranslationKey } from "@/shared/i18n/keys"
 export type { AppLanguage } from "@/shared/i18n/engine"
 
 export type TranslationValues = Record<string, string | number | boolean | undefined>
-type CheckedKey<K extends string> = string extends K
+type IsDynamicKey<K extends string> = string extends K
+  ? true
+  : K extends `${infer _Head}.${infer Tail}`
+    ? string extends Tail
+      ? true
+      : IsDynamicKey<Tail>
+    : false
+
+type CheckedKey<K extends string> = K extends TranslationKey
   ? K
-  : K extends TranslationKey
+  : IsDynamicKey<K> extends true
     ? K
     : never
 
-export type AppTranslate = <K extends string>(
+export type AppTranslate = (key: string, values?: TranslationValues) => string
+
+type TypedTranslate = <K extends string>(
   key: CheckedKey<K> | null | undefined,
   values?: TranslationValues,
 ) => string
@@ -39,7 +49,7 @@ export async function changeLanguage(language: AppLanguage): Promise<void> {
 
 export function useAppTranslation() {
   const { t, i18n } = useI18nextTranslation()
-  const appTranslate: AppTranslate = (key, values) =>
+  const appTranslate: TypedTranslate = (key, values) =>
     key ? t(key, values) : ""
 
   return {
