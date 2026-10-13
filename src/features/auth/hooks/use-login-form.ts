@@ -1,3 +1,4 @@
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 import { useLocation, useNavigate } from "react-router-dom"
@@ -7,7 +8,7 @@ import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 
 import { authMutations } from "@/features/auth/api/auth.api"
 import { setAuthSession } from "@/features/auth/storage/auth-session"
-import type { LoginRequest } from "@/features/auth/types/auth.types"
+import { loginSchema, type LoginFormValues } from "@/features/auth/schemas/login.schema"
 
 export function useLoginForm() {
   const navigate = useNavigate()
@@ -16,7 +17,8 @@ export function useLoginForm() {
   const queryClient = useQueryClient()
   const runMutation = useMutationLock()
 
-  const form = useForm<LoginRequest>({
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
       username: "admin",
       password: "admin",
@@ -42,8 +44,9 @@ export function useLoginForm() {
     submit,
     isPending: loginMutation.isPending,
     errorMessage:
-      loginMutation.error instanceof AppError && loginMutation.error.code === "AUTH_CREDENTIALS_REQUIRED"
+      t(form.formState.errors.username?.message ?? form.formState.errors.password?.message) ||
+      (loginMutation.error instanceof AppError && loginMutation.error.code === "AUTH_CREDENTIALS_REQUIRED"
         ? t("auth:validation.credentialsRequired")
-        : loginMutation.error instanceof Error ? loginMutation.error.message : null,
+        : loginMutation.error instanceof Error ? loginMutation.error.message : null),
   }
 }

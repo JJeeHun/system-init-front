@@ -31,9 +31,3 @@ export type UpdateCommonCodeItemRequest = Omit<
   "groupId" | "code"
 >
 
-export type CommonCodeGroupFormValues = CreateCommonCodeGroupRequest
-
-export type CommonCodeItemFormValues = Omit<
-  CreateCommonCodeItemRequest,
-  "groupId"
->

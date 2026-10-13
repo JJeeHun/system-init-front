@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useForm } from "react-hook-form"
 
 import { userManagementMutations, userManagementQueries, userManagementQueryKeys } from "@/features/user/api/user-management.api"
-import type { UserAccountInput, UserFilters } from "@/features/user/types/user-management.types"
+import { userSchema, type UserFormValues } from "@/features/user/schemas/user.schema"
+import { userSearchSchema, type UserSearchFormValues } from "@/features/user/schemas/user-search.schema"
+import type { UserFilters } from "@/features/user/types/user-management.types"
 import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useAppTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
@@ -12,14 +15,14 @@ import { message } from "@/shared/lib/message"
 type FormMode = "create" | "edit" | null
 
 const EMPTY_FILTERS: UserFilters = { keyword: "", status: "all", role: "all" }
-const EMPTY_USER: UserAccountInput = { id: "", name: "", email: "", center: "SEOUL", role: "STAFF", enabled: true }
+const EMPTY_USER: UserFormValues = { id: "", name: "", email: "", center: "SEOUL", role: "STAFF", enabled: true }
 
 export function useUserManagement() {
-  const { t, language } = useAppTranslation()
+  const { t } = useAppTranslation()
   const queryClient = useQueryClient()
   const runMutation = useMutationLock()
 
-  const searchForm = useForm<UserFilters>({ defaultValues: EMPTY_FILTERS })
+  const searchForm = useForm<UserSearchFormValues>({ resolver: zodResolver(userSearchSchema), defaultValues: EMPTY_FILTERS })
   const [filters, setFilters] = useState<UserFilters>(EMPTY_FILTERS)
   const [pagination, setPagination] = useState({ page: 1, pageSize: 20 })
   const query = useQuery(userManagementQueries.list({ ...filters, ...pagination }))
@@ -36,12 +39,9 @@ export function useUserManagement() {
   const [selectedId, setSelectedId] = useState<string | null>(null)
   const selected = useMemo(() => users.find(user => user.id === selectedId) ?? null, [users, selectedId])
 
-  const form = useForm<UserAccountInput>({ defaultValues: EMPTY_USER })
+  const form = useForm<UserFormValues>({ resolver: zodResolver(userSchema), defaultValues: EMPTY_USER })
   const [mode, setMode] = useState<FormMode>(null)
 
-  useEffect(() => {
-    if (Object.keys(form.formState.errors).length > 0) void form.trigger()
-  }, [language])
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: userManagementQueryKeys.lists() })
 

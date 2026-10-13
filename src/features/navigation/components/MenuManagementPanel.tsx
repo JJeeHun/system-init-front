@@ -177,14 +177,11 @@ function MenuFormDialog({ management }: { management: MenuManagement }) {
       onOpenChange={(open) => { if (!open && !saving) management.cancel() }}
     >
       <DefaultForm onSubmit={management.submit}>
-        <Field required label={t("navigation:management.fields.id")} htmlFor="menu-editor-id" error={form.formState.errors.id?.message}>
-          <Input id="menu-editor-id" {...form.register("id", {
-            required: t("navigation:management.validation.idRequired"),
-            pattern: { value: /^[a-z0-9]+(?:-[a-z0-9]+)*$/, message: t("navigation:management.validation.idFormat") },
-          })} readOnly={mode === "edit"} aria-invalid={!!form.formState.errors.id} />
+        <Field required label={t("navigation:management.fields.id")} htmlFor="menu-editor-id" error={t(form.formState.errors.id?.message)}>
+          <Input id="menu-editor-id" {...form.register("id")} readOnly={mode === "edit"} aria-invalid={!!form.formState.errors.id} />
         </Field>
-        <Field required label={t("navigation:management.fields.name")} htmlFor="menu-editor-name" error={form.formState.errors.label?.message}>
-          <Input id="menu-editor-name" {...form.register("label", { required: t("navigation:management.validation.nameRequired") })} aria-invalid={!!form.formState.errors.label} />
+        <Field required label={t("navigation:management.fields.name")} htmlFor="menu-editor-name" error={t(form.formState.errors.label?.message)}>
+          <Input id="menu-editor-name" {...form.register("label")} aria-invalid={!!form.formState.errors.label} />
         </Field>
         <Field label={t("navigation:management.fields.kind")} htmlFor="menu-editor-kind">
           <Controller control={form.control} name="kind" render={({ field }) => (
@@ -212,11 +209,8 @@ function MenuFormDialog({ management }: { management: MenuManagement }) {
         </Field>
         {kind === "page" ? (
           <>
-            <Field required label={t("navigation:management.fields.path")} htmlFor="menu-editor-path" error={form.formState.errors.path?.message}>
-              <Input id="menu-editor-path" placeholder="/app/example" {...form.register("path", {
-                required: t("navigation:management.validation.pathRequired"),
-                pattern: { value: /^\/app\/[^?#]+$/, message: t("navigation:management.validation.pathFormat") },
-              })} aria-invalid={!!form.formState.errors.path} />
+            <Field required label={t("navigation:management.fields.path")} htmlFor="menu-editor-path" error={t(form.formState.errors.path?.message)}>
+              <Input id="menu-editor-path" placeholder="/app/example" {...form.register("path")} aria-invalid={!!form.formState.errors.path} />
             </Field>
             <Field label={t("navigation:management.fields.icon")} htmlFor="menu-editor-icon">
               <Controller control={form.control} name="icon" render={({ field }) => (
@@ -231,13 +225,8 @@ function MenuFormDialog({ management }: { management: MenuManagement }) {
             </Field>
           </>
         ) : null}
-        <Field required label={t("navigation:management.fields.sortOrder")} htmlFor="menu-editor-order" error={form.formState.errors.sortOrder?.message}>
-          <Input id="menu-editor-order" type="number" min={0} step={1} {...form.register("sortOrder", {
-            valueAsNumber: true,
-            required: t("navigation:management.validation.orderRequired"),
-            min: { value: 0, message: t("navigation:management.validation.orderInvalid") },
-            validate: value => Number.isInteger(value) || t("navigation:management.validation.orderInvalid"),
-          })} aria-invalid={!!form.formState.errors.sortOrder} />
+        <Field required label={t("navigation:management.fields.sortOrder")} htmlFor="menu-editor-order" error={t(form.formState.errors.sortOrder?.message)}>
+          <Input id="menu-editor-order" type="number" min={0} step={1} {...form.register("sortOrder", { valueAsNumber: true })} aria-invalid={!!form.formState.errors.sortOrder} />
         </Field>
         <Field label={t("navigation:management.fields.scope")} htmlFor="menu-editor-scope">
           <Controller control={form.control} name="scope" render={({ field }) => (

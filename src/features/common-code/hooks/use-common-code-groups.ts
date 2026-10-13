@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react"
+import { useMemo, useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useController, useForm } from "react-hook-form"
@@ -7,7 +8,8 @@ import { useAppTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
 
 import { commonCodeMutations, commonCodeQueries, commonCodeQueryKeys } from "@/features/common-code/api/common-code.api"
-import type { CommonCodeGroup, CommonCodeGroupFormValues } from "@/features/common-code/types/common-code.types"
+import { commonCodeGroupSchema, type CommonCodeGroupFormValues } from "@/features/common-code/schemas/common-code-group.schema"
+import type { CommonCodeGroup } from "@/features/common-code/types/common-code.types"
 
 type FormMode = "create" | "edit" | null
 
@@ -31,7 +33,7 @@ function sortGroups(groups: CommonCodeGroup[]) {
 }
 
 export function useCommonCodeGroups() {
-  const { t, language } = useAppTranslation()
+  const { t } = useAppTranslation()
   const queryClient = useQueryClient()
   const runMutation = useMutationLock()
   const groupQuery = useQuery(commonCodeQueries.groups())
@@ -39,12 +41,9 @@ export function useCommonCodeGroups() {
   const [groupFormMode, setGroupFormMode] = useState<FormMode>(null)
 
   const groupForm = useForm<CommonCodeGroupFormValues>({
+    resolver: zodResolver(commonCodeGroupSchema),
     defaultValues: EMPTY_GROUP_FORM,
   })
-
-  useEffect(() => {
-    if (Object.keys(groupForm.formState.errors).length > 0) void groupForm.trigger()
-  }, [language])
 
   const groupEnabledField = useController({
     control: groupForm.control,
@@ -185,30 +184,19 @@ export function useCommonCodeGroups() {
     form: {
       mode: groupFormMode,
       fields: {
-        code: groupForm.register("code", {
-          required: t("common-code:validation.groupCodeRequired"),
-        }),
-        name: groupForm.register("name", {
-          required: t("common-code:validation.groupNameRequired"),
-        }),
+        code: groupForm.register("code"),
+        name: groupForm.register("name"),
         description: groupForm.register("description"),
         enabled: {
           checked: groupEnabledField.value,
           onCheckedChange: groupEnabledField.onChange,
         },
-        sortOrder: groupForm.register("sortOrder", {
-          required: t("common-code:validation.sortOrderRequired"),
-          valueAsNumber: true,
-          min: {
-            value: 0,
-            message: t("common-code:validation.sortOrderMin"),
-          },
-        }),
+        sortOrder: groupForm.register("sortOrder", { valueAsNumber: true }),
       },
       errors: {
-        code: groupForm.formState.errors.code?.message ?? null,
-        name: groupForm.formState.errors.name?.message ?? null,
-        sortOrder: groupForm.formState.errors.sortOrder?.message ?? null,
+        code: t(groupForm.formState.errors.code?.message),
+        name: t(groupForm.formState.errors.name?.message),
+        sortOrder: t(groupForm.formState.errors.sortOrder?.message),
       },
       isPending:
         createGroupMutation.isPending || updateGroupMutation.isPending,

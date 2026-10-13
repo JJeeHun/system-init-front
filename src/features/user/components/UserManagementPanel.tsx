@@ -65,17 +65,17 @@ function UserEditor({ management }: { management: Management }) {
       onOpenChange={open => { if (!open && !saving) management.cancel() }}
     >
       <DefaultForm onSubmit={management.submit}>
-        <Field required label={t("user:fields.id")} htmlFor="user-editor-id" error={form.formState.errors.id?.message}>
+        <Field required label={t("user:fields.id")} htmlFor="user-editor-id" error={t(form.formState.errors.id?.message)}>
           <Input id="user-editor-id" readOnly={mode === "edit"} aria-invalid={!!form.formState.errors.id}
-            {...form.register("id", { required: t("user:validation.idRequired"), pattern: { value: /^[a-zA-Z0-9_-]{3,30}$/, message: t("user:validation.idFormat") } })} />
+            {...form.register("id")} />
         </Field>
-        <Field required label={t("user:fields.name")} htmlFor="user-editor-name" error={form.formState.errors.name?.message}>
+        <Field required label={t("user:fields.name")} htmlFor="user-editor-name" error={t(form.formState.errors.name?.message)}>
           <Input id="user-editor-name" aria-invalid={!!form.formState.errors.name}
-            {...form.register("name", { required: t("user:validation.nameRequired") })} />
+            {...form.register("name")} />
         </Field>
-        <Field required label={t("user:fields.email")} htmlFor="user-editor-email" error={form.formState.errors.email?.message}>
+        <Field required label={t("user:fields.email")} htmlFor="user-editor-email" error={t(form.formState.errors.email?.message)}>
           <Input id="user-editor-email" type="email" aria-invalid={!!form.formState.errors.email}
-            {...form.register("email", { required: t("user:validation.emailRequired"), pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: t("user:validation.emailFormat") } })} />
+            {...form.register("email")} />
         </Field>
         <Field label={t("user:fields.center")} htmlFor="user-editor-center">
           <Controller control={form.control} name="center" render={({ field }) => (
