@@ -44,7 +44,7 @@ describe("main navigation shell", () => {
     expect(within(sidebar).getByRole("navigation", { name: "시스템 관리 하위 메뉴" })).toBeInTheDocument()
     expect(within(screen.getAllByRole("banner")[0]).queryByRole("button", { name: "PC 사이드바 접기" })).not.toBeInTheDocument()
     expect(within(sidebar).queryByRole("link", { name: "홈" })).not.toBeInTheDocument()
-    expect(within(screen.getByRole("banner")).getByRole("link", { name: "홈으로 이동" })).toHaveAttribute("href", "/app")
+    expect(within(screen.getAllByRole("banner")[0]).getByRole("link", { name: "홈으로 이동" })).toHaveAttribute("href", "/app")
 
     fireEvent.click(collapse)
     const expand = within(sidebar).getByRole("button", { name: "PC 사이드바 펼치기" })
