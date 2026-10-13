@@ -66,6 +66,10 @@ return type === "COMPANY" ? <CompanyFields /> : <PersonalFields />
 
 - 업무 폼은 `useForm({ resolver: zodResolver(schema) })`로 연결한다. `register`는 필드 바인딩을 담당하고 업무 Validation은 Feature 소유 Zod Schema에만 정의한다.
 - Schema는 기본적으로 정적 `z.object()`를 export한다. 오류 메시지는 번역된 문자열 대신 `TranslationKey`로 검증된 i18n Key를 사용하며, 정적 Key에는 `satisfies TranslationKey`를 적용한다.
+- Schema의 위치는 `src/features/{feature}/schemas/`, 파일명은 `{domain-or-form}.schema.ts`, export 이름은 `{name}Schema`로 통일한다.
+- 서로 다른 업무 폼은 별도 Schema 파일을 사용한다. 동일한 등록·수정 폼은 Schema 하나를 공유하고, 실제 Validation 조건이 달라질 때만 구분한다.
+- 폼 값 타입은 해당 Schema의 `z.infer` 또는 `z.input`/`z.output`으로 추론한다. API 요청·응답의 타입 계약은 기존 Feature `types/`에서 관리하며 Schema를 넣기 위해 API 타입 위치를 이동하지 않는다.
+- 서로 다른 Feature가 실제로 같은 Schema를 재사용해야 하는 요구가 생기기 전에는 향후 재사용 가능성만으로 `shared/` Schema를 만들지 않는다.
 - 폼 타입은 `z.infer<typeof schema>`를 우선 사용하되, Schema의 입력과 변환 후 출력이 다른 경우 `z.input<typeof schema>`, `z.output<typeof schema>` 및 `useForm` 제네릭을 구분해 맞춘다.
 - 필수 문자열은 공백만 입력해도 통과하지 않게 검증한다. 조건부 검증은 `refine`/`superRefine` 등을 이용한다.
 - `register()`의 `required`, `min`, `max`, `pattern`, `validate`와 Zod 검증을 혼용하지 않는다. `valueAsNumber`처럼 값을 변환하는 옵션은 허용하되 Schema 입력 타입과 일치해야 한다.

@@ -95,6 +95,8 @@ $ARGUMENTS
 - 모든 업무 폼의 입력 Validation은 **React Hook Form + Zod + `zodResolver`**를 표준으로 한다. React Hook Form은 폼 상태·필드 등록·Submit·검증 결과를, Feature 소유 Zod Schema는 필수·형식·길이·범위·조건부 검증을 담당한다.
 - `register()`의 `required`, `min`, `max`, `pattern`, `validate` 등 업무 Validation과 Zod Validation을 혼용하지 않는다. `valueAsNumber` 등 입력 변환은 Schema의 입력·출력 타입과 맞춰 사용할 수 있다.
 - Schema는 기본적으로 정적 `z.object()`로 정의하고 폼 타입은 Schema에서 추론한다. 입력 타입과 파싱 결과 타입이 다를 때는 `z.input`/`z.output`을 구분한다. 단순 번역 메시지 주입만을 위한 Schema Factory를 만들지 않는다.
+- 모든 업무 Zod Schema는 `src/features/{feature}/schemas/`에 두고 파일명은 `{domain-or-form}.schema.ts`, Schema export는 `{name}Schema`로 통일한다. 등록·수정이 동일한 폼이면 Schema를 공유하며, 서로 다른 폼은 별도 Schema 파일로 구분한다.
+- 폼 값 타입은 Schema에서 추론하고 API 요청·응답 타입은 기존 Feature `types/`에서 관리한다. 실제 Feature 간 재사용 필요가 없는데 향후 공통화를 이유로 `shared/`에 Schema를 만들지 않는다.
 - Zod 오류에는 번역된 문장이 아닌 **타입 검사된 i18n Key**를 지정하고, React Hook Form의 `formState.errors`에서 꺼내 표시할 때 번역한다. UI/Field는 실제 검증 규칙을 소유하지 않고 오류 표시만 담당한다.
 - 서버의 권한·중복·데이터 무결성 검증은 클라이언트 입력 Validation과 구분하여 유지한다.
 - 표준 전환을 요청받은 범위에서는 기존 폼까지 같은 패턴으로 통일해 혼재를 남기지 않는다. 별도 지시 없이 무관한 폼까지 수정하거나 작업 범위를 확대하지 않는다. 상세 기준은 [state-form.md](references/state-form.md)를 따른다.
