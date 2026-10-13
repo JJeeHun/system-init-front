@@ -4,12 +4,15 @@ import { mutationOptions, queryOptions } from "@tanstack/react-query"
 import { buildVisibleMenus, createMockMenu, deleteMockMenu, getMenuRecordsSnapshot, updateMockMenu } from "@/features/navigation/api/navigation.mock"
 import type { MenuInput, MenuRecord } from "@/features/navigation/types/menu-management.types"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
+import { getMockRolePermissions } from "@/features/role/api/role-management.mock"
+import { getCurrentUser } from "@/features/user/api/user.api"
 
 
 
 export async function getNavigationMenus(): Promise<NavigationMenuItem[]> {
-  await waitForMockDelay()
-  return buildVisibleMenus()
+  const user = await getCurrentUser()
+  const { grants } = getMockRolePermissions(user.roleId)
+  return buildVisibleMenus(grants, user.roleId === "SYSTEM")
 }
 
 export async function getMenuRecords(): Promise<MenuRecord[]> {
