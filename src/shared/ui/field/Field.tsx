@@ -1,4 +1,5 @@
 import type { ReactNode } from "react"
+import { LockKeyhole } from "lucide-react"
 import { useAppTranslation } from "@/shared/i18n"
 
 import {
@@ -15,6 +16,7 @@ export type FieldProps = {
   error?: string | null
   description?: string
   required?: boolean
+  readOnly?: boolean
   orientation?: "vertical" | "horizontal"
   className?: string
 }
@@ -26,6 +28,7 @@ export function Field({
   error,
   description,
   required = false,
+  readOnly = false,
   orientation = "vertical",
   className,
 }: FieldProps) {
@@ -39,6 +42,7 @@ export function Field({
           <span className="sr-only">{t("common:labels.required")}</span>
         </>
       ) : null}
+      {readOnly ? <LockKeyhole aria-hidden="true" className="ml-1 inline size-3.5 text-muted-foreground" /> : null}
     </ShadcnFieldLabel>
   )
 

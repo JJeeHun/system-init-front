@@ -119,11 +119,14 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
       title={t(form.mode === "create" ? "common-code:group.create" : "common-code:group.edit")}
     >
       <DefaultForm onSubmit={form.submit}>
-        <Field required label={t("common-code:group.fields.code")} htmlFor="common-code-group-code" error={form.errors.code}>
+        <Field required={form.mode === "create"} readOnly={form.mode === "edit"}
+          description={form.mode === "edit" ? t("common:labels.immutableAfterCreate") : undefined}
+          label={t("common-code:group.fields.code")} htmlFor="common-code-group-code" error={form.errors.code}>
           <Input
             id="common-code-group-code"
             {...form.fields.code}
             readOnly={form.mode === "edit"}
+            aria-describedby={form.mode === "edit" ? "common-code-group-code-description" : undefined}
             aria-invalid={Boolean(form.errors.code)}
           />
         </Field>

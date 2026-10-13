@@ -246,8 +246,10 @@ function RoleEditor({ management }: { management: Management }) {
     <Dialog open title={t(mode === "create" ? "role:actions.createTitle" : "role:actions.editTitle")}
       onOpenChange={open => { if (!open && !savingRole) management.cancel() }}>
       <DefaultForm onSubmit={management.submit}>
-        <Field required label={t("role:fields.id")} htmlFor="role-editor-id" error={t(roleForm.formState.errors.id?.message)}>
-          <Input id="role-editor-id" readOnly={mode === "edit"} aria-invalid={!!roleForm.formState.errors.id}
+        <Field required={mode === "create"} readOnly={mode === "edit"}
+          description={mode === "edit" ? t("common:labels.immutableAfterCreate") : undefined}
+          label={t("role:fields.id")} htmlFor="role-editor-id" error={t(roleForm.formState.errors.id?.message)}>
+          <Input id="role-editor-id" readOnly={mode === "edit"} aria-describedby={mode === "edit" ? "role-editor-id-description" : undefined} aria-invalid={!!roleForm.formState.errors.id}
             {...roleForm.register("id")} />
         </Field>
         <Field required label={t("role:fields.name")} htmlFor="role-editor-name" error={t(roleForm.formState.errors.name?.message)}>

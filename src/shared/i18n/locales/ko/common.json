@@ -16,6 +16,7 @@
   },
   "labels": {
     "required": "필수",
+    "immutableAfterCreate": "등록 후 변경할 수 없는 항목입니다.",
     "enabled": "사용",
     "disabled": "미사용"
   },
