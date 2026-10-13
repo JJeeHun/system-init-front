@@ -1,16 +1,21 @@
 import { useOutletContext } from "react-router-dom"
+
+import { useTabPage } from "@/app/routing/TabPageContext"
 import { useAppTranslation } from "@/shared/i18n"
 
 import type { MainLayoutContext } from "@/app/layouts/MainLayout"
-import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
+import { findMenuByPath, findRootMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { PageLayout } from "@/shared/layout/page"
 import { PageHeader } from "@/shared/ui/page-header"
 
 export function MenuPage() {
   const { navigation } = useOutletContext<MainLayoutContext>()
   const { t } = useAppTranslation()
+  const { path } = useTabPage()
+  const currentMenu = findMenuByPath(navigation.menus, path)
+  const rootMenu = findRootMenuByPath(navigation.menus, path)
 
-  if (!navigation.currentMenu) {
+  if (!currentMenu) {
     return (
       <PageLayout>
         <section className="min-w-0 rounded-lg border border-border bg-card p-panel shadow-panel">
@@ -23,13 +28,13 @@ export function MenuPage() {
     )
   }
 
-  const menuTitle = getMenuLabel(navigation.currentMenu, t)
+  const menuTitle = getMenuLabel(currentMenu, t)
 
   return (
     <PageLayout>
       <div className="min-w-0">
         <p className="mb-1 text-xs font-bold uppercase tracking-widest text-primary">
-          {navigation.routeRootMenu ? getMenuLabel(navigation.routeRootMenu, t) : null}
+          {rootMenu ? getMenuLabel(rootMenu, t) : null}
         </p>
         <PageHeader
           title={menuTitle}

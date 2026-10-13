@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { RouteLink } from "@/app/routing/RouteLink"
 import { useAppTranslation } from "@/shared/i18n"
 import { House, ArrowRight } from "lucide-react"
 
@@ -14,14 +14,14 @@ export function HomePage() {
       <Panel>
         <Panel.Header title={t("home:startTitle")} description={t("home:startDescription")} />
         <Panel.Content>
-          <Link
-            to="/app/master/common-code"
+          <RouteLink
+            to="commonCode"
             className="inline-flex min-h-10 items-center gap-3 rounded-md border border-border bg-card px-4 py-3 text-sm text-foreground hover:bg-surface-soft focus-visible:outline-2 focus-visible:outline-primary"
           >
             <House aria-hidden="true" className="size-4 text-primary" />
             {t("home:commonCodeLink")}
             <ArrowRight aria-hidden="true" className="size-4 text-foreground-soft" />
-          </Link>
+          </RouteLink>
         </Panel.Content>
       </Panel>
     </PageLayout>
