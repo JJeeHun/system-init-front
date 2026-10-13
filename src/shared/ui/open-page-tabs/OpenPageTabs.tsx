@@ -35,7 +35,6 @@ export function OpenPageTabs({ tabs, activePath, homePath, homeActive, onClose }
       >
         <House aria-hidden="true" className="size-4" />
       </Link>
-      <span aria-hidden="true" className="mx-1 h-5 w-px shrink-0 bg-border-strong" />
       <nav
         aria-label={t("navigation:tabs.label")}
         className="flex h-full min-w-0 flex-1 items-stretch gap-0 overflow-x-auto overflow-y-hidden"
