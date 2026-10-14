@@ -135,6 +135,7 @@ function UserList({ management }: { management: Management }) {
             <CrudActions
               menuId="user"
               onCreate={management.startCreate}
+              createAriaLabel={t("user:actions.create")}
               onEdit={management.startEdit}
               showEdit={selected !== null}
               createDisabled={management.saving || management.statusPending}

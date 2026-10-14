@@ -82,6 +82,7 @@ function RoleList({ management }: { management: Management }) {
           <CrudActions
             menuId="role"
             onCreate={management.startCreate}
+            createAriaLabel={t("role:actions.add")}
             onEdit={management.startEdit}
             onDelete={() => void management.deleteSelected()}
             showEdit={management.selected !== null}

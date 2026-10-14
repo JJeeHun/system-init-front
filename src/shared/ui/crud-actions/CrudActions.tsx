@@ -27,6 +27,7 @@ export type CrudActionsProps = {
   editLoading?: boolean
   deleteLoading?: boolean
   createLabel?: string
+  createAriaLabel?: string
   editLabel?: string
   deleteLabel?: string
   editError?: boolean
@@ -98,6 +99,7 @@ function CrudActionButtons({
   editLoading = false,
   deleteLoading = false,
   createLabel,
+  createAriaLabel,
   editLabel,
   deleteLabel,
   editError,
@@ -112,7 +114,7 @@ function CrudActionButtons({
   return (
     <>
       {canShowCreate && (
-        <Button primary size="sm" disabled={createDisabled} loading={createLoading} onClick={onCreate}>
+        <Button primary size="sm" aria-label={createAriaLabel} disabled={createDisabled} loading={createLoading} onClick={onCreate}>
           {createLabel ?? t("common:actions.create")}
         </Button>
       )}

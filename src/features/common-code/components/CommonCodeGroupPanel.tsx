@@ -203,6 +203,7 @@ export function CommonCodeGroupPanel({
           <CrudActions
             menuId="common-code"
             onCreate={form.startCreate}
+            createAriaLabel={t("common-code:group.create")}
             onEdit={form.startEdit}
             onDelete={form.delete}
             showEdit={selectedGroupId !== null}
