@@ -57,7 +57,7 @@ export function getAuthSession(): AuthSession | null {
     }
     scheduleExpiry(session.expiresAt)
     return { accessToken: session.accessToken, expiresAt: session.expiresAt,
-      mockUsername: typeof session.mockUsername === "string" ? session.mockUsername : undefined }
+      mockUsername: "mockUsername" in session && typeof session.mockUsername === "string" ? session.mockUsername : undefined }
   } catch {
     sessionStorage.removeItem(AUTH_SESSION_KEY)
     cancelExpiryTimer()
