@@ -204,12 +204,12 @@ export function TabWorkspace() {
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-      {(isTab || current?.route === app.home) ? (
+      {(isTab || pathname === app.home.path) ? (
         <OpenPageTabs
           tabs={tabs}
           activePath={visibleTabs.some((tab) => tab.path === activePath) ? activePath : null}
           homePath={app.home.path}
-          homeActive={current?.route === app.home}
+          homeActive={pathname === app.home.path}
           onClose={closeTab}
         />
       ) : null}
