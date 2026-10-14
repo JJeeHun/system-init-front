@@ -2,11 +2,11 @@ import { create } from "zustand"
 import type { NavigateFunction, NavigateOptions } from "react-router-dom"
 
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
-import { matchAppRoute, routePath, type RouteKey } from "@/app/routing/route-metadata"
+import { resolveRoute } from "@/app/routing/route-metadata"
 
 type MenuEntry = { menu: NavigationMenuItem; root: NavigationMenuItem }
 type MenuIndex = Readonly<Record<string, MenuEntry>>
-type NavigationTarget = RouteKey | `/${string}`
+type NavigationTarget = `/${string}`
 
 const EMPTY_MENUS: NavigationMenuItem[] = []
 const EMPTY_INDEX: MenuIndex = {}
@@ -79,13 +79,13 @@ export const useNavigationStore = create<NavigationState>((set, get) => ({
   findMenu: (path) => findMenuEntry(get().menuIndex, path)?.menu ?? null,
   findRootMenu: (path) => findMenuEntry(get().menuIndex, path)?.root ?? null,
   canAccess: (path) => {
-    const match = matchAppRoute(path)
+    const match = resolveRoute(path)
     if (!match) return false
-    if (match.metadata.access === "public") return true
+    if (match.route.access === "public") return true
     return get().hasLoadedMenus && get().findMenu(path) !== null
   },
   navigateTo: (target, options) => {
-    const path = target.startsWith("/") ? target : routePath(target as RouteKey)
+    const path = target
     if (!routerNavigate || !get().canAccess(path)) return false
     void routerNavigate(path, options)
     return true

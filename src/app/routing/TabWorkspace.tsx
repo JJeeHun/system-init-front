@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom"
 
 import { navigationSettings } from "@/app/navigation/navigation-settings"
 import { useNavigationStore } from "@/app/navigation/use-navigation-store"
-import { resolveRoute, routePath } from "@/app/routing/route-config"
+import { app, resolveRoute } from "@/app/routing/route-metadata"
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
 import { useAppTranslation } from "@/shared/i18n"
@@ -57,12 +57,12 @@ export function TabWorkspace() {
       const allowed = previous.filter(canAccess)
       return allowed.length === previous.length ? previous : allowed
     })
-    if (!canAccess(pathname)) navigate(routePath("forbidden"), { replace: true })
+    if (!canAccess(pathname)) navigate(app.forbidden.path, { replace: true })
   }, [hasLoadedMenus, menuIndex, pathname, canAccess, navigate])
 
   const closeTab = (path: string) => {
     const remaining = openPaths.filter((openPath) => openPath !== path)
-    if (path === activePath) navigate(remaining[remaining.length - 1] ?? routePath("home"), { replace: true })
+    if (path === activePath) navigate(remaining[remaining.length - 1] ?? app.home.path, { replace: true })
     setOpenPaths(remaining)
   }
 
@@ -91,12 +91,12 @@ export function TabWorkspace() {
 
   return (
     <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-      {(isTab || current?.key === "home") ? (
+      {(isTab || current?.route === app.home) ? (
         <OpenPageTabs
           tabs={tabs}
           activePath={activePath}
-          homePath={routePath("home")}
-          homeActive={current?.key === "home"}
+          homePath={app.home.path}
+          homeActive={current?.route === app.home}
           onClose={closeTab}
         />
       ) : null}

@@ -3,7 +3,7 @@ import { Navigate, Route, Routes, useNavigate } from "react-router-dom"
 
 import { AuthLayout } from "@/app/layouts/AuthLayout"
 import { MainLayout } from "@/app/layouts/MainLayout"
-import { routePath } from "@/app/routing/route-config"
+import { app } from "@/app/routing/route-metadata"
 import { RequireAuth } from "@/app/routing/RequireAuth"
 import { getForbiddenGeneration, subscribeForbiddenNavigation } from "@/features/auth/api/auth-response"
 import { UiPlaygroundPage } from "@/pages/UiPlaygroundPage"
@@ -17,7 +17,7 @@ function AuthResponseNavigation() {
   useEffect(() => {
     if (generation <= lastHandled.current) return
     lastHandled.current = generation
-    navigate(routePath("forbidden"), { replace: true })
+    navigate(app.forbidden.path, { replace: true })
   }, [generation, navigate])
 
   return null
@@ -42,7 +42,7 @@ export default function App() {
           }
         />
 
-        <Route path="/" element={<Navigate to={routePath("home")} replace />} />
+        <Route path="/" element={<Navigate to={app.home.path} replace />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

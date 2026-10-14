@@ -1,5 +1,7 @@
 import { Boxes, LogOut, MapPin, Menu } from "lucide-react"
-import { RouteLink } from "@/app/routing/RouteLink"
+import { Link } from "react-router-dom"
+
+import { app } from "@/app/routing/route-metadata"
 import { config } from "@/shared/config/config"
 
 import { HeaderMenu } from "@/features/navigation/components/HeaderMenu"
@@ -27,7 +29,7 @@ function Brand({ expanded }: { expanded: boolean }) {
   const { t } = useAppTranslation()
   return (
     <div className="flex min-w-0 items-center gap-2 px-3 lg:border-r lg:border-header-border">
-      <RouteLink to="home" aria-label={t("navigation:header.homeLink")} className="flex min-w-0 items-center gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-header-active">
+      <Link to={app.home.path} aria-label={t("navigation:header.homeLink")} className="flex min-w-0 items-center gap-3 rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-header-active">
         <span className="grid size-9 shrink-0 place-items-center rounded-md bg-header-accent">
           <Boxes aria-hidden="true" className="size-5" />
         </span>
@@ -37,7 +39,7 @@ function Brand({ expanded }: { expanded: boolean }) {
             WMS Console
           </small>
         </span>
-      </RouteLink>
+      </Link>
     </div>
   )
 }
