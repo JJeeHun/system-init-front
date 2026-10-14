@@ -1,8 +1,8 @@
-import type { RoleAction, RoleMenuGrant } from "@/features/role/types/role-management.types"
+import type { RoleMenuGrant } from "@/features/role/types/role-management.types"
 
 import { AppError } from "@/shared/lib/app-error"
 import type { MenuInput, MenuRecord } from "@/features/navigation/types/menu-management.types"
-import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
+import type { NavigationMenuItem, NavigationPermissions } from "@/features/navigation/types/navigation.types"
 
 const initialMenus: MenuRecord[] = [
   { id: "system", parentId: null, label: "시스템 관리", labelKey: "navigation:menu.system", kind: "group", path: "", sortOrder: 10, enabled: true, scope: "GENERAL" },
@@ -24,7 +24,16 @@ function byOrder(a: MenuRecord, b: MenuRecord) {
   return a.sortOrder - b.sortOrder || a.id.localeCompare(b.id)
 }
 
-const ALL_ACTIONS: RoleAction[] = ["view", "create", "edit", "delete"]
+const ALL_ACTIONS = ["view", "create", "edit", "delete"] as const
+
+function toNavigationPermissions(actions: readonly string[]): NavigationPermissions {
+  return {
+    isView: actions.includes("view"),
+    isCreated: actions.includes("create"),
+    isUpdated: actions.includes("edit"),
+    isDeleted: actions.includes("delete"),
+  }
+}
 
 export function buildVisibleMenus(grants: readonly RoleMenuGrant[], isSystem = false): NavigationMenuItem[] {
   const actionsByMenu = new Map(grants.map(grant => [grant.menuId, grant.actions]))
@@ -50,7 +59,7 @@ export function buildVisibleMenus(grants: readonly RoleMenuGrant[], isSystem = f
           labelKey: menu.labelKey,
           path: menu.path,
           icon: menu.icon,
-          permissions: [...permissions],
+          permissions: toNavigationPermissions(permissions),
         }]
       })
   }
