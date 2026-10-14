@@ -6,6 +6,7 @@ import { MemoryRouter, Route, Routes } from "react-router-dom"
 import { describe, expect, it, vi } from "vitest"
 import { devSettings } from "@/shared/dev-tools/settings"
 
+import { AuthProvider } from "@/app/auth/AuthProvider"
 import { MainLayout } from "@/app/layouts/MainLayout"
 vi.mock("@/pages/CommonCodePage", () => ({
   CommonCodePage: () => <p>공통코드 화면</p>,
@@ -24,9 +25,11 @@ function renderNavigation() {
   return render(
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={["/app"]}>
-        <Routes>
-          <Route path="/app/*" element={<MainLayout />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/app/*" element={<MainLayout />} />
+          </Routes>
+        </AuthProvider>
       </MemoryRouter>
     </QueryClientProvider>,
   )
