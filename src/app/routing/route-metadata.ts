@@ -35,8 +35,58 @@ type RouteGroup = {
 
 type RouteDefinition = RoutePage | RouteGroup
 
+type MenuDeclaration<Menu, Location extends string> =
+  Menu extends { id: infer Id extends string; parentId: infer Parent }
+    ? { id: Id; parentId: Parent; location: Location }
+    : never
+
+type MenuGroupDeclarations<Groups extends readonly unknown[], Location extends string, Index extends unknown[] = []> =
+  Groups extends readonly [infer First, ...infer Rest]
+    ? MenuDeclaration<First, `${Location}.menuGroups.${Index["length"]}`>
+      | MenuGroupDeclarations<Rest, Location, [...Index, unknown]>
+    : never
+
+type MenuNodeDeclarations<Node, Location extends string> =
+  | (Node extends { menu: infer Menu } ? MenuDeclaration<Menu, `${Location}.menu`> : never)
+  | (Node extends { menuGroups: infer Groups extends readonly unknown[] } ? MenuGroupDeclarations<Groups, Location> : never)
+  | (Node extends { children: infer Children } ? MenuDeclarations<Children, Location> : never)
+
+type MenuDeclarations<Nodes, Prefix extends string = ""> = {
+  [Key in keyof Nodes & string]: MenuNodeDeclarations<Nodes[Key], `${Prefix}.${Key}`>
+}[keyof Nodes & string]
+
+type MenuIds<Nodes> =
+  MenuDeclarations<Nodes> extends infer Menu
+    ? Menu extends { id: infer Id extends string } ? Id : never
+    : never
+
+type MenuParentIds<Nodes> =
+  MenuDeclarations<Nodes> extends infer Menu
+    ? Menu extends { parentId: infer Parent extends string } ? Parent : never
+    : never
+
+type IsUnion<Value, Original = Value> =
+  Value extends Original ? [Original] extends [Value] ? false : true : never
+
+type DuplicateMenuIds<Nodes> = {
+  [Id in MenuIds<Nodes>]:
+    IsUnion<Extract<MenuDeclarations<Nodes>, { id: Id }>["location"]> extends true ? Id : never
+}[MenuIds<Nodes>]
+
+type ValidatedMenus<Nodes> =
+  ([DuplicateMenuIds<Nodes>] extends [never] ? unknown : { __duplicate_menu_ids__: DuplicateMenuIds<Nodes> }) &
+  ([Exclude<MenuParentIds<Nodes>, MenuIds<Nodes>>] extends [never]
+    ? unknown
+    : { __unknown_menu_parent_ids__: Exclude<MenuParentIds<Nodes>, MenuIds<Nodes>> })
+
+function defineRouteDefinitions<const T extends Record<string, RouteDefinition>>(
+  definitions: T & ValidatedMenus<T>,
+): T {
+  return definitions
+}
+
 // A single source of truth: route keys define URL segments; menu hierarchy is independent.
-export const routeDefinitions = {
+export const routeDefinitions = defineRouteDefinitions({
   app: {
     children: {
       home: { index: true, Component: HomePage, mode: "page", access: "public", titleKey: "home:title" },
@@ -106,7 +156,7 @@ export const routeDefinitions = {
       "*": { Component: MenuPage, mode: "page", access: "public", titleKey: "navigation:page.notFound" },
     },
   },
-} as const satisfies Record<string, RouteDefinition>
+})
 
 type InitializedNode<Node> =
   Node extends { children: infer Children }
