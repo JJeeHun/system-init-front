@@ -7,7 +7,9 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 
 import { resetMockRolesForTest, getMockRolePermissions } from "@/features/role/api/role-management.mock"
 import { resetMockMenusForTest } from "@/features/navigation/api/navigation.mock"
+import { app } from "@/app/routing/route-metadata"
 import { RoleManagementPage } from "@/pages/RoleManagementPage"
+import { PagePermissionScope } from "@/shared/ui/page-permissions"
 import { devSettings } from "@/shared/dev-tools/settings"
 import { changeLanguage } from "@/shared/i18n"
 
@@ -32,9 +34,15 @@ function renderPage() {
   render(
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={["/app/system/roles"]}>
-        <Routes>
-          <Route path="/app/system/roles" element={<RoleManagementPage />} />
-        </Routes>
+        <PagePermissionScope
+          menuId={app.system.roles.menu.id}
+          permissions={{ isView: true, isCreated: true, isUpdated: true, isDeleted: true }}
+          bypassCrudPermissions={false}
+        >
+          <Routes>
+            <Route path="/app/system/roles" element={<RoleManagementPage />} />
+          </Routes>
+        </PagePermissionScope>
       </MemoryRouter>
     </QueryClientProvider>,
   )

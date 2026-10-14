@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 
+import { AuthProvider } from "@/app/auth/AuthProvider"
 import { MainLayout } from "@/app/layouts/MainLayout"
 import { MenuManagementPage } from "@/pages/MenuManagementPage"
 import { resetMockMenusForTest } from "@/features/navigation/api/navigation.mock"
@@ -32,11 +33,13 @@ describe("menu management screen", () => {
     render(
       <QueryClientProvider client={client}>
         <MemoryRouter initialEntries={["/app/system/menus"]}>
+          <AuthProvider>
           <Routes>
             <Route path="/app" element={<MainLayout />}>
               <Route path="system/menus" element={<MenuManagementPage />} />
             </Route>
-          </Routes>
+            </Routes>
+        </AuthProvider>
         </MemoryRouter>
       </QueryClientProvider>,
     )

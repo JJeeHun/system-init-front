@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 
+import { AuthProvider } from "@/app/auth/AuthProvider"
 import { MainLayout } from "@/app/layouts/MainLayout"
 import { resetMockUsersForTest } from "@/features/user/api/user-management.mock"
 import { changeLanguage } from "@/shared/i18n"
@@ -29,9 +30,11 @@ describe("user management page", () => {
     render(
       <QueryClientProvider client={client}>
         <MemoryRouter initialEntries={["/app/system/users"]}>
+          <AuthProvider>
           <Routes>
             <Route path="/app/*" element={<MainLayout />} />
-          </Routes>
+            </Routes>
+        </AuthProvider>
         </MemoryRouter>
       </QueryClientProvider>,
     )

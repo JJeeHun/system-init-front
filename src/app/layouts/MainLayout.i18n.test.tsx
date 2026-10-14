@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 
+import { AuthProvider } from "@/app/auth/AuthProvider"
 import { MainLayout } from "@/app/layouts/MainLayout"
 import { CommonCodePage } from "@/pages/CommonCodePage"
 import { HomePage } from "@/pages/HomePage"
@@ -29,12 +30,14 @@ describe("feature-based translations in the existing admin screens", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/app"]}>
+          <AuthProvider>
           <Routes>
             <Route path="/app" element={<MainLayout />}>
               <Route index element={<HomePage />} />
               <Route path="master/common-code" element={<CommonCodePage />} />
             </Route>
-          </Routes>
+            </Routes>
+        </AuthProvider>
         </MemoryRouter>
       </QueryClientProvider>,
     )

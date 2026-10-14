@@ -104,7 +104,7 @@ describe("tab workspace permission lifecycle", () => {
     const client = setup()
     client.setQueryData(navigationQueryKeys.menus(), [])
 
-    await waitFor(() => expect(screen.getByTestId("location")).toHaveTextContent(app.home.path))
+    await waitFor(() => expect(screen.getByTestId("location").textContent).toBe(app.home.path))
     expect(screen.queryByRole("textbox", { name: "User draft" })).not.toBeInTheDocument()
     expect(screen.getByText("Home mounted")).toBeInTheDocument()
   })

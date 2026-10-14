@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { MemoryRouter, Route, Routes } from "react-router-dom"
 import { describe, expect, it, vi } from "vitest"
 
+import { AuthProvider } from "@/app/auth/AuthProvider"
 import { MainLayout } from "@/app/layouts/MainLayout"
 vi.mock("@/pages/CommonCodePage", () => ({
   CommonCodePage: () => <p>공통코드 화면</p>,
@@ -17,9 +18,11 @@ function renderNavigation() {
   render(
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={["/app"]}>
-        <Routes>
+        <AuthProvider>
+          <Routes>
           <Route path="/app/*" element={<MainLayout />} />
-        </Routes>
+          </Routes>
+        </AuthProvider>
       </MemoryRouter>
     </QueryClientProvider>,
   )
