@@ -1,12 +1,13 @@
+import { ArrowRight, House } from "lucide-react"
 import { Link } from "react-router-dom"
 
 import { app } from "@/app/routing/route-metadata"
-import { useAppTranslation } from "@/shared/i18n"
-import { House, ArrowRight } from "lucide-react"
 
-import { PageLayout } from "@/shared/layout/page"
 import { PageHeader } from "@/shared/ui/page-header"
 import { Panel } from "@/shared/ui/panel"
+
+import { useAppTranslation } from "@/shared/i18n"
+import { PageLayout } from "@/shared/layout/page"
 
 export function HomePage() {
   const { t } = useAppTranslation()
