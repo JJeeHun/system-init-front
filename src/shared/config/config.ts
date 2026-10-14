@@ -9,6 +9,7 @@ export type AppConfig = Readonly<{
     name: string
     environment: AppEnvironment
     isProduction: boolean
+    canBypassCrudPermissions: (roleId?: string) => boolean
     baseUrl: string
   }>
 }>
@@ -36,6 +37,7 @@ export const config: AppConfig = Object.freeze({
     name: "system-init-front",
     environment,
     isProduction: environment === "production",
+    canBypassCrudPermissions: (roleId) => environment !== "production" && roleId === "SYSTEM",
     baseUrl: import.meta.env.BASE_URL,
   }),
 })
