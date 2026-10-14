@@ -3,6 +3,7 @@ const AUTH_SESSION_KEY = "system-init-front.auth"
 export type AuthSession = {
   accessToken: string
   expiresAt: number
+  mockUsername?: string
 }
 
 export type SessionEndReason = "expired" | "unauthorized" | null
@@ -55,7 +56,8 @@ export function getAuthSession(): AuthSession | null {
       return null
     }
     scheduleExpiry(session.expiresAt)
-    return { accessToken: session.accessToken, expiresAt: session.expiresAt }
+    return { accessToken: session.accessToken, expiresAt: session.expiresAt,
+      mockUsername: typeof session.mockUsername === "string" ? session.mockUsername : undefined }
   } catch {
     sessionStorage.removeItem(AUTH_SESSION_KEY)
     cancelExpiryTimer()
@@ -76,10 +78,11 @@ export function getSessionEndReason(): SessionEndReason {
   return endReason
 }
 
-export function setAuthSession(accessToken: string, expiresIn: number) {
+export function setAuthSession(accessToken: string, expiresIn: number, mockUsername?: string) {
   const session: AuthSession = {
     accessToken,
     expiresAt: Date.now() + expiresIn * 1000,
+    mockUsername,
   }
   sessionStorage.setItem(AUTH_SESSION_KEY, JSON.stringify(session))
   endReason = null
