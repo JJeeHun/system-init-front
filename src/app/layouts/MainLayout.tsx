@@ -1,9 +1,8 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom"
 
 import { useAuth } from "@/app/auth/AuthProvider"
 import { AppHeader } from "@/app/layouts/AppHeader"
-import { useNavigationStore } from "@/app/navigation/use-navigation-store"
 import { TabWorkspace } from "@/app/routing/TabWorkspace"
 import { useLogout } from "@/features/auth/hooks/use-logout"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
@@ -15,13 +14,12 @@ export function MainLayout() {
   const { t } = useAppTranslation()
   const { pathname } = useLocation()
   const { user, allowedMenus: menus, isLoading, isError } = useAuth()
-  const selectedRootId = useNavigationStore((state) => state.selectedRootId)
-  const mobileSidebarOpen = useNavigationStore((state) => state.isMobileSidebarOpen)
-  const desktopSidebarExpanded = useNavigationStore((state) => state.isDesktopSidebarExpanded)
-  const selectRootMenu = useNavigationStore((state) => state.selectRootMenu)
-  const openMobileSidebar = useNavigationStore((state) => state.openMobileSidebar)
-  const closeMobileSidebar = useNavigationStore((state) => state.closeMobileSidebar)
-  const toggleDesktopSidebar = useNavigationStore((state) => state.toggleDesktopSidebar)
+  const [selectedRootId, selectRootMenu] = useState<string | null>(null)
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+  const [desktopSidebarExpanded, setDesktopSidebarExpanded] = useState(true)
+  const openMobileSidebar = () => setMobileSidebarOpen(true)
+  const closeMobileSidebar = () => setMobileSidebarOpen(false)
+  const toggleDesktopSidebar = () => setDesktopSidebarExpanded(open => !open)
   const logout = useLogout()
 
   const routeRootMenu = findRootMenuByPath(menus, pathname)
