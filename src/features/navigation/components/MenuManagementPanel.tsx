@@ -1,4 +1,6 @@
 import { FolderIcon } from "lucide-react"
+
+import { CrudActions } from "@/app/navigation/CrudActions"
 import { Controller, useWatch } from "react-hook-form"
 import { useAppTranslation } from "@/shared/i18n"
 import type { AppTranslate } from "@/shared/i18n"
@@ -69,7 +71,8 @@ function MenuList({ management }: { management: MenuManagement }) {
       <Panel.Header
         title={t("navigation:management.treeTitle")}
         description={t("navigation:management.treeDescription")}
-        actions={<Button primary size="sm" onClick={() => management.startCreate()}>{t("navigation:management.addRoot")}</Button>}
+        actions={<CrudActions menuId="menu-management" onCreate={() => management.startCreate()}
+          createLabel={t("navigation:management.addRoot")} createDisabled={management.saving || management.deleting} />}
       />
       <Panel.Content>
         <div className="mb-3">
@@ -115,11 +118,18 @@ function MenuDetails({ management }: { management: MenuManagement }) {
         title={t("navigation:management.detailsTitle")}
         description={selected ? management.selectedPath : t("navigation:management.choose")}
         actions={selected ? (
-          <>
-            <Button size="sm" disabled={selected.kind !== "group" || management.saving} onClick={() => management.startCreate(selected.id)}>{t("navigation:management.addChild")}</Button>
-            <Button size="sm" disabled={management.saving || management.deleting} onClick={management.startEdit}>{t("common:actions.edit")}</Button>
-            <Button error size="sm" disabled={management.saving || management.deleting} loading={management.deleting} onClick={() => void management.deleteSelected()}>{t("common:actions.delete")}</Button>
-          </>
+          <CrudActions
+            menuId="menu-management"
+            onCreate={() => management.startCreate(selected.id)}
+            onEdit={management.startEdit}
+            onDelete={() => void management.deleteSelected()}
+            showCreate={selected.kind === "group"}
+            createLabel={t("navigation:management.addChild")}
+            createDisabled={management.saving || management.deleting}
+            editDisabled={management.saving || management.deleting}
+            deleteDisabled={management.saving || management.deleting}
+            deleteLoading={management.deleting}
+          />
         ) : undefined}
       />
       <Panel.Content>
