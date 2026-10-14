@@ -37,7 +37,7 @@ export const config: AppConfig = Object.freeze({
     name: "system-init-front",
     environment,
     isProduction: environment === "production",
-    canBypassCrudPermissions: (roleId) => environment !== "production" && roleId === "SYSTEM",
+    canBypassCrudPermissions: (roleId?: string) => environment !== "production" && roleId === "SYSTEM",
     baseUrl: import.meta.env.BASE_URL,
   }),
 })
