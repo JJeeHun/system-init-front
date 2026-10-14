@@ -169,7 +169,7 @@ type InitializedRoutes = {
   readonly [Key in keyof typeof routeDefinitions]: InitializedNode<(typeof routeDefinitions)[Key]>
 }
 
-type ResolvedPage = RoutePage & { readonly path: string }
+type ResolvedPage = RoutePage & { readonly id: string; readonly path: string }
 
 const pages: ResolvedPage[] = []
 const menuDefinitions: MenuRecord[] = []
@@ -182,7 +182,8 @@ function registerMenu(menu: MenuDefinition, path: string): void {
   menuDefinitions.push({ ...menu, path })
 }
 
-function initializeNode(key: string, definition: RouteDefinition, parentPath: string): object {
+function initializeNode(key: string, definition: RouteDefinition, parentPath: string, parentId = ""): object {
+  const id = parentId ? `${parentId}.${key}` : key
   const segment = key.replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase()
   const path = "index" in definition && definition.index
     ? parentPath
@@ -194,14 +195,14 @@ function initializeNode(key: string, definition: RouteDefinition, parentPath: st
 
     const initialized: Record<string, unknown> = { path }
     for (const [childKey, child] of Object.entries(definition.children)) {
-      initialized[childKey] = initializeNode(childKey, child, path)
+      initialized[childKey] = initializeNode(childKey, child, path, id)
     }
     return initialized
   }
 
   if (registeredPaths.has(path)) throw new Error(`Duplicate route path: ${path}`)
   registeredPaths.add(path)
-  const page = { ...definition, path }
+  const page = { ...definition, id, path }
   pages.push(page)
   if (definition.menu) registerMenu(definition.menu, path)
   return page

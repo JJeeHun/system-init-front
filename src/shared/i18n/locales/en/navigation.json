@@ -37,7 +37,8 @@
     "title": "Open pages",
     "preview": "Page tab preview",
     "close": "Close {{title}} tab",
-    "uiPlayground": "UI Components"
+    "uiPlayground": "UI Components",
+    "limitReached": "You can open up to {{max}} tabs. Close a tab before opening another."
   },
   "page": {
     "notFound": "Menu not found",
