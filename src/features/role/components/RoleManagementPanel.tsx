@@ -15,7 +15,8 @@ import { useAppTranslation } from "@/shared/i18n"
 import type { AppTranslate } from "@/shared/i18n"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
-import { CrudActions, useCrudActionPermission } from "@/shared/ui/crud-actions"
+import { CrudActions } from "@/shared/ui/crud-actions"
+import { usePageActionPermission } from "@/shared/ui/page-permissions"
 import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
 import { Panel } from "@/shared/ui/panel"
@@ -80,7 +81,6 @@ function RoleList({ management }: { management: Management }) {
       <Panel.Header title={t("role:list.title")} description={t("role:list.description")}
         actions={
           <CrudActions
-            menuId="role"
             onCreate={management.startCreate}
             createAriaLabel={t("role:actions.add")}
             onEdit={management.startEdit}
@@ -225,7 +225,7 @@ function RolePermissionContent({ management }: { management: Management }) {
 function RolePermissionPanel({ management }: { management: Management }) {
   const { t } = useAppTranslation()
   const selected = management.selected
-  const canSavePermissions = useCrudActionPermission("role", "edit")
+  const canSavePermissions = usePageActionPermission("edit")
   return (
     <Panel>
       <Panel.Header
@@ -254,11 +254,15 @@ function RolePermissionPanel({ management }: { management: Management }) {
 function RoleEditor({ management }: { management: Management }) {
   const { t } = useAppTranslation()
   const { roleForm, mode, savingRole } = management
+  const canSubmit = usePageActionPermission(mode === "create" ? "create" : "edit")
   if (!mode) return null
   return (
     <Dialog open title={t(mode === "create" ? "role:actions.createTitle" : "role:actions.editTitle")}
       onOpenChange={open => { if (!open && !savingRole) management.cancel() }}>
-      <DefaultForm onSubmit={management.submit}>
+      <DefaultForm onSubmit={event => {
+        if (!canSubmit) { event.preventDefault(); return }
+        management.submit(event)
+      }}>
         <Field required={mode === "create"} readOnly={mode === "edit"}
           description={mode === "edit" ? t("common:labels.immutableAfterCreate") : undefined}
           label={t("role:fields.id")} htmlFor="role-editor-id" error={t(roleForm.formState.errors.id?.message)}>
@@ -276,7 +280,7 @@ function RoleEditor({ management }: { management: Management }) {
         </div>
         <DefaultForm.Actions>
           <Button size="sm" disabled={savingRole} onClick={management.cancel}>{t("common:actions.cancel")}</Button>
-          <Button size="sm" type="submit" primary loading={savingRole}>{t("common:actions.save")}</Button>
+          <Button size="sm" type="submit" primary loading={savingRole} disabled={!canSubmit}>{t("common:actions.save")}</Button>
         </DefaultForm.Actions>
       </DefaultForm>
     </Dialog>
