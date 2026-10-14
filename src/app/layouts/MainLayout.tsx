@@ -8,15 +8,13 @@ import { TabWorkspace } from "@/app/routing/TabWorkspace"
 import { useLogout } from "@/features/auth/hooks/use-logout"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
 import { findRootMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
-import { config } from "@/shared/config/config"
 import { useAppTranslation } from "@/shared/i18n"
-import { CrudPermissionsProvider } from "@/shared/ui/crud-actions"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 
 export function MainLayout() {
   const { t } = useAppTranslation()
   const { pathname } = useLocation()
-  const { user, allowedMenus: menus, isLoading, isError, getMenuPermissions } = useAuth()
+  const { user, allowedMenus: menus, isLoading, isError } = useAuth()
   const selectedRootId = useNavigationStore((state) => state.selectedRootId)
   const mobileSidebarOpen = useNavigationStore((state) => state.isMobileSidebarOpen)
   const desktopSidebarExpanded = useNavigationStore((state) => state.isDesktopSidebarExpanded)
@@ -36,11 +34,7 @@ export function MainLayout() {
   const onSelectRoot = (menu: (typeof menus)[number]) => selectRootMenu(menu.id)
 
   return (
-    <CrudPermissionsProvider
-      resolvePermissions={getMenuPermissions}
-      bypassPermissions={config.app.canBypassCrudPermissions(user?.roleId)}
-    >
-      <div className="flex h-dvh w-full min-w-0 flex-col overflow-hidden bg-background">
+    <div className="flex h-dvh w-full min-w-0 flex-col overflow-hidden bg-background">
       <AppHeader
         menus={menus}
         menuLoading={isLoading}
@@ -93,6 +87,5 @@ export function MainLayout() {
         </main>
       </div>
     </div>
-    </CrudPermissionsProvider>
   )
 }
