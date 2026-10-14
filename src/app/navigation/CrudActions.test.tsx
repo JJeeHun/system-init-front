@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import "@testing-library/jest-dom/vitest"
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react"
+import { act, fireEvent, render, screen } from "@testing-library/react"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { afterEach, describe, expect, it, vi } from "vitest"
 
@@ -12,7 +12,7 @@ import { config } from "@/shared/config/config"
 vi.mock("@/shared/dev-tools/mock-delay", () => ({ waitForMockDelay: async () => {} }))
 
 function renderActions(username: string, permissions: { isView: boolean; isCreated: boolean; isUpdated: boolean; isDeleted: boolean },
-  overrides: Record<string, unknown> = {}) {
+  overrides: Partial<React.ComponentProps<typeof CrudActions>> = {}) {
   setAuthSession("mock-access-token", 3600, username)
   useNavigationStore.getState().updateMenuQuery({
     data: [{ id: "system", label: "시스템 관리", children: [
@@ -42,8 +42,7 @@ const viewOnly = { isView: true, isCreated: false, isUpdated: false, isDeleted: 
 describe("CRUD action permissions", () => {
   it("hides controls without granted permission for staff", async () => {
     renderActions("staff", viewOnly)
-    await screen.findByText("사용자 관리").catch(() => null)
-    await waitFor(() => expect(screen.queryByRole("button", { name: "등록" })).not.toBeInTheDocument())
+    expect(screen.queryByRole("button", { name: "등록" })).not.toBeInTheDocument()
     expect(screen.queryByRole("button", { name: "수정" })).not.toBeInTheDocument()
     expect(screen.queryByRole("button", { name: "삭제" })).not.toBeInTheDocument()
   })
