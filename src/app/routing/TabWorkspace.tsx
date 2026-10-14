@@ -107,12 +107,13 @@ export function TabWorkspace() {
   })
   const lastValidPath = useRef(app.home.path)
   const closingPath = useRef<string | null>(null)
-  const rejectedPath = useRef<string | null>(null)
+  const redirectingPath = useRef<string | null>(null)
 
   useLayoutEffect(() => {
     if (isLoading || isError) return
 
     if (closingPath.current && closingPath.current !== pathname) closingPath.current = null
+    if (redirectingPath.current && redirectingPath.current !== pathname) redirectingPath.current = null
 
     let changed = false
     const allowed = openTabs.flatMap((tab) => {
@@ -136,18 +137,21 @@ export function TabWorkspace() {
     if (!canAccessRoute(pathname)) {
       if (changed) setOpenTabs(allowed)
       const revoked = openTabs.some((tab) => tab.path === pathname)
-      navigate(revoked ? fallback() : app.forbidden.path, { replace: true })
+      if (redirectingPath.current !== pathname) {
+        redirectingPath.current = pathname
+        navigate(revoked ? fallback() : app.forbidden.path, { replace: true })
+      }
       return
     }
 
     if (activePath && !allowed.some((tab) => tab.path === activePath) && activePath !== closingPath.current) {
       if (allowed.length >= navigationSettings.maxOpenTabs) {
         if (changed) setOpenTabs(allowed)
-        if (rejectedPath.current !== activePath) {
+        if (redirectingPath.current !== activePath) {
+          redirectingPath.current = activePath
           toast.error(t("navigation:tabs.limitReached", { max: navigationSettings.maxOpenTabs }))
-          rejectedPath.current = activePath
+          navigate(fallback(), { replace: true })
         }
-        navigate(fallback(), { replace: true })
         return
       }
 
@@ -161,7 +165,7 @@ export function TabWorkspace() {
     if (changed) setOpenTabs(allowed)
     if (activePath !== closingPath.current) {
       lastValidPath.current = pathname
-      rejectedPath.current = null
+      redirectingPath.current = null
     }
   }, [pathname, activePath, openTabs, isLoading, isError, canAccessRoute, getMenuPermissions, navigate, t])
 
