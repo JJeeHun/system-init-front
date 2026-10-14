@@ -6,6 +6,7 @@ import { FilterBar } from "@/shared/layout/filter-bar"
 import { Button } from "@/shared/ui/button"
 import { Form } from "@/shared/ui/form"
 import { Panel } from "@/shared/ui/panel"
+import { usePageActionPermission } from "@/shared/ui/page-permissions"
 
 export type SearchPanelProps = {
   children: ReactNode
@@ -19,6 +20,14 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
   const { t } = useAppTranslation()
   const [expanded, setExpanded] = useState(true)
   const contentId = useId()
+  const canSearch = usePageActionPermission("view") && !loading && !disabled
+  const handleSearch: FormEventHandler<HTMLFormElement> = event => {
+    if (!canSearch) {
+      event.preventDefault()
+      return
+    }
+    onSearch(event)
+  }
   return (
     <Panel>
       <Panel.Header
@@ -33,13 +42,13 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
       />
       <div id={contentId} hidden={!expanded}>
         <Panel.Content>
-          <Form onSubmit={onSearch} className="grid min-w-0 gap-3">
+          <Form onSubmit={handleSearch} className="grid min-w-0 gap-3">
           <FilterBar>{children}</FilterBar>
           <div className="flex flex-wrap justify-end gap-2">
-            <Button size="sm" disabled={loading || disabled} onClick={onReset}>
+            <Button size="sm" disabled={!canSearch} onClick={() => { if (canSearch) onReset() }}>
               {t("common:actions.reset")}
             </Button>
-            <Button type="submit" primary size="sm" loading={loading} disabled={disabled}>
+            <Button type="submit" primary size="sm" loading={loading} disabled={!canSearch}>
               {t("common:actions.search")}
             </Button>
           </div>
