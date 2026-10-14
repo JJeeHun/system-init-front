@@ -6,7 +6,6 @@ import { resolveRoute } from "@/app/routing/route-metadata"
 
 type MenuEntry = { menu: NavigationMenuItem; root: NavigationMenuItem }
 type MenuIndex = Readonly<Record<string, MenuEntry>>
-type NavigationTarget = `/${string}`
 
 const EMPTY_MENUS: NavigationMenuItem[] = []
 const EMPTY_INDEX: MenuIndex = {}
@@ -55,7 +54,7 @@ type NavigationState = {
   findMenu: (path: string) => NavigationMenuItem | null
   findRootMenu: (path: string) => NavigationMenuItem | null
   canAccess: (path: string) => boolean
-  navigateTo: (target: NavigationTarget, options?: NavigateOptions) => boolean
+  navigateTo: (target: string, options?: NavigateOptions) => boolean
   selectRootMenu: (id: string) => void
   openMobileSidebar: () => void
   closeMobileSidebar: () => void
