@@ -2,23 +2,24 @@ import { useNavigationStore } from "@/app/navigation/use-navigation-store"
 
 import { useCurrentUser } from "@/features/user/hooks/use-current-user"
 
-import { CrudActions as SharedCrudActions, CrudPermissionsProvider, type CrudActionsProps } from "@/shared/ui/crud-actions"
+import { CrudActions as SharedCrudActions, type CrudActionsProps } from "@/shared/ui/crud-actions"
+import { PagePermissionScope } from "@/shared/ui/page-permissions"
 
 import { config } from "@/shared/config/config"
 
-// Compatibility entry point for existing navigation component tests.
-export function CrudActions(props: CrudActionsProps) {
+// Retained for existing navigation tests; app pages use shared CrudActions directly.
+export function CrudActions({ menuId, ...props }: CrudActionsProps & { menuId: string }) {
   const currentUser = useCurrentUser()
   const permissions = useNavigationStore(state =>
-    Object.values(state.menuIndex).find(entry => entry.menu.id === props.menuId)?.menu.permissions,
+    Object.values(state.menuIndex).find(entry => entry.menu.id === menuId)?.menu.permissions,
   )
-
   return (
-    <CrudPermissionsProvider
-      resolvePermissions={() => permissions}
-      bypassPermissions={config.app.canBypassCrudPermissions(currentUser.data?.roleId)}
+    <PagePermissionScope
+      menuId={menuId}
+      permissions={permissions}
+      bypassCrudPermissions={config.app.canBypassCrudPermissions(currentUser.data?.roleId)}
     >
       <SharedCrudActions {...props} />
-    </CrudPermissionsProvider>
+    </PagePermissionScope>
   )
 }
