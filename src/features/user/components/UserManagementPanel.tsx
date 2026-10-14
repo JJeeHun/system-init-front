@@ -9,7 +9,8 @@ import { Input } from "@/shared/components/ui/input"
 import { Switch } from "@/shared/components/ui/switch"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
-import { CrudActions, useCrudActionPermission } from "@/shared/ui/crud-actions"
+import { CrudActions } from "@/shared/ui/crud-actions"
+import { usePageActionPermission } from "@/shared/ui/page-permissions"
 import type { DataGridColumn } from "@/shared/ui/data-grid"
 import { PaginatedDataGrid } from "@/shared/ui/paginated-data-grid"
 import { Dialog } from "@/shared/ui/dialog"
@@ -59,6 +60,7 @@ function UserFilters({ management }: { management: Management }) {
 function UserEditor({ management }: { management: Management }) {
   const { t } = useAppTranslation()
   const { mode, form, saving } = management
+  const canSubmit = usePageActionPermission(mode === "create" ? "create" : "edit")
   if (!mode) return null
   return (
     <Dialog
@@ -66,7 +68,10 @@ function UserEditor({ management }: { management: Management }) {
       title={t(mode === "create" ? "user:actions.createTitle" : "user:actions.editTitle")}
       onOpenChange={open => { if (!open && !saving) management.cancel() }}
     >
-      <DefaultForm onSubmit={management.submit}>
+      <DefaultForm onSubmit={event => {
+        if (!canSubmit) { event.preventDefault(); return }
+        management.submit(event)
+      }}>
         <Field required={mode === "create"} readOnly={mode === "edit"}
           description={mode === "edit" ? t("common:labels.immutableAfterCreate") : undefined}
           label={t("user:fields.id")} htmlFor="user-editor-id" error={t(form.formState.errors.id?.message)}>
@@ -101,7 +106,7 @@ function UserEditor({ management }: { management: Management }) {
         </Field>
         <DefaultForm.Actions>
           <Button size="sm" disabled={saving} onClick={management.cancel}>{t("common:actions.cancel")}</Button>
-          <Button size="sm" type="submit" primary loading={saving}>{t("common:actions.save")}</Button>
+          <Button size="sm" type="submit" primary loading={saving} disabled={!canSubmit}>{t("common:actions.save")}</Button>
         </DefaultForm.Actions>
       </DefaultForm>
     </Dialog>
@@ -111,7 +116,7 @@ function UserEditor({ management }: { management: Management }) {
 function UserList({ management }: { management: Management }) {
   const { t } = useAppTranslation()
   const selected = management.selected
-  const canChangeStatus = useCrudActionPermission("user", "edit")
+  const canChangeStatus = usePageActionPermission("edit")
   const columns = [
     { key: "id", header: t("user:fields.id"), size: "md" },
     { key: "name", header: t("user:fields.name"), size: "md" },
@@ -133,7 +138,6 @@ function UserList({ management }: { management: Management }) {
         actions={
           <>
             <CrudActions
-              menuId="user"
               onCreate={management.startCreate}
               createAriaLabel={t("user:actions.create")}
               onEdit={management.startEdit}
