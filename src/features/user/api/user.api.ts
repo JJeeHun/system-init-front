@@ -21,7 +21,7 @@ const mockUsers: Record<string, CurrentUser> = {
 
 export async function getCurrentUser(): Promise<CurrentUser> {
   await waitForMockDelay()
-  const username = getAuthSession()?.mockUsername ?? "admin"
+  const username = typeof sessionStorage === "undefined" ? "admin" : getAuthSession()?.mockUsername ?? "admin"
   return mockUsers[username] ?? { ...mockUsers.staff, id: username, name: username }
 }
 
