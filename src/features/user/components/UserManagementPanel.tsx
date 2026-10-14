@@ -1,6 +1,5 @@
 import { Controller } from "react-hook-form"
 
-import { CrudActions } from "@/app/navigation/CrudActions"
 import { useAppTranslation } from "@/shared/i18n"
 
 import { RoleCombobox } from "@/features/role/components/RoleCombobox"
@@ -10,6 +9,7 @@ import { Input } from "@/shared/components/ui/input"
 import { Switch } from "@/shared/components/ui/switch"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
+import { CrudActions, useCrudActionPermission } from "@/shared/ui/crud-actions"
 import type { DataGridColumn } from "@/shared/ui/data-grid"
 import { PaginatedDataGrid } from "@/shared/ui/paginated-data-grid"
 import { Dialog } from "@/shared/ui/dialog"
@@ -111,6 +111,7 @@ function UserEditor({ management }: { management: Management }) {
 function UserList({ management }: { management: Management }) {
   const { t } = useAppTranslation()
   const selected = management.selected
+  const canChangeStatus = useCrudActionPermission("user", "edit")
   const columns = [
     { key: "id", header: t("user:fields.id"), size: "md" },
     { key: "name", header: t("user:fields.name"), size: "md" },
@@ -136,19 +137,17 @@ function UserList({ management }: { management: Management }) {
               onCreate={management.startCreate}
               onEdit={management.startEdit}
               showEdit={selected !== null}
-              createLabel={t("user:actions.create")}
               createDisabled={management.saving || management.statusPending}
               editDisabled={management.saving || management.statusPending}
             />
-            <CrudActions
-              menuId="user"
-              onEdit={() => void management.toggleEnabled()}
-              showEdit={selected !== null}
-              editLabel={t(selected?.enabled ? "user:actions.disable" : "user:actions.enable")}
-              editDisabled={management.saving || management.statusPending}
-              editLoading={management.statusPending}
-              editError={!!selected?.enabled}
-            />
+            {canChangeStatus && selected && (
+              <Button size="sm" error={!!selected.enabled}
+                disabled={management.saving || management.statusPending}
+                loading={management.statusPending}
+                onClick={() => void management.toggleEnabled()}>
+                {t(selected.enabled ? "user:actions.disable" : "user:actions.enable")}
+              </Button>
+            )}
           </>
         }
       />

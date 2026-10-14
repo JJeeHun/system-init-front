@@ -6,12 +6,15 @@ import { useLogout } from "@/features/auth/hooks/use-logout"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { useCurrentUser } from "@/features/user/hooks/use-current-user"
+import { config } from "@/shared/config/config"
 import { useAppTranslation } from "@/shared/i18n"
+import { CrudPermissionsProvider } from "@/shared/ui/crud-actions"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 
 export function MainLayout() {
   const { t } = useAppTranslation()
   const menus = useNavigationStore((state) => state.menus)
+  const menuIndex = useNavigationStore((state) => state.menuIndex)
   const hasLoadedMenus = useNavigationStore((state) => state.hasLoadedMenus)
   const isLoading = useNavigationStore((state) => state.isLoading)
   const isError = useNavigationStore((state) => state.isError)
@@ -31,7 +34,11 @@ export function MainLayout() {
   const onSelectRoot = (menu: (typeof menus)[number]) => selectRootMenu(menu.id)
 
   return (
-    <div className="flex h-dvh w-full min-w-0 flex-col overflow-hidden bg-background">
+    <CrudPermissionsProvider
+      resolvePermissions={menuId => Object.values(menuIndex).find(entry => entry.menu.id === menuId)?.menu.permissions}
+      bypassPermissions={config.app.canBypassCrudPermissions(currentUser.data?.roleId)}
+    >
+      <div className="flex h-dvh w-full min-w-0 flex-col overflow-hidden bg-background">
       <NavigationBridge />
       <AppHeader
         menus={menus}
@@ -85,5 +92,6 @@ export function MainLayout() {
         </main>
       </div>
     </div>
+    </CrudPermissionsProvider>
   )
 }

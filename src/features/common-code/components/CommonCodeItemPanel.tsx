@@ -1,6 +1,5 @@
 import type { FormEventHandler } from "react"
 
-import { CrudActions } from "@/app/navigation/CrudActions"
 import { useAppTranslation } from "@/shared/i18n"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
@@ -11,6 +10,7 @@ import type {
 import { Switch } from "@/shared/components/ui/switch"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
+import { CrudActions } from "@/shared/ui/crud-actions"
 import { DataGrid } from "@/shared/ui/data-grid"
 import type { DataGridColumn } from "@/shared/ui/data-grid"
 import { Dialog } from "@/shared/ui/dialog"
@@ -172,12 +172,10 @@ export function CommonCodeItemPanel({
             onDelete={form.delete}
             showEdit={selectedItem !== null}
             showDelete={selectedItem !== null}
-            createLabel={t("common-code:item.create")}
             createDisabled={!group || form.isPending || form.isDeleting}
             editDisabled={form.isPending || form.isDeleting}
             deleteDisabled={form.isPending || form.isDeleting}
             deleteLoading={form.isDeleting}
-            deleteLabel={form.isDeleting ? t("common:actions.deleting") : t("common:actions.delete")}
           />
         }
       />
