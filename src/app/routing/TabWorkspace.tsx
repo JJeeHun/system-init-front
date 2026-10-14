@@ -9,6 +9,7 @@ import { app, resolveRoute } from "@/app/routing/route-metadata"
 import { findMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationPermissions } from "@/features/navigation/types/navigation.types"
 
+import { config } from "@/shared/config/config"
 import { useAppTranslation } from "@/shared/i18n"
 import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
 import { PagePermissionScope } from "@/shared/ui/page-permissions"
@@ -96,7 +97,7 @@ export function TabWorkspace() {
   const navigate = useNavigate()
   const { user, allowedMenus, isLoading, isError, canAccessRoute, getMenuPermissions } = useAuth()
   const { t } = useAppTranslation()
-  const bypassCrudPermissions = !isLoading && !isError && user?.roleId === "SYSTEM"
+  const bypassCrudPermissions = !isLoading && !isError && config.app.canBypassCrudPermissions(user?.roleId)
   const current = resolveRoute(pathname)
   const activePath = navigationSettings.tabsEnabled && current?.route.mode === "tab" ? pathname : null
 
