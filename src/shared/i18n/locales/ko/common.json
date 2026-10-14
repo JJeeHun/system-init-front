@@ -1,5 +1,6 @@
 {
   "actions": {
+    "create": "등록",
     "save": "저장",
     "cancel": "취소",
     "edit": "수정",
