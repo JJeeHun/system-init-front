@@ -42,7 +42,7 @@ export function buildVisibleMenus(grants: readonly RoleMenuGrant[], isSystem = f
     return records
       .filter(menu => menu.parentId === parentId && menu.enabled)
       .sort(byOrder)
-      .flatMap(menu => {
+      .flatMap<NavigationMenuItem>(menu => {
         if (menu.kind === "group") {
           const children = nested(menu.id)
           return children.length ? [{
