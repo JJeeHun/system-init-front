@@ -11,6 +11,7 @@ import { Switch } from "@/shared/components/ui/switch"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
 import { CrudActions } from "@/shared/ui/crud-actions"
+import { usePageActionPermission } from "@/shared/ui/page-permissions"
 import { DataGrid } from "@/shared/ui/data-grid"
 import type { DataGridColumn } from "@/shared/ui/data-grid"
 import { Dialog } from "@/shared/ui/dialog"
@@ -58,6 +59,7 @@ type CommonCodeItemPanelProps = {
 
 const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFormProps }) => {
   const { t } = useAppTranslation()
+  const canSubmit = usePageActionPermission(form.mode === "create" ? "create" : "edit")
   if (!show) return null
 
   return (
@@ -68,7 +70,10 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
       }}
       title={t(form.mode === "create" ? "common-code:item.create" : "common-code:item.edit")}
     >
-      <DefaultForm onSubmit={form.submit}>
+      <DefaultForm onSubmit={event => {
+        if (!canSubmit) { event.preventDefault(); return }
+        form.submit(event)
+      }}>
         <Field required={form.mode === "create"} readOnly={form.mode === "edit"}
           description={form.mode === "edit" ? t("common:labels.immutableAfterCreate") : undefined}
           label={t("common-code:item.fields.code")} htmlFor="common-code-item-code" error={form.errors.code}>
@@ -124,6 +129,7 @@ const ItemFormDialog = ({ show, form }: { show: boolean; form: CommonCodeItemFor
             primary
             size="sm"
             loading={form.isPending}
+            disabled={!canSubmit}
           >
             {t("common:actions.save")}
           </Button>
@@ -166,7 +172,6 @@ export function CommonCodeItemPanel({
         description={group ? `${group.code} · ${group.name}` : t("common-code:item.description")}
         actions={
           <CrudActions
-            menuId="common-code"
             onCreate={form.startCreate}
             onEdit={form.startEdit}
             onDelete={form.delete}
