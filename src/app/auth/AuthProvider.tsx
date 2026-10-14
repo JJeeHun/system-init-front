@@ -23,10 +23,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const userQuery = useCurrentUser()
   const menuQuery = useQuery(navigationQueries.menus())
 
-  const isLoading = userQuery.isPending || menuQuery.isPending
   const isError = userQuery.isError || menuQuery.isError
-  const user = !isError ? userQuery.data ?? null : null
-  const allowedMenus = !isError ? menuQuery.data ?? EMPTY_MENUS : EMPTY_MENUS
+  const isLoading = !isError && (userQuery.isPending || menuQuery.isPending)
+  const user = !isError && !isLoading ? userQuery.data ?? null : null
+  const allowedMenus = !isError && !isLoading ? menuQuery.data ?? EMPTY_MENUS : EMPTY_MENUS
 
   const permissionsById = useMemo(() => {
     const permissions = new Map<string, NavigationPermissions>()
