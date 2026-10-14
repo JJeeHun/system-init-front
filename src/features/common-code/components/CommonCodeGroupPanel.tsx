@@ -1,4 +1,6 @@
 import type { FormEventHandler } from "react"
+
+import { CrudActions } from "@/app/navigation/CrudActions"
 import { useAppTranslation } from "@/shared/i18n"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
@@ -198,27 +200,20 @@ export function CommonCodeGroupPanel({
         title={t("common-code:group.title")}
         description={t("common-code:group.description")}
         actions={
-          <>
-            <Button primary size="sm" disabled={form.isPending || form.isDeleting} onClick={form.startCreate}>
-              {t("common-code:group.create")}
-            </Button>
-            <Button
-              size="sm"
-              disabled={!selectedGroupId || form.isPending || form.isDeleting}
-              onClick={form.startEdit}
-            >
-              {t("common:actions.edit")}
-            </Button>
-            <Button
-              error
-              size="sm"
-              disabled={!selectedGroupId || form.isPending || form.isDeleting}
-              onClick={form.delete}
-              loading={form.isDeleting}
-            >
-              {form.isDeleting ? t("common:actions.deleting") : t("common:actions.delete")}
-            </Button>
-          </>
+          <CrudActions
+            menuId="common-code"
+            onCreate={form.startCreate}
+            onEdit={form.startEdit}
+            onDelete={form.delete}
+            showEdit={selectedGroupId !== null}
+            showDelete={selectedGroupId !== null}
+            createLabel={t("common-code:group.create")}
+            createDisabled={form.isPending || form.isDeleting}
+            editDisabled={form.isPending || form.isDeleting}
+            deleteDisabled={form.isPending || form.isDeleting}
+            deleteLoading={form.isDeleting}
+            deleteLabel={form.isDeleting ? t("common:actions.deleting") : t("common:actions.delete")}
+          />
         }
       />
 
