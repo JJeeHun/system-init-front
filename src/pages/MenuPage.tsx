@@ -1,13 +1,14 @@
-import { useNavigationStore } from "@/app/navigation/use-navigation-store"
-import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
+import { useAuth } from "@/app/auth/AuthProvider"
+import { findMenuByPath, findRootMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { useAppTranslation } from "@/shared/i18n"
 import { PageLayout } from "@/shared/layout/page"
 import { PageHeader } from "@/shared/ui/page-header"
 
 export function MenuPage({ path }: { path: string }) {
   const { t } = useAppTranslation()
-  const currentMenu = useNavigationStore((state) => state.findMenu(path))
-  const rootMenu = useNavigationStore((state) => state.findRootMenu(path))
+  const { allowedMenus } = useAuth()
+  const currentMenu = findMenuByPath(allowedMenus, path)
+  const rootMenu = findRootMenuByPath(allowedMenus, path)
 
   if (!currentMenu) {
     return (
