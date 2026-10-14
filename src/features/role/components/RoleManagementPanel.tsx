@@ -1,4 +1,6 @@
 import { FolderIcon } from "lucide-react"
+
+import { CrudActions } from "@/app/navigation/CrudActions"
 import { Controller } from "react-hook-form"
 
 import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
@@ -77,13 +79,18 @@ function RoleList({ management }: { management: Management }) {
     <Panel>
       <Panel.Header title={t("role:list.title")} description={t("role:list.description")}
         actions={
-          <>
-            <Button primary size="sm" disabled={!management.canCreate || management.busy} onClick={management.startCreate}>{t("role:actions.add")}</Button>
-            <Button size="sm" disabled={!management.selected || management.busy} onClick={management.startEdit}>{t("common:actions.edit")}</Button>
-            <Button size="sm" error disabled={!management.canDelete || management.busy} onClick={() => void management.deleteSelected()}>
-              {t("common:actions.delete")}
-            </Button>
-          </>
+          <CrudActions
+            menuId="role"
+            onCreate={management.startCreate}
+            onEdit={management.startEdit}
+            onDelete={() => void management.deleteSelected()}
+            showEdit={management.selected !== null}
+            showDelete={management.selected !== null}
+            createLabel={t("role:actions.add")}
+            createDisabled={!management.canCreate || management.busy}
+            editDisabled={management.busy}
+            deleteDisabled={!management.canDelete || management.busy}
+          />
         } />
       <Panel.Content>
         <RoleListContent management={management} />
@@ -226,8 +233,13 @@ function RolePermissionPanel({ management }: { management: Management }) {
         actions={selected ? (
           <>
             <Button size="sm" onClick={management.cancelPermissions} disabled={!management.permissionDirty || management.busy}>{t("common:actions.cancel")}</Button>
-            <Button primary size="sm" onClick={management.savePermissions} loading={management.savingPermissions}
-              disabled={!management.permissionDirty || management.busy}>{t("common:actions.save")}</Button>
+            <CrudActions
+              menuId="role"
+              onEdit={management.savePermissions}
+              editLabel={t("common:actions.save")}
+              editDisabled={!management.permissionDirty || management.busy}
+              editLoading={management.savingPermissions}
+            />
           </>
         ) : undefined}
       />
