@@ -2,6 +2,7 @@ import { waitForMockDelay } from "@/shared/dev-tools/mock-delay"
 import { queryOptions } from "@tanstack/react-query"
 
 import type { CurrentUser } from "@/features/user/types/user.types"
+import { getAuthSession } from "@/features/auth/storage/auth-session"
 
 
 const mockCurrentUser: CurrentUser = {
@@ -12,9 +13,16 @@ const mockCurrentUser: CurrentUser = {
   centerName: "서울물류센터",
 }
 
+const mockUsers: Record<string, CurrentUser> = {
+  admin: mockCurrentUser,
+  manager: { id: "manager", name: "실무 관리자", roleId: "MANAGER", roleName: "실무 관리자", centerName: "서울물류센터" },
+  staff: { id: "staff", name: "일반 사용자", roleId: "STAFF", roleName: "일반 사용자", centerName: "서울물류센터" },
+}
+
 export async function getCurrentUser(): Promise<CurrentUser> {
   await waitForMockDelay()
-  return mockCurrentUser
+  const username = getAuthSession()?.mockUsername ?? "admin"
+  return mockUsers[username] ?? { ...mockUsers.staff, id: username, name: username }
 }
 
 export const userQueryKeys = {
