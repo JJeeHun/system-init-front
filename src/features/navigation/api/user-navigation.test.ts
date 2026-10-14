@@ -14,13 +14,13 @@ describe("current user navigation mock", () => {
   it("returns the signed-in user's menu with action permissions", async () => {
     const menus = await getNavigationMenus()
     expect(findMenuByPath(menus, "/app/system/users")?.permissions)
-      .toEqual(["view", "create", "edit", "delete"])
+      .toEqual({ isView: true, isCreated: true, isUpdated: true, isDeleted: true })
   })
 
   it("hides pages without view permission and omits empty groups", () => {
     const menus = buildVisibleMenus(getMockRolePermissions("STAFF").grants)
-    expect(findMenuByPath(menus, "/app/system/users")?.permissions).toEqual(["view"])
-    expect(findMenuByPath(menus, "/app/master/common-code")?.permissions).toEqual(["view"])
+    expect(findMenuByPath(menus, "/app/system/users")?.permissions).toEqual({ isView: true, isCreated: false, isUpdated: false, isDeleted: false })
+    expect(findMenuByPath(menus, "/app/master/common-code")?.permissions).toEqual({ isView: true, isCreated: false, isUpdated: false, isDeleted: false })
     expect(findMenuByPath(menus, "/app/system/roles")).toBeNull()
     expect(findMenuByPath(menus, "/app/system/menus")).toBeNull()
     expect(buildVisibleMenus([])).toEqual([])
@@ -28,7 +28,7 @@ describe("current user navigation mock", () => {
 
   it("shows only the delegated actions for a manager", () => {
     const menus = buildVisibleMenus(getMockRolePermissions("MANAGER").grants)
-    expect(findMenuByPath(menus, "/app/system/users")?.permissions).toEqual(["view", "create", "edit"])
+    expect(findMenuByPath(menus, "/app/system/users")?.permissions).toEqual({ isView: true, isCreated: true, isUpdated: true, isDeleted: false })
     expect(findMenuByPath(menus, "/app/master/common-code")).toBeNull()
   })
 
@@ -46,6 +46,6 @@ describe("current user navigation mock", () => {
     })
     const menus = buildVisibleMenus(getMockRolePermissions("SYSTEM").grants, true)
     expect(findMenuByPath(menus, "/app/system/custom")?.permissions)
-      .toEqual(["view", "create", "edit", "delete"])
+      .toEqual({ isView: true, isCreated: true, isUpdated: true, isDeleted: true })
   })
 })
