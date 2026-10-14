@@ -15,6 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ScrollArea } from "@/shared/components/ui/scroll-area"
 import { Button } from "@/shared/ui/button"
 import { CrudActions } from "@/shared/ui/crud-actions"
+import { usePageActionPermission } from "@/shared/ui/page-permissions"
 import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
 import { Panel } from "@/shared/ui/panel"
@@ -71,7 +72,7 @@ function MenuList({ management }: { management: MenuManagement }) {
       <Panel.Header
         title={t("navigation:management.treeTitle")}
         description={t("navigation:management.treeDescription")}
-        actions={<CrudActions menuId="menu-management" onCreate={() => management.startCreate()}
+        actions={<CrudActions onCreate={() => management.startCreate()}
           createLabel={t("navigation:management.addRoot")} createDisabled={management.saving || management.deleting} />}
       />
       <Panel.Content>
@@ -119,7 +120,6 @@ function MenuDetails({ management }: { management: MenuManagement }) {
         description={selected ? management.selectedPath : t("navigation:management.choose")}
         actions={selected ? (
           <CrudActions
-            menuId="menu-management"
             onCreate={() => management.startCreate(selected.id)}
             onEdit={management.startEdit}
             onDelete={() => void management.deleteSelected()}
@@ -163,6 +163,7 @@ function MenuDetails({ management }: { management: MenuManagement }) {
 function MenuFormDialog({ management }: { management: MenuManagement }) {
   const { t } = useAppTranslation()
   const { form, mode, saving } = management
+  const canSubmit = usePageActionPermission(mode === "create" ? "create" : "edit")
   const kind = useWatch({ control: form.control, name: "kind" })
   const excluded = new Set<string>()
   if (mode === "edit" && management.selected) {
@@ -186,7 +187,10 @@ function MenuFormDialog({ management }: { management: MenuManagement }) {
       title={t(mode === "create" ? "navigation:management.create" : "navigation:management.edit")}
       onOpenChange={(open) => { if (!open && !saving) management.cancel() }}
     >
-      <DefaultForm onSubmit={management.submit}>
+      <DefaultForm onSubmit={event => {
+        if (!canSubmit) { event.preventDefault(); return }
+        management.submit(event)
+      }}>
         <Field required={mode === "create"} readOnly={mode === "edit"}
           description={mode === "edit" ? t("common:labels.immutableAfterCreate") : undefined}
           label={t("navigation:management.fields.id")} htmlFor="menu-editor-id" error={t(form.formState.errors.id?.message)}>
@@ -258,7 +262,7 @@ function MenuFormDialog({ management }: { management: MenuManagement }) {
         </Field>
         <DefaultForm.Actions>
           <Button size="sm" disabled={saving} onClick={management.cancel}>{t("common:actions.cancel")}</Button>
-          <Button size="sm" type="submit" primary loading={saving}>{t("common:actions.save")}</Button>
+          <Button size="sm" type="submit" primary loading={saving} disabled={!canSubmit}>{t("common:actions.save")}</Button>
         </DefaultForm.Actions>
       </DefaultForm>
     </Dialog>
