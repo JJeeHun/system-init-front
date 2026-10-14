@@ -1,11 +1,13 @@
+import { useEffect } from "react"
+import { useLocation } from "react-router-dom"
+
+import { useAuth } from "@/app/auth/AuthProvider"
 import { AppHeader } from "@/app/layouts/AppHeader"
-import { NavigationBridge } from "@/app/navigation/NavigationBridge"
 import { useNavigationStore } from "@/app/navigation/use-navigation-store"
 import { TabWorkspace } from "@/app/routing/TabWorkspace"
 import { useLogout } from "@/features/auth/hooks/use-logout"
 import { Sidebar } from "@/features/navigation/components/Sidebar"
-import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
-import { useCurrentUser } from "@/features/user/hooks/use-current-user"
+import { findRootMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { config } from "@/shared/config/config"
 import { useAppTranslation } from "@/shared/i18n"
 import { CrudPermissionsProvider } from "@/shared/ui/crud-actions"
@@ -13,21 +15,21 @@ import { Skeleton } from "@/shared/components/ui/skeleton"
 
 export function MainLayout() {
   const { t } = useAppTranslation()
-  const menus = useNavigationStore((state) => state.menus)
-  const menuIndex = useNavigationStore((state) => state.menuIndex)
-  const hasLoadedMenus = useNavigationStore((state) => state.hasLoadedMenus)
-  const isLoading = useNavigationStore((state) => state.isLoading)
-  const isError = useNavigationStore((state) => state.isError)
+  const { pathname } = useLocation()
+  const { user, allowedMenus: menus, isLoading, isError, getMenuPermissions } = useAuth()
   const selectedRootId = useNavigationStore((state) => state.selectedRootId)
-  const routeRootMenu = useNavigationStore((state) => state.findRootMenu(state.currentPath))
   const mobileSidebarOpen = useNavigationStore((state) => state.isMobileSidebarOpen)
   const desktopSidebarExpanded = useNavigationStore((state) => state.isDesktopSidebarExpanded)
   const selectRootMenu = useNavigationStore((state) => state.selectRootMenu)
   const openMobileSidebar = useNavigationStore((state) => state.openMobileSidebar)
   const closeMobileSidebar = useNavigationStore((state) => state.closeMobileSidebar)
   const toggleDesktopSidebar = useNavigationStore((state) => state.toggleDesktopSidebar)
-  const currentUser = useCurrentUser()
   const logout = useLogout()
+
+  const routeRootMenu = findRootMenuByPath(menus, pathname)
+  useEffect(() => {
+    if (routeRootMenu) selectRootMenu(routeRootMenu.id)
+  }, [pathname, menus, selectRootMenu])
 
   const selectedRootMenu = menus.find((menu) => menu.id === selectedRootId) ?? routeRootMenu ?? menus[0] ?? null
   const sidebarMenus = selectedRootMenu?.children ?? []
@@ -35,17 +37,16 @@ export function MainLayout() {
 
   return (
     <CrudPermissionsProvider
-      resolvePermissions={menuId => Object.values(menuIndex).find(entry => entry.menu.id === menuId)?.menu.permissions}
-      bypassPermissions={config.app.canBypassCrudPermissions(currentUser.data?.roleId)}
+      resolvePermissions={getMenuPermissions}
+      bypassPermissions={config.app.canBypassCrudPermissions(user?.roleId)}
     >
       <div className="flex h-dvh w-full min-w-0 flex-col overflow-hidden bg-background">
-      <NavigationBridge />
       <AppHeader
         menus={menus}
         menuLoading={isLoading}
-        user={currentUser.data ?? null}
-        userLoading={currentUser.isLoading}
-        userError={currentUser.isError}
+        user={user}
+        userLoading={isLoading}
+        userError={isError}
         activeRootId={selectedRootMenu?.id}
         desktopSidebarOpen={desktopSidebarExpanded}
         mobileSidebarOpen={mobileSidebarOpen}
@@ -75,13 +76,13 @@ export function MainLayout() {
 
         <main className="flex min-h-0 min-w-0 flex-col overflow-hidden">
           <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-            {!hasLoadedMenus && isLoading ? (
+            {isLoading ? (
               <div role="status" aria-label={t("navigation:layout.loading")} className="grid gap-4 px-page-x py-page-y">
                 <span className="sr-only">{t("navigation:layout.loadingDescription")}</span>
                 <Skeleton className="h-7 w-1/3" />
                 <Skeleton className="h-32 w-full" />
               </div>
-            ) : !hasLoadedMenus && isError ? (
+            ) : isError ? (
               <div role="alert" className="px-page-x py-page-y text-sm text-destructive">
                 {t("navigation:layout.loadFailed")}
               </div>

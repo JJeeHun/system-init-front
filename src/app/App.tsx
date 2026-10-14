@@ -1,6 +1,7 @@
 import { useEffect, useRef, useSyncExternalStore } from "react"
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom"
 
+import { AuthProvider } from "@/app/auth/AuthProvider"
 import { AuthLayout } from "@/app/layouts/AuthLayout"
 import { MainLayout } from "@/app/layouts/MainLayout"
 import { app } from "@/app/routing/route-metadata"
@@ -37,7 +38,9 @@ export default function App() {
           path="/app/*"
           element={
             <RequireAuth>
-              <MainLayout />
+              <AuthProvider>
+                <MainLayout />
+              </AuthProvider>
             </RequireAuth>
           }
         />

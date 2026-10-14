@@ -1,10 +1,10 @@
 import { Activity, memo, useLayoutEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 
+import { useAuth } from "@/app/auth/AuthProvider"
 import { navigationSettings } from "@/app/navigation/navigation-settings"
-import { useNavigationStore } from "@/app/navigation/use-navigation-store"
 import { app, resolveRoute } from "@/app/routing/route-metadata"
-import { getMenuLabel } from "@/features/navigation/lib/navigation-menu"
+import { findMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
 import { useAppTranslation } from "@/shared/i18n"
 
@@ -37,28 +37,25 @@ function StandalonePage({ path }: { path: string }) {
 export function TabWorkspace() {
   const { pathname } = useLocation()
   const navigate = useNavigate()
-  const menuIndex = useNavigationStore((state) => state.menuIndex)
-  const hasLoadedMenus = useNavigationStore((state) => state.hasLoadedMenus)
-  const findMenu = useNavigationStore((state) => state.findMenu)
-  const canAccess = useNavigationStore((state) => state.canAccess)
+  const { allowedMenus, isLoading, isError, canAccessRoute } = useAuth()
   const { t } = useAppTranslation()
   const current = resolveRoute(pathname)
   const activePath = navigationSettings.tabsEnabled && current?.route.mode === "tab" ? pathname : null
   const [openPaths, setOpenPaths] = useState<string[]>(() => activePath ? [activePath] : [])
 
   useLayoutEffect(() => {
-    if (!activePath || !canAccess(activePath)) return
+    if (!activePath || !canAccessRoute(activePath)) return
     setOpenPaths((previous) => previous.includes(activePath) ? previous : [...previous, activePath])
-  }, [activePath, canAccess, menuIndex])
+  }, [activePath, canAccessRoute])
 
   useLayoutEffect(() => {
-    if (!hasLoadedMenus) return
+    if (isLoading || isError) return
     setOpenPaths((previous) => {
-      const allowed = previous.filter(canAccess)
+      const allowed = previous.filter(canAccessRoute)
       return allowed.length === previous.length ? previous : allowed
     })
-    if (!canAccess(pathname)) navigate(app.forbidden.path, { replace: true })
-  }, [hasLoadedMenus, menuIndex, pathname, canAccess, navigate])
+    if (!canAccessRoute(pathname)) navigate(app.forbidden.path, { replace: true })
+  }, [isLoading, isError, pathname, canAccessRoute, navigate])
 
   const closeTab = (path: string) => {
     const remaining = openPaths.filter((openPath) => openPath !== path)
@@ -67,7 +64,7 @@ export function TabWorkspace() {
   }
 
   const tabs = openPaths.map((path) => {
-    const menu = findMenu(path)
+    const menu = findMenuByPath(allowedMenus, path)
     const match = resolveRoute(path)
     return {
       path,
@@ -75,7 +72,7 @@ export function TabWorkspace() {
     }
   })
 
-  if (!hasLoadedMenus || !canAccess(pathname)) return null
+  if (isLoading || isError || !canAccessRoute(pathname)) return null
 
   if (!navigationSettings.tabsEnabled) {
     return (
