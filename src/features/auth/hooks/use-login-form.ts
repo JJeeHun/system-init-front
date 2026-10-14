@@ -27,8 +27,8 @@ export function useLoginForm() {
 
   const loginMutation = useMutation({
     ...authMutations.login(),
-    onSuccess: ({ accessToken, expiresIn }) => {
-      setAuthSession(accessToken, expiresIn)
+    onSuccess: ({ accessToken, expiresIn }, request) => {
+      setAuthSession(accessToken, expiresIn, request.username.trim().toLowerCase())
       queryClient.removeQueries()
       const from = (location.state as { from?: unknown } | null)?.from
       navigate(typeof from === "string" && (from === "/app" || from.startsWith("/app/")) ? from : "/app", { replace: true })
