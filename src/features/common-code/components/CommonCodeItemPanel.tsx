@@ -1,4 +1,6 @@
 import type { FormEventHandler } from "react"
+
+import { CrudActions } from "@/app/navigation/CrudActions"
 import { useAppTranslation } from "@/shared/i18n"
 import type { UseFormRegisterReturn } from "react-hook-form"
 
@@ -163,32 +165,20 @@ export function CommonCodeItemPanel({
         title={t("common-code:item.title")}
         description={group ? `${group.code} · ${group.name}` : t("common-code:item.description")}
         actions={
-          <>
-            <Button
-              primary
-              size="sm"
-              disabled={!group || form.isPending || form.isDeleting}
-              onClick={form.startCreate}
-            >
-              {t("common-code:item.create")}
-            </Button>
-            <Button
-              size="sm"
-              disabled={!selectedItem || form.isPending || form.isDeleting}
-              onClick={form.startEdit}
-            >
-              {t("common:actions.edit")}
-            </Button>
-            <Button
-              error
-              size="sm"
-              disabled={!selectedItem || form.isPending || form.isDeleting}
-              onClick={form.delete}
-              loading={form.isDeleting}
-            >
-              {form.isDeleting ? t("common:actions.deleting") : t("common:actions.delete")}
-            </Button>
-          </>
+          <CrudActions
+            menuId="common-code"
+            onCreate={form.startCreate}
+            onEdit={form.startEdit}
+            onDelete={form.delete}
+            showEdit={selectedItem !== null}
+            showDelete={selectedItem !== null}
+            createLabel={t("common-code:item.create")}
+            createDisabled={!group || form.isPending || form.isDeleting}
+            editDisabled={form.isPending || form.isDeleting}
+            deleteDisabled={form.isPending || form.isDeleting}
+            deleteLoading={form.isDeleting}
+            deleteLabel={form.isDeleting ? t("common:actions.deleting") : t("common:actions.delete")}
+          />
         }
       />
 
