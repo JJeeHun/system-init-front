@@ -1,4 +1,6 @@
 import { Controller } from "react-hook-form"
+
+import { CrudActions } from "@/app/navigation/CrudActions"
 import { useAppTranslation } from "@/shared/i18n"
 
 import { RoleCombobox } from "@/features/role/components/RoleCombobox"
@@ -129,16 +131,24 @@ function UserList({ management }: { management: Management }) {
         errorMessage={management.loadError}
         actions={
           <>
-            <Button primary size="sm" disabled={management.saving || management.statusPending} onClick={management.startCreate}>
-              {t("user:actions.create")}
-            </Button>
-            <Button size="sm" disabled={!selected || management.saving || management.statusPending} onClick={management.startEdit}>
-              {t("common:actions.edit")}
-            </Button>
-            <Button size="sm" error={!!selected?.enabled} disabled={!selected || management.saving || management.statusPending}
-              loading={management.statusPending} onClick={() => void management.toggleEnabled()}>
-              {t(selected?.enabled ? "user:actions.disable" : "user:actions.enable")}
-            </Button>
+            <CrudActions
+              menuId="user"
+              onCreate={management.startCreate}
+              onEdit={management.startEdit}
+              showEdit={selected !== null}
+              createLabel={t("user:actions.create")}
+              createDisabled={management.saving || management.statusPending}
+              editDisabled={management.saving || management.statusPending}
+            />
+            <CrudActions
+              menuId="user"
+              onEdit={() => void management.toggleEnabled()}
+              showEdit={selected !== null}
+              editLabel={t(selected?.enabled ? "user:actions.disable" : "user:actions.enable")}
+              editDisabled={management.saving || management.statusPending}
+              editLoading={management.statusPending}
+              editError={!!selected?.enabled}
+            />
           </>
         }
       />
