@@ -10,6 +10,7 @@ import { Skeleton } from "@/shared/components/ui/skeleton"
 import { DefaultForm } from "@/shared/layout/default-form"
 import { Button } from "@/shared/ui/button"
 import { CrudActions } from "@/shared/ui/crud-actions"
+import { usePageActionPermission } from "@/shared/ui/page-permissions"
 import { Dialog } from "@/shared/ui/dialog"
 import { Field } from "@/shared/ui/field"
 import { Panel } from "@/shared/ui/panel"
@@ -110,6 +111,7 @@ const GroupList = ({
 
 const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupFormProps }) => {
   const { t } = useAppTranslation()
+  const canSubmit = usePageActionPermission(form.mode === "create" ? "create" : "edit")
   if (!show) return null
 
   return (
@@ -120,7 +122,10 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
       }}
       title={t(form.mode === "create" ? "common-code:group.create" : "common-code:group.edit")}
     >
-      <DefaultForm onSubmit={form.submit}>
+      <DefaultForm onSubmit={event => {
+        if (!canSubmit) { event.preventDefault(); return }
+        form.submit(event)
+      }}>
         <Field required={form.mode === "create"} readOnly={form.mode === "edit"}
           description={form.mode === "edit" ? t("common:labels.immutableAfterCreate") : undefined}
           label={t("common-code:group.fields.code")} htmlFor="common-code-group-code" error={form.errors.code}>
@@ -176,6 +181,7 @@ const GroupFormDialog = ({ show, form }: { show: boolean; form: CommonCodeGroupF
             primary
             size="sm"
             loading={form.isPending}
+            disabled={!canSubmit}
           >
             {t("common:actions.save")}
           </Button>
@@ -201,7 +207,6 @@ export function CommonCodeGroupPanel({
         description={t("common-code:group.description")}
         actions={
           <CrudActions
-            menuId="common-code"
             onCreate={form.startCreate}
             createAriaLabel={t("common-code:group.create")}
             onEdit={form.startEdit}
