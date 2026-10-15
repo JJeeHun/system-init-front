@@ -26,7 +26,7 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
   const searchStatus = status ?? (loading ? "loading" : "idle")
   const busy = searchStatus === "loading" || searchStatus === "success"
   const canSearch = usePageActionPermission("view") && !busy && !disabled
-  const searchLabel = searchStatus === "loading"
+  const searchLabel = status === undefined ? t("common:actions.search") : searchStatus === "loading"
     ? t(searchType === "filter" ? "common:searchPanel.filterLoading" : "common:searchPanel.apiLoading")
     : searchStatus === "success" ? t("common:searchPanel.completed")
       : searchStatus === "error" ? t("common:searchPanel.failed") : t("common:actions.search")
