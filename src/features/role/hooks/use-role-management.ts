@@ -34,23 +34,25 @@ export function useRoleManagement() {
   const rolesQuery = useQuery(roleQueries.list())
   const menuQuery = useQuery(navigationQueries.management())
   const roles = rolesQuery.data ?? EMPTY_LIST
-  const allMenus = menuQuery.data ?? []
+  const allMenus = menuQuery.data ?? EMPTY_LIST
   const actorRoleId = currentUser.data?.roleId ?? null
   const actorPermissionsQuery = useQuery(roleQueries.permissions(actorRoleId))
   const actor = roles.find(role => role.id === actorRoleId) ?? null
   const actorGrants = actorPermissionsQuery.data?.grants ?? EMPTY_LIST
   const manageableRoles = useMemo(() => roles.filter(role => canManageRole(actor, role, actorGrants)), [roles, actor, actorGrants])
-  const visiblePages = allMenus.filter(menu => menu.kind === "page" && canDelegateAction(actor, menu, "view"))
-  const visibleIds = new Set(visiblePages.map(menu => menu.id))
-  for (const menu of visiblePages) {
-    let parentId = menu.parentId
-    while (parentId) {
-      if (visibleIds.has(parentId)) break
-      visibleIds.add(parentId)
-      parentId = allMenus.find(parent => parent.id === parentId)?.parentId ?? null
+  const menus = useMemo(() => {
+    const visiblePages = allMenus.filter(menu => menu.kind === "page" && canDelegateAction(actor, menu, "view"))
+    const visibleIds = new Set(visiblePages.map(menu => menu.id))
+    for (const menu of visiblePages) {
+      let parentId = menu.parentId
+      while (parentId) {
+        if (visibleIds.has(parentId)) break
+        visibleIds.add(parentId)
+        parentId = allMenus.find(parent => parent.id === parentId)?.parentId ?? null
+      }
     }
-  }
-  const menus = allMenus.filter(menu => visibleIds.has(menu.id))
+    return allMenus.filter(menu => visibleIds.has(menu.id))
+  }, [allMenus, actor, actorGrants])
   const getMenuSearchText = useCallback((menu: MenuRecord) =>
     [getMenuLabel(menu, t), menu.label, menu.id, menu.path].join(" "), [language, t])
   const menuTree = useTree({ items: menus, getSearchText: getMenuSearchText, isBranch: isMenuGroup })

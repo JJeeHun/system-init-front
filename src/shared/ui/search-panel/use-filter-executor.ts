@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 
 export type SearchType = "api" | "filter"
 export type SearchStatus = "idle" | "loading" | "success" | "error"
@@ -19,66 +19,78 @@ export function useFilterExecutor<TItem, TCriteria>(
 ) {
   const [status, setStatus] = useState<SearchStatus>("idle")
   const [result, setResult] = useState<FilterResult<TItem, TCriteria> | null>(null)
+  const [request, setRequest] = useState<{ criteria: TCriteria } | null>(null)
   const runningRef = useRef(false)
-  const itemsRef = useRef(items)
-  const filterRef = useRef(filter)
-  const framesRef = useRef<number[]>([])
-  const timersRef = useRef<number[]>([])
-  itemsRef.current = items
-  filterRef.current = filter
 
-  const cancelScheduled = useCallback(() => {
-    for (const frame of framesRef.current) window.cancelAnimationFrame(frame)
-    for (const timer of timersRef.current) window.clearTimeout(timer)
-    framesRef.current = []
-    timersRef.current = []
-  }, [])
+  useEffect(() => {
+    if (!request) return
 
-  useEffect(() => cancelScheduled, [cancelScheduled])
+    let cancelled = false
+    let completionTimer: ReturnType<typeof setTimeout> | undefined
+    const startedAt = performance.now()
+    runningRef.current = true
+    setStatus("loading")
 
-  const data = useMemo(() => {
-    if (!result) return items
-    return result.source === items ? result.data : filter(items, result.criteria)
-  }, [items, filter, result])
+    // Defer synchronous work to a new task, then settle it through a Promise.
+    const workTimer = setTimeout(() => {
+      void Promise.resolve()
+        .then(() => filter(items, request.criteria))
+        .then(data => {
+          if (cancelled) return
+          setResult({ source: items, criteria: request.criteria, data })
+          const remaining = Math.max(0, minLoadingMs - (performance.now() - startedAt))
+          completionTimer = setTimeout(() => {
+            if (!cancelled) setStatus("success")
+          }, remaining)
+        })
+        .catch(() => {
+          if (!cancelled) {
+            runningRef.current = false
+            setStatus("error")
+          }
+        })
+    }, 0)
+
+    return () => {
+      cancelled = true
+      clearTimeout(workTimer)
+      clearTimeout(completionTimer)
+    }
+  }, [request, items, filter, minLoadingMs])
+
+  useEffect(() => {
+    if (status !== "success") return
+    const timer = setTimeout(() => {
+      runningRef.current = false
+      setStatus("idle")
+    }, successFeedbackMs)
+    return () => clearTimeout(timer)
+  }, [status, successFeedbackMs])
 
   const execute = useCallback((criteria: TCriteria) => {
     if (runningRef.current) return
-    cancelScheduled()
     runningRef.current = true
-    setStatus("loading")
-    const startedAt = performance.now()
 
-    // Give React and the browser an opportunity to paint Loading before synchronous filtering.
-    const firstFrame = window.requestAnimationFrame(() => {
-      const secondFrame = window.requestAnimationFrame(() => {
-        try {
-          const source = itemsRef.current
-          const filtered = filterRef.current(source, criteria)
-          setResult({ source, criteria, data: filtered })
-          const remaining = Math.max(0, minLoadingMs - (performance.now() - startedAt))
-          timersRef.current.push(window.setTimeout(() => {
-            setStatus("success")
-            timersRef.current.push(window.setTimeout(() => {
-              runningRef.current = false
-              setStatus("idle")
-            }, successFeedbackMs))
-          }, remaining))
-        } catch {
-          runningRef.current = false
-          setStatus("error")
-        }
-      })
-      framesRef.current.push(secondFrame)
-    })
-    framesRef.current.push(firstFrame)
-  }, [cancelScheduled, minLoadingMs, successFeedbackMs])
+    if (result?.source === items && Object.is(result.criteria, criteria)) {
+      setStatus("success")
+      return
+    }
+    setStatus("loading")
+    setRequest({ criteria })
+  }, [items, result])
 
   const reset = useCallback(() => {
-    cancelScheduled()
     runningRef.current = false
+    setRequest(null)
     setResult(null)
     setStatus("idle")
-  }, [cancelScheduled])
+  }, [])
 
-  return { type: "filter" as const, status, data, execute, reset }
+  return {
+    type: "filter" as const,
+    status,
+    data: result && result.source === items ? result.data : items,
+    execute,
+    reset,
+  }
 }
