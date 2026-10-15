@@ -17,10 +17,12 @@ import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useAppTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
 import { message } from "@/shared/lib/message"
+import { useFilterExecutor } from "@/shared/ui/search-panel"
 import { useTree } from "@/shared/ui/tree"
 
 type Mode = "create" | "edit" | null
 const EMPTY_ROLE: RoleFormValues = { id: "", name: "", description: "" }
+const EMPTY_LIST: never[] = []
 
 const isMenuGroup = (menu: MenuRecord) => menu.kind === "group"
 
@@ -31,13 +33,13 @@ export function useRoleManagement() {
   const currentUser = useCurrentUser()
   const rolesQuery = useQuery(roleQueries.list())
   const menuQuery = useQuery(navigationQueries.management())
-  const roles = rolesQuery.data ?? []
+  const roles = rolesQuery.data ?? EMPTY_LIST
   const allMenus = menuQuery.data ?? []
   const actorRoleId = currentUser.data?.roleId ?? null
   const actorPermissionsQuery = useQuery(roleQueries.permissions(actorRoleId))
   const actor = roles.find(role => role.id === actorRoleId) ?? null
-  const actorGrants = actorPermissionsQuery.data?.grants ?? []
-  const manageableRoles = roles.filter(role => canManageRole(actor, role, actorGrants))
+  const actorGrants = actorPermissionsQuery.data?.grants ?? EMPTY_LIST
+  const manageableRoles = useMemo(() => roles.filter(role => canManageRole(actor, role, actorGrants)), [roles, actor, actorGrants])
   const visiblePages = allMenus.filter(menu => menu.kind === "page" && canDelegateAction(actor, menu, "view"))
   const visibleIds = new Set(visiblePages.map(menu => menu.id))
   for (const menu of visiblePages) {
@@ -58,10 +60,10 @@ export function useRoleManagement() {
   const [mode, setMode] = useState<Mode>(null)
   const roleForm = useForm<RoleFormValues>({ resolver: zodResolver(roleSchema), defaultValues: EMPTY_ROLE })
   const searchForm = useForm<RoleSearchFormValues>({ resolver: zodResolver(roleSearchSchema), defaultValues: { keyword: "" } })
-  const [keyword, setKeyword] = useState("")
-  const filteredRoles = useMemo(() => manageableRoles.filter(role =>
-    [role.id, role.name, role.description].some(value => value.toLocaleLowerCase().includes(keyword.toLocaleLowerCase())),
-  ), [roles, keyword, actorRoleId, actorGrants])
+  const filterRoles = useCallback((items: readonly (typeof manageableRoles)[number][], keyword: string) =>
+    items.filter(role => [role.id, role.name, role.description]
+      .some(value => value.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()))), [])
+  const roleSearch = useFilterExecutor(manageableRoles, filterRoles)
 
   const permissionsQuery = useQuery(roleQueries.permissions(selectedId))
   const permissionForm = useForm<RolePermissionFormValues>({ resolver: zodResolver(rolePermissionSchema), defaultValues: { grants: [] } })
@@ -205,10 +207,10 @@ export function useRoleManagement() {
   })
 
   return {
-    roles: filteredRoles, selected, selectRole, searchForm,
+    roles: roleSearch.data, selected, selectRole, searchForm, searchStatus: roleSearch.status, searchType: roleSearch.type,
     canCreate: canCreateRole(actor, actorGrants), canGrant,
-    search: searchForm.handleSubmit(values => setKeyword(values.keyword.trim())),
-    resetSearch: () => { searchForm.reset({ keyword: "" }); setKeyword("") },
+    search: searchForm.handleSubmit(values => roleSearch.execute(values.keyword.trim())),
+    resetSearch: () => { searchForm.reset({ keyword: "" }); roleSearch.reset() },
     rolesLoading: rolesQuery.isLoading, rolesError: rolesQuery.isError,
     menus, menuTree, menusLoading: menuQuery.isLoading, menusError: menuQuery.isError,
     permissionsLoading: permissionsQuery.isLoading, permissionsError: permissionsQuery.isError,

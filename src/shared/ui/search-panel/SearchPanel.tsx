@@ -7,6 +7,7 @@ import { Button } from "@/shared/ui/button"
 import { Form } from "@/shared/ui/form"
 import { Panel } from "@/shared/ui/panel"
 import { usePageActionPermission } from "@/shared/ui/page-permissions"
+import type { SearchStatus, SearchType } from "@/shared/ui/search-panel/use-filter-executor"
 
 export type SearchPanelProps = {
   children: ReactNode
@@ -14,13 +15,21 @@ export type SearchPanelProps = {
   onReset: () => void
   loading?: boolean
   disabled?: boolean
+  searchType?: SearchType
+  status?: SearchStatus
 }
 
-export function SearchPanel({ children, onSearch, onReset, loading = false, disabled = false }: SearchPanelProps) {
+export function SearchPanel({ children, onSearch, onReset, loading = false, disabled = false, searchType = "api", status }: SearchPanelProps) {
   const { t } = useAppTranslation()
   const [expanded, setExpanded] = useState(true)
   const contentId = useId()
-  const canSearch = usePageActionPermission("view") && !loading && !disabled
+  const searchStatus = status ?? (loading ? "loading" : "idle")
+  const busy = searchStatus === "loading" || searchStatus === "success"
+  const canSearch = usePageActionPermission("view") && !busy && !disabled
+  const searchLabel = searchStatus === "loading"
+    ? t(searchType === "filter" ? "common:searchPanel.filterLoading" : "common:searchPanel.apiLoading")
+    : searchStatus === "success" ? t("common:searchPanel.completed")
+      : searchStatus === "error" ? t("common:searchPanel.failed") : t("common:actions.search")
   const handleSearch: FormEventHandler<HTMLFormElement> = event => {
     if (!canSearch) {
       event.preventDefault()
@@ -48,8 +57,8 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
             <Button size="sm" disabled={!canSearch} onClick={() => { if (canSearch) onReset() }}>
               {t("common:actions.reset")}
             </Button>
-            <Button type="submit" primary size="sm" loading={loading} disabled={!canSearch}>
-              {t("common:actions.search")}
+            <Button type="submit" primary size="sm" loading={searchStatus === "loading"} disabled={!canSearch}>
+              <span aria-live="polite">{searchLabel}</span>
             </Button>
           </div>
           </Form>

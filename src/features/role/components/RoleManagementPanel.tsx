@@ -31,7 +31,8 @@ const ACTIONS: RoleAction[] = ["view", "create", "edit", "delete"]
 function RoleSearch({ management }: { management: Management }) {
   const { t } = useAppTranslation()
   return (
-    <SearchPanel onSearch={management.search} onReset={management.resetSearch}>
+    <SearchPanel onSearch={management.search} onReset={management.resetSearch}
+      searchType={management.searchType} status={management.searchStatus}>
       <div className="w-full min-w-0 sm:w-72">
         <Field label={t("role:fields.search")} htmlFor="role-search">
           <Controller control={management.searchForm.control} name="keyword" render={({ field }) => (

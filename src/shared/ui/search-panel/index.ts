@@ -1,2 +1,4 @@
 export { SearchPanel } from "@/shared/ui/search-panel/SearchPanel"
 export type { SearchPanelProps } from "@/shared/ui/search-panel/SearchPanel"
+export { useFilterExecutor } from "@/shared/ui/search-panel/use-filter-executor"
+export type { SearchStatus, SearchType } from "@/shared/ui/search-panel/use-filter-executor"

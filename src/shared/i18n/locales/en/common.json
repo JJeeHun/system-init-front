@@ -57,7 +57,11 @@
   "searchPanel": {
     "title": "Search Filters",
     "collapse": "Collapse",
-    "expand": "Expand"
+    "expand": "Expand",
+    "filterLoading": "Searching...",
+    "apiLoading": "Loading results...",
+    "completed": "Search complete",
+    "failed": "Search failed · Retry"
   },
   "pagination": {
     "pageSize": "Rows per page",
