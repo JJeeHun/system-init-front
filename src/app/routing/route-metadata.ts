@@ -3,7 +3,6 @@ import { matchPath } from "react-router-dom"
 
 import { routeDefinitions } from "@/app/routing/route-definitions"
 
-
 import type { MenuRecord } from "@/features/navigation/types/menu-management.types"
 import type { TranslationKey } from "@/shared/i18n/keys"
 
