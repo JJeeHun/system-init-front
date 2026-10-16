@@ -1,4 +1,4 @@
-import { useId, useState, type FormEventHandler, type ReactNode } from "react"
+import { useEffect, useId, useRef, useState, type FormEventHandler, type ReactNode } from "react"
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 import { useAppTranslation } from "@/shared/i18n"
@@ -22,8 +22,18 @@ export type SearchPanelProps = {
 export function SearchPanel({ children, onSearch, onReset, loading = false, disabled = false, searchType = "api", status }: SearchPanelProps) {
   const { t } = useAppTranslation()
   const [expanded, setExpanded] = useState(true)
+  const [feedback, setFeedback] = useState<SearchStatus>("idle")
+  const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const requestId = useRef(0)
+  const submitting = useRef(false)
   const contentId = useId()
-  const searchStatus = status ?? (loading ? "loading" : "idle")
+  useEffect(() => () => {
+    requestId.current += 1
+    if (feedbackTimer.current !== null) clearTimeout(feedbackTimer.current)
+  }, [])
+  const searchStatus = searchType === "filter"
+    ? loading ? "loading" : feedback
+    : status ?? (loading ? "loading" : "idle")
   const busy = searchStatus === "loading" || searchStatus === "success"
   const canSearch = usePageActionPermission("view") && !busy && !disabled
   const searchLabel = status === undefined ? t("common:actions.search") : searchStatus === "loading"
@@ -31,11 +41,44 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
     : searchStatus === "success" ? t("common:searchPanel.completed")
       : searchStatus === "error" ? t("common:searchPanel.failed") : t("common:actions.search")
   const handleSearch: FormEventHandler<HTMLFormElement> = event => {
-    if (!canSearch) {
+    if (!canSearch || (searchType === "filter" && submitting.current)) {
       event.preventDefault()
       return
     }
-    onSearch(event)
+    if (searchType !== "filter") {
+      onSearch(event)
+      return
+    }
+
+    submitting.current = true
+    const id = ++requestId.current
+    setFeedback("loading")
+    try {
+      void Promise.resolve(onSearch(event)).then(() => {
+        if (requestId.current !== id) return
+        setFeedback("success")
+        feedbackTimer.current = setTimeout(() => {
+          if (requestId.current !== id) return
+          submitting.current = false
+          setFeedback("idle")
+        }, 800)
+      }).catch(() => {
+        if (requestId.current !== id) return
+        submitting.current = false
+        setFeedback("error")
+      })
+    } catch {
+      submitting.current = false
+      setFeedback("error")
+    }
+  }
+  const handleReset = () => {
+    if (!canSearch) return
+    onReset()
+    requestId.current += 1
+    if (feedbackTimer.current !== null) clearTimeout(feedbackTimer.current)
+    submitting.current = false
+    setFeedback("idle")
   }
   return (
     <Panel>
@@ -54,7 +97,7 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
           <Form onSubmit={handleSearch} className="grid min-w-0 gap-3">
           <FilterBar>{children}</FilterBar>
           <div className="flex flex-wrap justify-end gap-2">
-            <Button size="sm" disabled={!canSearch} onClick={() => { if (canSearch) onReset() }}>
+            <Button size="sm" disabled={!canSearch} onClick={handleReset}>
               {t("common:actions.reset")}
             </Button>
             <Button type="submit" primary size="sm" loading={searchStatus === "loading"} disabled={!canSearch}>

@@ -17,7 +17,7 @@ import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 import { useAppTranslation } from "@/shared/i18n"
 import { dialog } from "@/shared/lib/dialog"
 import { message } from "@/shared/lib/message"
-import { useFilterExecutor } from "@/shared/ui/search-panel"
+import { useSearchExecutor } from "@/shared/ui/search-panel"
 import { useTree } from "@/shared/ui/tree"
 
 type Mode = "create" | "edit" | null
@@ -62,10 +62,12 @@ export function useRoleManagement() {
   const [mode, setMode] = useState<Mode>(null)
   const roleForm = useForm<RoleFormValues>({ resolver: zodResolver(roleSchema), defaultValues: EMPTY_ROLE })
   const searchForm = useForm<RoleSearchFormValues>({ resolver: zodResolver(roleSearchSchema), defaultValues: { keyword: "" } })
-  const filterRoles = useCallback((items: readonly (typeof manageableRoles)[number][], keyword: string) =>
-    items.filter(role => [role.id, role.name, role.description]
-      .some(value => value.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()))), [])
-  const roleSearch = useFilterExecutor(manageableRoles, filterRoles)
+  const roleSearch = useSearchExecutor({
+    queryKey: ["role", "management", rolesQuery.dataUpdatedAt, actorPermissionsQuery.dataUpdatedAt, actorRoleId],
+    queryFn: (keyword: string) => manageableRoles.filter(role =>
+      [role.id, role.name, role.description]
+        .some(value => value.toLocaleLowerCase().includes(keyword.toLocaleLowerCase()))),
+  })
 
   const permissionsQuery = useQuery(roleQueries.permissions(selectedId))
   const permissionForm = useForm<RolePermissionFormValues>({ resolver: zodResolver(rolePermissionSchema), defaultValues: { grants: [] } })
@@ -209,9 +211,10 @@ export function useRoleManagement() {
   })
 
   return {
-    roles: roleSearch.data, selected, selectRole, searchForm, searchStatus: roleSearch.status, searchType: roleSearch.type,
+    roles: roleSearch.data ?? manageableRoles, selected, selectRole, searchForm,
+    searchLoading: roleSearch.isFetching, searchType: roleSearch.type,
     canCreate: canCreateRole(actor, actorGrants), canGrant,
-    search: searchForm.handleSubmit(values => roleSearch.execute(values.keyword.trim())),
+    search: searchForm.handleSubmit(async values => { await roleSearch.execute(values.keyword.trim()) }),
     resetSearch: () => { searchForm.reset({ keyword: "" }); roleSearch.reset() },
     rolesLoading: rolesQuery.isLoading, rolesError: rolesQuery.isError,
     menus, menuTree, menusLoading: menuQuery.isLoading, menusError: menuQuery.isError,
