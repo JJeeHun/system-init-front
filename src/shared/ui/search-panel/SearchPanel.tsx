@@ -7,6 +7,7 @@ import { Button } from "@/shared/ui/button"
 import { Form } from "@/shared/ui/form"
 import { Panel } from "@/shared/ui/panel"
 import { usePageActionPermission } from "@/shared/ui/page-permissions"
+
 export type SearchType = "api" | "filter"
 export type SearchStatus = "idle" | "loading" | "success" | "error"
 
