@@ -60,4 +60,51 @@ describe("search executor", () => {
     await waitFor(() => expect(callback).toHaveBeenCalledTimes(2))
     expect(result.current.data).toEqual(["alpha"])
   })
+
+  it("deduplicates in-flight searches and hides results after reset", async () => {
+    let resolveSearch!: (items: string[]) => void
+    const callback = vi.fn(() => new Promise<string[]>(resolve => { resolveSearch = resolve }))
+    const { result } = renderHook(() => useSearchExecutor({
+      queryKey: ["role", "pending"],
+      queryFn: callback,
+      minLoadingMs: 0,
+    }), { wrapper: createWrapper() })
+
+    let first!: Promise<string[]>
+    let second!: Promise<string[]>
+    act(() => {
+      first = result.current.execute("alpha")
+      second = result.current.execute("alpha")
+    })
+    await waitFor(() => expect(callback).toHaveBeenCalledTimes(1))
+
+    act(() => { result.current.reset() })
+    await act(async () => {
+      resolveSearch(["alpha"])
+      await Promise.all([first, second])
+    })
+    expect(result.current.data).toBeUndefined()
+    expect(callback).toHaveBeenCalledTimes(1)
+  })
+
+  it("reports errors and allows another search afterwards", async () => {
+    const callback = vi.fn((value: string) => {
+      if (value === "error") throw new Error("filter failed")
+      return [value]
+    })
+    const { result } = renderHook(() => useSearchExecutor({
+      queryKey: ["role", "error"],
+      queryFn: callback,
+      minLoadingMs: 0,
+    }), { wrapper: createWrapper() })
+
+    await act(async () => {
+      await expect(result.current.execute("error")).rejects.toThrow("filter failed")
+    })
+    await waitFor(() => expect(result.current.isError).toBe(true))
+
+    await act(async () => { await result.current.execute("beta") })
+    expect(result.current.data).toEqual(["beta"])
+    expect(result.current.isError).toBe(false)
+  })
 })
