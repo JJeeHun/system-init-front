@@ -30,12 +30,15 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
   const feedbackTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const requestId = useRef(0)
   const submitting = useRef(false)
+  const hasSubmitted = useRef(false)
   const contentId = useId()
   useEffect(() => () => {
     requestId.current += 1
     if (feedbackTimer.current !== null) clearTimeout(feedbackTimer.current)
   }, [])
-  const searchStatus = feedback === "idle" ? status ?? (loading ? "loading" : "idle") : feedback
+  const searchStatus = feedback === "idle"
+    ? status ?? (!hasSubmitted.current && loading ? "loading" : "idle")
+    : feedback
   const busy = searchStatus === "loading" || searchStatus === "success"
   const permitted = usePageActionPermission("view") && !disabled
   const canSearch = permitted && !busy
@@ -53,6 +56,7 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
     }
 
     submitting.current = true
+    hasSubmitted.current = true
     const id = ++requestId.current
     setFeedback("loading")
     try {
@@ -80,6 +84,7 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
     requestId.current += 1
     if (feedbackTimer.current !== null) clearTimeout(feedbackTimer.current)
     submitting.current = false
+    hasSubmitted.current = false
     setFeedback("idle")
   }
   return (
