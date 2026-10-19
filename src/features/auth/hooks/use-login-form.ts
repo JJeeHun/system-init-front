@@ -7,6 +7,7 @@ import { AppError } from "@/shared/lib/app-error"
 import { useMutationLock } from "@/shared/hooks/use-mutation-lock"
 
 import { authMutations } from "@/features/auth/api/auth.api"
+import { clearAuthQueryCache } from "@/features/auth/lib/auth-query-cache"
 import { setAuthSession } from "@/features/auth/storage/auth-session"
 import { loginSchema, type LoginFormValues } from "@/features/auth/schemas/login.schema"
 
@@ -28,10 +29,12 @@ export function useLoginForm() {
   const loginMutation = useMutation({
     ...authMutations.login(),
     onSuccess: ({ accessToken, expiresIn }, request) => {
+      clearAuthQueryCache(queryClient)
       setAuthSession(accessToken, expiresIn, request.username.trim().toLowerCase())
-      queryClient.removeQueries()
-      const from = (location.state as { from?: unknown } | null)?.from
-      navigate(typeof from === "string" && (from === "/app" || from.startsWith("/app/")) ? from : "/app", { replace: true })
+      const state = location.state as { from?: unknown; reason?: unknown } | null
+      const from = state?.from
+      const restorePath = state?.reason !== "expired" && state?.reason !== "unauthorized"
+      navigate(restorePath && typeof from === "string" && (from === "/app" || from.startsWith("/app/")) ? from : "/app", { replace: true })
     },
   })
 
