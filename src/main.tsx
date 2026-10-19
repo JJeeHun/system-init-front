@@ -6,6 +6,7 @@ import { MutationCache, QueryCache, QueryClient, QueryClientProvider } from "@ta
 import "@/shared/i18n"
 import App from "@/app/App"
 import { handleAuthResponseError } from "@/features/auth/api/auth-response"
+import { subscribeAuthQueryCache } from "@/features/auth/lib/auth-query-cache"
 import { Toaster } from "@/shared/components/ui/sonner"
 import { GlobalDialogHost } from "@/shared/ui/confirm-dialog/GlobalDialogHost"
 import { notifyGlobalError } from "@/shared/lib/message-error"
@@ -36,6 +37,8 @@ const queryClient = new QueryClient({
     },
   },
 })
+
+subscribeAuthQueryCache(queryClient)
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
