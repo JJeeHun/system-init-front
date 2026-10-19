@@ -8,6 +8,8 @@ import { Form } from "@/shared/ui/form"
 import { Panel } from "@/shared/ui/panel"
 import { usePageActionPermission } from "@/shared/ui/page-permissions"
 
+const COMPLETION_FEEDBACK_MS = 800
+
 export type SearchType = "api" | "filter"
 export type SearchStatus = "idle" | "loading" | "success" | "error"
 
@@ -34,7 +36,7 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
     if (feedbackTimer.current !== null) clearTimeout(feedbackTimer.current)
   }, [])
   const searchStatus = searchType === "filter"
-    ? loading ? "loading" : feedback
+    ? feedback === "idle" && loading ? "loading" : feedback
     : status ?? (loading ? "loading" : "idle")
   const busy = searchStatus === "loading" || searchStatus === "success"
   const canSearch = usePageActionPermission("view") && !busy && !disabled
@@ -63,7 +65,7 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
           if (requestId.current !== id) return
           submitting.current = false
           setFeedback("idle")
-        }, 800)
+        }, COMPLETION_FEEDBACK_MS)
       }).catch(() => {
         if (requestId.current !== id) return
         submitting.current = false
