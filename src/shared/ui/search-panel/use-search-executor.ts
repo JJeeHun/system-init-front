@@ -1,30 +1,22 @@
 import { useCallback, useState } from "react"
 import { useQuery, useQueryClient, type QueryKey } from "@tanstack/react-query"
 
-const MIN_LOADING_MS = 300
-
 type SearchExecutorOptions<TData, TCriteria> = {
   queryKey: QueryKey
   queryFn: (criteria: TCriteria) => TData | Promise<TData>
+  /** @deprecated Search feedback timing is managed by SearchPanel. */
   minLoadingMs?: number
 }
 
 export function useSearchExecutor<TData, TCriteria>({
   queryKey,
   queryFn,
-  minLoadingMs = MIN_LOADING_MS,
 }: SearchExecutorOptions<TData, TCriteria>) {
   const queryClient = useQueryClient()
   const [request, setRequest] = useState<{ criteria: TCriteria } | null>(null)
 
   const getKey = (criteria: TCriteria): QueryKey => ["filter", ...queryKey, { criteria }]
-  const run = (criteria: TCriteria) => async () => {
-    const [data] = await Promise.all([
-      Promise.resolve().then(() => queryFn(criteria)),
-      new Promise<void>(resolve => setTimeout(resolve, minLoadingMs)),
-    ])
-    return data
-  }
+  const run = (criteria: TCriteria) => () => queryFn(criteria)
 
   const query = useQuery({
     queryKey: request ? getKey(request.criteria) : ["filter", ...queryKey, { active: false }],
@@ -42,7 +34,7 @@ export function useSearchExecutor<TData, TCriteria>({
       queryFn: run(criteria),
       staleTime: Infinity,
     })
-  }, [queryClient, queryKey, queryFn, minLoadingMs])
+  }, [queryClient, queryKey, queryFn])
 
   const reset = useCallback(() => setRequest(null), [])
 
