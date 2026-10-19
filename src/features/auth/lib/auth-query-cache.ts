@@ -12,6 +12,8 @@ export function clearAuthQueryCache(queryClient: QueryClient) {
 
 export function subscribeAuthQueryCache(queryClient: QueryClient) {
   return subscribeAuthSession(() => {
-    if (getAuthSessionToken() === null) clearAuthQueryCache(queryClient)
+    if (getAuthSessionToken() !== null) return
+    clearAuthQueryCache(queryClient)
+    queryClient.getMutationCache().clear()
   })
 }
