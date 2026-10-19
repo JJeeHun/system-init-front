@@ -24,6 +24,7 @@ function seededClient() {
   const queryClient = new QueryClient()
   for (const key of protectedKeys) queryClient.setQueryData([...key], "previous-account")
   queryClient.setQueryData(["common-code", "groups"], "shared-data")
+  queryClient.getMutationCache().build(queryClient, { mutationFn: async () => "previous-account" })
   return queryClient
 }
 
@@ -47,6 +48,7 @@ describe("account-scoped React Query cache", () => {
 
     clearAuthSession()
     expectAccountCacheCleared(client)
+    expect(client.getMutationCache().getAll()).toHaveLength(0)
     unsubscribe()
   })
 
@@ -61,6 +63,7 @@ describe("account-scoped React Query cache", () => {
     expect(getAuthSessionToken()).toBeNull()
     expect(getSessionEndReason()).toBe("expired")
     expectAccountCacheCleared(client)
+    expect(client.getMutationCache().getAll()).toHaveLength(0)
     unsubscribe()
   })
 
@@ -71,11 +74,13 @@ describe("account-scoped React Query cache", () => {
 
     handleAuthResponseError(new AppError("AUTH_FORBIDDEN", "forbidden"))
     expect(client.getQueryData(["user", "current"])).toBe("previous-account")
+    expect(client.getMutationCache().getAll()).toHaveLength(1)
 
     handleAuthResponseError(new AppError("AUTH_UNAUTHORIZED", "unauthorized"))
     expect(getAuthSessionToken()).toBeNull()
     expect(getSessionEndReason()).toBe("unauthorized")
     expectAccountCacheCleared(client)
+    expect(client.getMutationCache().getAll()).toHaveLength(0)
     unsubscribe()
   })
 
