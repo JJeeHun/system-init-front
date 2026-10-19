@@ -35,22 +35,20 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
     requestId.current += 1
     if (feedbackTimer.current !== null) clearTimeout(feedbackTimer.current)
   }, [])
-  const searchStatus = searchType === "filter"
-    ? feedback === "idle" && loading ? "loading" : feedback
-    : status ?? (loading ? "loading" : "idle")
+  const searchStatus = feedback === "idle" ? status ?? (loading ? "loading" : "idle") : feedback
   const busy = searchStatus === "loading" || searchStatus === "success"
-  const canSearch = usePageActionPermission("view") && !busy && !disabled
-  const searchLabel = searchType === "api" && status === undefined ? t("common:actions.search") : searchStatus === "loading"
+  const permitted = usePageActionPermission("view") && !disabled
+  const canSearch = permitted && !busy
+  const canReset = permitted && (feedback === "idle" ? !busy : !loading)
+  const searchLabel = feedback === "idle" && searchType === "api" && status === undefined
+    ? t("common:actions.search")
+    : searchStatus === "loading"
     ? t(searchType === "filter" ? "common:searchPanel.filterLoading" : "common:searchPanel.apiLoading")
     : searchStatus === "success" ? t("common:searchPanel.completed")
       : searchStatus === "error" ? t("common:searchPanel.failed") : t("common:actions.search")
   const handleSearch: FormEventHandler<HTMLFormElement> = event => {
-    if (!canSearch || (searchType === "filter" && submitting.current)) {
+    if (!canSearch || submitting.current) {
       event.preventDefault()
-      return
-    }
-    if (searchType !== "filter") {
-      onSearch(event)
       return
     }
 
@@ -77,7 +75,7 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
     }
   }
   const handleReset = () => {
-    if (!canSearch) return
+    if (!canReset) return
     onReset()
     requestId.current += 1
     if (feedbackTimer.current !== null) clearTimeout(feedbackTimer.current)
@@ -101,7 +99,7 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
           <Form onSubmit={handleSearch} className="grid min-w-0 gap-3">
           <FilterBar>{children}</FilterBar>
           <div className="flex flex-wrap justify-end gap-2">
-            <Button size="sm" disabled={!canSearch} onClick={handleReset}>
+            <Button size="sm" disabled={!canReset} onClick={handleReset}>
               {t("common:actions.reset")}
             </Button>
             <Button type="submit" primary size="sm" loading={searchStatus === "loading"} disabled={!canSearch}>
