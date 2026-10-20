@@ -47,6 +47,18 @@ export async function changeLanguage(language: AppLanguage): Promise<void> {
   await translationEngine.changeLanguage(language)
 }
 
+export function formatDate(value: Date | number, options?: Intl.DateTimeFormatOptions): string {
+  return new Intl.DateTimeFormat(getLanguage(), options).format(value)
+}
+
+export function formatNumber(value: number, options?: Intl.NumberFormatOptions): string {
+  return new Intl.NumberFormat(getLanguage(), options).format(value)
+}
+
+export function formatCurrency(value: number, currency: string, options?: Intl.NumberFormatOptions): string {
+  return new Intl.NumberFormat(getLanguage(), { ...options, style: "currency", currency }).format(value)
+}
+
 export function useAppTranslation() {
   const { t, i18n } = useI18nextTranslation()
   const appTranslate: TypedTranslate = (key, values) =>
