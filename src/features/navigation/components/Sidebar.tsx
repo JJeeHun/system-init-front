@@ -1,15 +1,18 @@
 import { memo, useEffect } from "react"
 import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react"
 import { NavLink } from "react-router-dom"
+
+import { MenuIcon } from "@/features/navigation/components/MenuIcon"
+import { useSelectedRootMenu } from "@/features/navigation/hooks/use-selected-root-menu"
+import { getFirstMenuPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
+import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
+
+import { Button } from "@/shared/ui/button"
+
 import { useAppTranslation } from "@/shared/i18n"
 import { useSidebarStore } from "@/shared/stores"
 
-import { MenuIcon } from "@/features/navigation/components/MenuIcon"
-import { getFirstMenuPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
-import { useSelectedRootMenu } from "@/features/navigation/hooks/use-selected-root-menu"
-import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 import { Skeleton } from "@/shared/components/ui/skeleton"
-import { Button } from "@/shared/ui/button"
 
 type SidebarProps = {
   rootMenus: NavigationMenuItem[]
