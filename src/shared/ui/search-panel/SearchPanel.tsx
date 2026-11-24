@@ -9,7 +9,7 @@ import { usePageActionPermission } from "@/shared/ui/page-permissions"
 import { useAppTranslation } from "@/shared/i18n"
 import { FilterBar } from "@/shared/layout/filter-bar"
 
-import { Spinner } from "@/shared/components/ui/spinner"
+import { Skeleton } from "@/shared/components/ui/skeleton"
 
 const COMPLETION_FEEDBACK_MS = 800
 
@@ -91,8 +91,8 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
     setFeedback("idle")
   }
   return (
-    <div className="relative min-w-0">
-      <div inert={loading} aria-busy={loading}>
+    <div className="min-w-0" aria-busy={loading}>
+      <div inert={loading}>
         <Panel>
           <Panel.Header
             title={t("common:searchPanel.title")}
@@ -108,14 +108,27 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
           <div id={contentId} hidden={!expanded}>
             <Panel.Content>
               <Form onSubmit={handleSearch} className="grid min-w-0 gap-3">
-                <FilterBar>{children}</FilterBar>
+                <div className="relative min-w-0">
+                  <FilterBar className={loading ? "opacity-0" : undefined}>{children}</FilterBar>
+                  {loading ? <Skeleton aria-hidden="true" className="absolute inset-0" /> : null}
+                </div>
                 <div className="flex flex-wrap justify-end gap-2">
-                  <Button size="sm" disabled={!canReset} onClick={handleReset}>
-                    {t("common:actions.reset")}
-                  </Button>
-                  <Button type="submit" primary size="sm" loading={searchStatus === "loading"} disabled={!canSearch}>
-                    <span aria-live="polite">{searchLabel}</span>
-                  </Button>
+                  <div className="relative flex">
+                    <div className={loading ? "flex opacity-0" : "flex"}>
+                      <Button size="sm" disabled={!canReset} onClick={handleReset}>
+                        {t("common:actions.reset")}
+                      </Button>
+                    </div>
+                    {loading ? <Skeleton aria-hidden="true" className="absolute inset-0" /> : null}
+                  </div>
+                  <div className="relative flex">
+                    <div className={loading ? "flex opacity-0" : "flex"}>
+                      <Button type="submit" primary size="sm" loading={searchStatus === "loading"} disabled={!canSearch}>
+                        <span aria-live="polite">{searchLabel}</span>
+                      </Button>
+                    </div>
+                    {loading ? <Skeleton aria-hidden="true" className="absolute inset-0" /> : null}
+                  </div>
                 </div>
               </Form>
             </Panel.Content>
@@ -123,13 +136,9 @@ export function SearchPanel({ children, onSearch, onReset, loading = false, disa
         </Panel>
       </div>
       {loading ? (
-        <div role="status" aria-live="polite"
-          className="absolute inset-0 z-10 flex items-center justify-center gap-2 rounded-lg bg-card/80 text-foreground">
-          <Spinner aria-hidden="true" className="size-5" />
-          <span className="text-sm">
-            {t(searchType === "filter" ? "common:searchPanel.filterLoading" : "common:searchPanel.apiLoading")}
-          </span>
-        </div>
+        <span role="status" aria-live="polite" className="sr-only">
+          {t(searchType === "filter" ? "common:searchPanel.filterLoading" : "common:searchPanel.apiLoading")}
+        </span>
       ) : null}
     </div>
   )
