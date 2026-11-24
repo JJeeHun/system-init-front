@@ -1,4 +1,4 @@
-import { Activity, memo, useLayoutEffect, useRef, useState } from "react"
+import { Activity, memo, useLayoutEffect, useRef } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 
@@ -9,18 +9,12 @@ import { app, resolveRoute } from "@/app/routing/route-metadata"
 import { findMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationPermissions } from "@/features/navigation/types/navigation.types"
 
-import { config } from "@/shared/config/config"
-import { useAppTranslation } from "@/shared/i18n"
 import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
 import { PagePermissionScope } from "@/shared/ui/page-permissions"
 
-type OpenTab = {
-  path: string
-  routeId: string
-  menuId: string | null
-  permissionSignature: string
-  revision: number
-}
+import { config } from "@/shared/config/config"
+import { useAppTranslation } from "@/shared/i18n"
+import { useTabsStore, type TabItem } from "@/shared/stores"
 
 function permissionSignature(permissions?: NavigationPermissions): string {
   if (!permissions) return "public"
@@ -28,7 +22,7 @@ function permissionSignature(permissions?: NavigationPermissions): string {
     .map(Boolean).map(Number).join("")
 }
 
-function createTab(path: string, getMenuPermissions: (id: string) => NavigationPermissions | undefined): OpenTab | null {
+function createTab(path: string, getMenuPermissions: (id: string) => NavigationPermissions | undefined): TabItem | null {
   const match = resolveRoute(path)
   if (!match || match.route.mode !== "tab") return null
 
@@ -43,7 +37,7 @@ function createTab(path: string, getMenuPermissions: (id: string) => NavigationP
 }
 
 type TabPageProps = {
-  tab: OpenTab
+  tab: TabItem
   active: boolean
   permissions?: NavigationPermissions
   bypassCrudPermissions: boolean
@@ -101,13 +95,12 @@ export function TabWorkspace() {
   const current = resolveRoute(pathname)
   const activePath = navigationSettings.tabsEnabled && current?.route.mode === "tab" ? pathname : null
 
-  const [openTabs, setOpenTabs] = useState<OpenTab[]>(() => {
-    const initial = activePath && canAccessRoute(activePath) ? createTab(activePath, getMenuPermissions) : null
-    return initial ? [initial] : []
-  })
+  const openTabs = useTabsStore((state) => state.openTabs)
   const lastValidPath = useRef(app.home.path)
   const closingPath = useRef<string | null>(null)
   const redirectingPath = useRef<string | null>(null)
+
+  useLayoutEffect(() => () => useTabsStore.getState().resetTabs(), [])
 
   useLayoutEffect(() => {
     if (isLoading || isError) return
@@ -135,7 +128,7 @@ export function TabWorkspace() {
     }
 
     if (!canAccessRoute(pathname)) {
-      if (changed) setOpenTabs(allowed)
+      if (changed) useTabsStore.getState().replaceTabs(allowed)
       const revoked = openTabs.some((tab) => tab.path === pathname)
       if (redirectingPath.current !== pathname) {
         redirectingPath.current = pathname
@@ -146,7 +139,7 @@ export function TabWorkspace() {
 
     if (activePath && !allowed.some((tab) => tab.path === activePath) && activePath !== closingPath.current) {
       if (allowed.length >= navigationSettings.maxOpenTabs) {
-        if (changed) setOpenTabs(allowed)
+        if (changed) useTabsStore.getState().replaceTabs(allowed)
         if (redirectingPath.current !== activePath) {
           redirectingPath.current = activePath
           toast.error(t("navigation:tabs.limitReached", { max: navigationSettings.maxOpenTabs }))
@@ -162,7 +155,7 @@ export function TabWorkspace() {
       }
     }
 
-    if (changed) setOpenTabs(allowed)
+    if (changed) useTabsStore.getState().replaceTabs(allowed)
     if (activePath !== closingPath.current) {
       lastValidPath.current = pathname
       redirectingPath.current = null
@@ -175,7 +168,7 @@ export function TabWorkspace() {
       closingPath.current = path
       navigate(remaining[remaining.length - 1]?.path ?? app.home.path, { replace: true })
     }
-    setOpenTabs(remaining)
+    useTabsStore.getState().replaceTabs(remaining)
   }
 
   const visibleTabs = openTabs.filter((tab) => canAccessRoute(tab.path))

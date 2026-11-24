@@ -1,25 +1,22 @@
 import { memo, useEffect } from "react"
 import { PanelLeftClose, PanelLeftOpen, X } from "lucide-react"
 import { NavLink } from "react-router-dom"
-import { useAppTranslation } from "@/shared/i18n"
 
 import { MenuIcon } from "@/features/navigation/components/MenuIcon"
+import { useSelectedRootMenu } from "@/features/navigation/hooks/use-selected-root-menu"
 import { getFirstMenuPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
-import { Skeleton } from "@/shared/components/ui/skeleton"
+
 import { Button } from "@/shared/ui/button"
 
+import { useAppTranslation } from "@/shared/i18n"
+import { useSidebarStore } from "@/shared/stores"
+
+import { Skeleton } from "@/shared/components/ui/skeleton"
+
 type SidebarProps = {
-  title: string
   rootMenus: NavigationMenuItem[]
-  activeRootId?: string
-  menus: NavigationMenuItem[]
   loading: boolean
-  open: boolean
-  desktopOpen: boolean
-  onClose: () => void
-  onRootSelect: (menu: NavigationMenuItem) => void
-  onToggleDesktopSidebar: () => void
 }
 
 type SidebarItemsProps = {
@@ -82,12 +79,11 @@ function SidebarItems({ menus, onNavigate, depth = 0, collapsed }: SidebarItemsP
   )
 }
 
-function SidebarHeader({
-  title,
-  desktopOpen,
-  onClose,
-  onToggleDesktopSidebar,
-}: Pick<SidebarProps, "title" | "desktopOpen" | "onClose" | "onToggleDesktopSidebar">) {
+function closeMobileSidebar() {
+  useSidebarStore.getState().setMobileOpen(false)
+}
+
+function SidebarHeader({ title, desktopOpen }: { title: string; desktopOpen: boolean }) {
   const { t } = useAppTranslation()
 
   return (
@@ -99,7 +95,7 @@ function SidebarHeader({
       <div className="hidden lg:block">
         <Button
           size="sm"
-          onClick={onToggleDesktopSidebar}
+          onClick={() => useSidebarStore.getState().toggleDesktop()}
           aria-label={t(desktopOpen ? "navigation:sidebar.collapse" : "navigation:sidebar.expand")}
           aria-expanded={desktopOpen}
           aria-controls="app-sidebar"
@@ -111,7 +107,7 @@ function SidebarHeader({
         </Button>
       </div>
       <div className="lg:hidden">
-        <Button size="sm" onClick={onClose} id="sidebar-mobile-close" aria-label={t("navigation:sidebar.close")}>
+        <Button size="sm" onClick={closeMobileSidebar} id="sidebar-mobile-close" aria-label={t("navigation:sidebar.close")}>
           <X aria-hidden="true" className="size-4" />
         </Button>
       </div>
@@ -123,7 +119,11 @@ function MobileRootNavigation({
   rootMenus,
   activeRootId,
   onRootSelect,
-}: Pick<SidebarProps, "rootMenus" | "activeRootId" | "onRootSelect">) {
+}: {
+  rootMenus: NavigationMenuItem[]
+  activeRootId?: string
+  onRootSelect: (menu: NavigationMenuItem) => void
+}) {
   const { t } = useAppTranslation()
 
   return (
@@ -149,19 +149,14 @@ function MobileRootNavigation({
   )
 }
 
-export const Sidebar = memo(function Sidebar({
-  title,
-  rootMenus,
-  activeRootId,
-  menus,
-  loading,
-  open,
-  desktopOpen,
-  onClose,
-  onRootSelect,
-  onToggleDesktopSidebar,
-}: SidebarProps) {
+export const Sidebar = memo(function Sidebar({ rootMenus, loading }: SidebarProps) {
   const { t } = useAppTranslation()
+  const { selectedRootMenu, selectRootMenu } = useSelectedRootMenu(rootMenus)
+  const open = useSidebarStore((state) => state.mobileOpen)
+  const desktopOpen = useSidebarStore((state) => state.desktopExpanded)
+  const title = selectedRootMenu ? getMenuLabel(selectedRootMenu, t) : t("navigation:sidebar.fallbackTitle")
+  const menus = selectedRootMenu?.children ?? []
+  const onRootSelect = (menu: NavigationMenuItem) => selectRootMenu(menu.id)
 
   useEffect(() => {
     if (!open) return
@@ -169,21 +164,21 @@ export const Sidebar = memo(function Sidebar({
     document.getElementById("sidebar-mobile-close")?.focus()
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
-        onClose()
+        closeMobileSidebar()
         document.getElementById("sidebar-mobile-open")?.focus()
       }
     }
 
     window.addEventListener("keydown", onKeyDown)
     return () => window.removeEventListener("keydown", onKeyDown)
-  }, [open, onClose])
+  }, [open])
 
   return (
     <>
       <button
         type="button"
         aria-label={t("navigation:sidebar.close")}
-        onClick={onClose}
+        onClick={closeMobileSidebar}
         data-open={open}
         tabIndex={open ? 0 : -1}
         className="fixed inset-x-0 bottom-0 top-[var(--layout-header-height)] z-[var(--z-backdrop)] hidden bg-backdrop data-[open=true]:block lg:hidden"
@@ -199,12 +194,10 @@ export const Sidebar = memo(function Sidebar({
         <SidebarHeader
           title={title}
           desktopOpen={desktopOpen}
-          onClose={onClose}
-          onToggleDesktopSidebar={onToggleDesktopSidebar}
         />
         <MobileRootNavigation
           rootMenus={rootMenus}
-          activeRootId={activeRootId}
+          activeRootId={selectedRootMenu?.id}
           onRootSelect={onRootSelect}
         />
         <nav className={desktopOpen ? "p-3" : "p-3 lg:p-2"} aria-label={t("navigation:sidebar.subMenu", { title })}>
@@ -214,7 +207,7 @@ export const Sidebar = memo(function Sidebar({
                 <Skeleton key={index} className="h-9 w-full" />
               ))}
             </div>
-          ) : <SidebarItems menus={menus} onNavigate={onClose} collapsed={!desktopOpen} />}
+          ) : <SidebarItems menus={menus} onNavigate={closeMobileSidebar} collapsed={!desktopOpen} />}
         </nav>
       </aside>
     </>
