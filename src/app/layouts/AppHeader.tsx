@@ -8,6 +8,7 @@ import { HeaderMenu } from "@/features/navigation/components/HeaderMenu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 import type { CurrentUser } from "@/features/user/types/user.types"
 import { useAppTranslation } from "@/shared/i18n"
+import { useSidebarStore } from "@/shared/stores"
 import { Skeleton } from "@/shared/components/ui/skeleton"
 import { Button } from "@/shared/ui/button"
 
@@ -17,11 +18,6 @@ type AppHeaderProps = {
   user: CurrentUser | null
   userLoading: boolean
   userError: boolean
-  activeRootId?: string
-  desktopSidebarOpen: boolean
-  mobileSidebarOpen: boolean
-  onRootSelect: (menu: NavigationMenuItem) => void
-  onOpenSidebar: () => void
   onLogout: () => void
 }
 
@@ -84,11 +80,10 @@ function HeaderActions({
   user,
   userLoading,
   userError,
-  mobileSidebarOpen,
-  onOpenSidebar,
   onLogout,
-}: Pick<AppHeaderProps, "user" | "userLoading" | "userError" | "mobileSidebarOpen" | "onOpenSidebar" | "onLogout">) {
+}: Pick<AppHeaderProps, "user" | "userLoading" | "userError" | "onLogout">) {
   const { t, language, changeLanguage } = useAppTranslation()
+  const mobileSidebarOpen = useSidebarStore((state) => state.mobileOpen)
 
   return (
     <div className="flex items-center gap-2 px-3">
@@ -117,7 +112,7 @@ function HeaderActions({
         <Button
           header
           size="sm"
-          onClick={onOpenSidebar}
+          onClick={() => useSidebarStore.getState().setMobileOpen(true)}
           aria-label={t("navigation:header.mobileOpen")}
           aria-expanded={mobileSidebarOpen}
           aria-controls="app-sidebar"
@@ -136,13 +131,10 @@ export function AppHeader({
   user,
   userLoading,
   userError,
-  activeRootId,
-  desktopSidebarOpen,
-  mobileSidebarOpen,
-  onRootSelect,
-  onOpenSidebar,
   onLogout,
 }: AppHeaderProps) {
+  const desktopSidebarOpen = useSidebarStore((state) => state.desktopExpanded)
+
   return (
     <header className={[
       "sticky top-0 z-[var(--z-sticky)] grid min-h-[var(--layout-header-height)] grid-cols-[minmax(0,1fr)_auto] border-b border-header-border bg-header text-header-foreground",
@@ -151,13 +143,11 @@ export function AppHeader({
         : "lg:grid-cols-[4.5rem_minmax(0,1fr)_auto]",
     ].join(" ")}>
       <Brand expanded={desktopSidebarOpen} />
-      <HeaderMenu menus={menus} loading={menuLoading} selectedRootId={activeRootId} onSelectRoot={onRootSelect} />
+      <HeaderMenu menus={menus} loading={menuLoading} />
       <HeaderActions
         user={user}
         userLoading={userLoading}
         userError={userError}
-        mobileSidebarOpen={mobileSidebarOpen}
-        onOpenSidebar={onOpenSidebar}
         onLogout={onLogout}
       />
     </header>
