@@ -2,15 +2,18 @@ import { Boxes, LogOut, MapPin, Menu } from "lucide-react"
 import { Link } from "react-router-dom"
 
 import { app } from "@/app/routing/route-metadata"
-import { config } from "@/shared/config/config"
 
 import { HeaderMenu } from "@/features/navigation/components/HeaderMenu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 import type { CurrentUser } from "@/features/user/types/user.types"
+
+import { Button } from "@/shared/ui/button"
+
+import { config } from "@/shared/config/config"
 import { useAppTranslation } from "@/shared/i18n"
 import { useSidebarStore } from "@/shared/stores"
+
 import { Skeleton } from "@/shared/components/ui/skeleton"
-import { Button } from "@/shared/ui/button"
 
 type AppHeaderProps = {
   menus: NavigationMenuItem[]
