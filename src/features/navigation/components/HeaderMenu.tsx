@@ -1,11 +1,12 @@
-import { useAppTranslation } from "@/shared/i18n"
-
 import { useSelectedRootMenu } from "@/features/navigation/hooks/use-selected-root-menu"
-
 import { getFirstMenuPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
-import { Skeleton } from "@/shared/components/ui/skeleton"
+
 import { Button } from "@/shared/ui/button"
+
+import { useAppTranslation } from "@/shared/i18n"
+
+import { Skeleton } from "@/shared/components/ui/skeleton"
 
 type HeaderMenuProps = {
   menus: NavigationMenuItem[]
