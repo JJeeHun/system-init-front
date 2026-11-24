@@ -1,3 +1,4 @@
+import { useLayoutEffect } from "react"
 import { useLocation } from "react-router-dom"
 
 import { findRootMenuByPath } from "@/features/navigation/lib/navigation-menu"
@@ -9,6 +10,10 @@ export function useSelectedRootMenu(menus: NavigationMenuItem[]) {
   const { pathname, key } = useLocation()
   const selectedRootMenuId = useNavigationStore((state) => state.selectedRootMenuId)
   const selectedLocationKey = useNavigationStore((state) => state.selectedLocationKey)
+
+  useLayoutEffect(() => {
+    useNavigationStore.getState().resetSelection()
+  }, [key])
 
   const selectedRootMenu = (
     selectedLocationKey === key
