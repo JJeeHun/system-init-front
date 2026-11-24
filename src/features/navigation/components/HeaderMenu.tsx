@@ -1,5 +1,7 @@
 import { useAppTranslation } from "@/shared/i18n"
 
+import { useSelectedRootMenu } from "@/features/navigation/hooks/use-selected-root-menu"
+
 import { getFirstMenuPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationMenuItem } from "@/features/navigation/types/navigation.types"
 import { Skeleton } from "@/shared/components/ui/skeleton"
@@ -8,12 +10,11 @@ import { Button } from "@/shared/ui/button"
 type HeaderMenuProps = {
   menus: NavigationMenuItem[]
   loading: boolean
-  selectedRootId?: string
-  onSelectRoot: (menu: NavigationMenuItem) => void
 }
 
-export function HeaderMenu({ menus, loading, selectedRootId, onSelectRoot }: HeaderMenuProps) {
+export function HeaderMenu({ menus, loading }: HeaderMenuProps) {
   const { t } = useAppTranslation()
+  const { selectedRootMenu, selectRootMenu } = useSelectedRootMenu(menus)
 
   return (
     <nav className="hidden min-w-0 overflow-x-auto lg:flex" aria-label={t("navigation:header.primaryMenu")}>
@@ -25,7 +26,7 @@ export function HeaderMenu({ menus, loading, selectedRootId, onSelectRoot }: Hea
         </div>
       ) : menus.map((menu) => {
         if (!getFirstMenuPath(menu)) return null
-        const selected = menu.id === selectedRootId
+        const selected = menu.id === selectedRootMenu?.id
 
         return (
           <div
@@ -35,7 +36,7 @@ export function HeaderMenu({ menus, loading, selectedRootId, onSelectRoot }: Hea
               selected ? "border-header-active bg-header-surface" : "border-transparent",
             ].join(" ")}
           >
-            <Button header size="sm" aria-pressed={selected} onClick={() => onSelectRoot(menu)}>
+            <Button header size="sm" aria-pressed={selected} onClick={() => selectRootMenu(menu.id)}>
               {getMenuLabel(menu, t)}
             </Button>
           </div>
