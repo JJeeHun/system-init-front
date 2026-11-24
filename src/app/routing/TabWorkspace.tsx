@@ -9,11 +9,12 @@ import { app, resolveRoute } from "@/app/routing/route-metadata"
 import { findMenuByPath, getMenuLabel } from "@/features/navigation/lib/navigation-menu"
 import type { NavigationPermissions } from "@/features/navigation/types/navigation.types"
 
+import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
+import { PagePermissionScope } from "@/shared/ui/page-permissions"
+
 import { config } from "@/shared/config/config"
 import { useAppTranslation } from "@/shared/i18n"
 import { useTabsStore, type TabItem } from "@/shared/stores"
-import { OpenPageTabs } from "@/shared/ui/open-page-tabs"
-import { PagePermissionScope } from "@/shared/ui/page-permissions"
 
 function permissionSignature(permissions?: NavigationPermissions): string {
   if (!permissions) return "public"
